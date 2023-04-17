@@ -1,0 +1,75 @@
+
+version: '0.1'
+
+networks:
+  local_net:
+    driver: bridge
+
+services:
+
+  pg:
+    image: postgres
+    container_name: pg
+    restart: always
+    ports:
+      - 5430:5432
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    networks:
+      - local_net
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    expose:
+      - '80'
+    depends_on:
+      - pg
+    networks:
+      - local_net
+
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ./rabbitmq/durables/:/var/lib/rabbitmq/
+      - ./rabbitmq/logs/:/var/log/rabbitmq
+    networks:
+      - local_net
+
+  users:
+    build: ./_users
+    container_name: users
+    restart: on-failure
+    depends_on:
+      - pg
+      - rabbitmq
+    env_file:
+      - ./_users/.env
+    ports:
+      - 12121:12121
+    volumes:
+      - ./_users:/users_root
+    networks:
+      - local_net
+
+  profiles:
+    build: ./_profiles
+    container_name: profiles
+    restart: on-failure
+    depends_on:
+      - pg
+      - rabbitmq
+    env_file:
+      - ./_profiles/.env
+    ports:
+      - 12122:12122
+    volumes:
+      - ./_profiles:/profiles_root
+    networks:
+      - local_net

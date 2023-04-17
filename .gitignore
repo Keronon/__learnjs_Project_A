@@ -1,3 +1,6 @@
+postgres
+rabbitmq
+
 # Logs
 logs
 *.log

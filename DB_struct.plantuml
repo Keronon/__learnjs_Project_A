@@ -1,0 +1,122 @@
+@startuml
+
+
+title  База данных
+header Носаченко А.
+footer \n Схема таблиц
+
+
+' =====
+
+
+class Genres
+{
+  serial_   g_id;
+  text___   g_name_ru;
+  text___   g_name_en;
+}
+
+class Film_genres
+{
+  serial_   fg_id;
+  integer   fg_id_film;
+  integer   fg_id_genre;
+}
+
+class Films
+{
+  serial_   f_id;
+  text___   f_image;
+  text___   f_name_ru;
+  text___   f_name_en;
+  integer   f_id_country;
+  integer   f_year;
+  integer   f_age;
+  integer   f_rating;
+  integer   f_length;
+}
+
+class Countries
+{
+  serial_   c_id;
+  text___   c_name_ru;
+  text___   c_name_en;
+}
+
+class Members
+{
+  serial_   m_id;
+  text___   m_name_ru;
+  text___   m_name_en;
+  text___   m_image;
+  text___   m_description;
+}
+
+class Professions
+{
+  serial_   pr_id;
+  text___   pr_name_ru;
+  text___   pr_name_en;
+}
+
+class Film_members
+{
+  serial_   fm_id;
+  integer   fm_id_film;
+  integer   fm_id_member;
+  integer   fm_id_profession;
+}
+
+class Comments
+{
+  serial_   co_id;
+  integer   co_id_film;
+  integer   co_id_user;
+  text___   co_title;
+  text___   co_text;
+  date___   co_date;
+  integer   co_prev_id;
+}
+
+class Profiles
+{
+  serial_   p_id;
+  text___   p_name;
+  text___   p_surname;
+  text___   p_image;
+  text___   p_phone;
+}
+
+class Users
+{
+  serial_   u_id;
+  text___   u_email;
+  text___   u_password;
+  integer   u_id_role;
+  integer   u_id_profile;
+}
+
+class Roles
+{
+  serial_   r_id;
+  text___   r_name;
+  text___   r_description;
+}
+
+
+' =====
+
+
+Films        <|-- Countries
+Film_genres  <|-- Films
+Film_genres  <|-- Genres
+Film_members <|-- Films
+Film_members <|-- Members
+Film_members <|-- Professions
+Comments     <|-- Films
+Comments     <|-- Users
+Users        <|-- Profiles
+Users        <|-- Roles
+
+
+@enduml
