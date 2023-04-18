@@ -1,8 +1,14 @@
 -----
 -----
 
-<b> The "learnjs 'Project A'" project
+<b> The "learnjs < Project A >" project
 =====
+
+-----
+
+## ***Essence of the project:***
+
+### The project is a realization of server for an online-cinema.
 
 -----
 
@@ -11,7 +17,7 @@
 
 ### <i> The project was created for:
   
-* Project created as completing of task of team stage of hotels.ru learning
+* The project was created as a task of the command stage of Hotels.ru training
 
 ### <i> Worked on the project:
 
@@ -27,13 +33,7 @@
 - ### <i> Profiles
 - ### <i> Films
 - ### <i> Members
-- ### <i> ...
-
------
-
-## ***Essence of the project:***
-
-### Project is a realization of server for an online-cinema.
+- ### <i> Comments
 
 -----
 -----
