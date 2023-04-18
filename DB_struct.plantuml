@@ -6,105 +6,221 @@ header Носаченко А.
 footer \n Схема таблиц
 
 
-' =====
+' = = = = = = = =
+' = = = = = = = =
+' = = = = = = = =
 
 
-class Genres
-{
-  serial_   g_id;
-  text___   g_name_ru;
-  text___   g_name_en;
-}
-
-class Film_genres
-{
-  serial_   fg_id;
-  integer   fg_id_film;
-  integer   fg_id_genre;
-}
+namespace MS_Films {
 
 class Films
 {
-  serial_   f_id;
-  text___   f_image;
-  text___   f_name_ru;
-  text___   f_name_en;
-  integer   f_id_country;
-  integer   f_year;
-  integer   f_age;
-  integer   f_rating;
-  integer   f_length;
+  + <font color="gold"      >serial_     id;
+
+  - text___   name_ru;
+
+  - text___   name_en;
+
+  + <font color="lightgreen">integer   id_country;
+
+  + integer   year;
+
+  + text___   age_rating;
+
+  - integer   rating;
+
+  + integer   duration;
+
+  + text___   image_path;
 }
 
 class Countries
 {
-  serial_   c_id;
-  text___   c_name_ru;
-  text___   c_name_en;
+  + <font color="gold"      >serial_     id;
+
+  + text___   name_ru;
+
+  + text___   name_en;
 }
 
-class Members
+class Film_genres
 {
-  serial_   m_id;
-  text___   m_name_ru;
-  text___   m_name_en;
-  text___   m_image;
-  text___   m_description;
+  + <font color="gold"      >serial_     id;
+
+  + <font color="lightgreen">integer   id_film;
+
+  + <font color="lightgreen">integer   id_genre;
 }
 
-class Professions
+class Genres
 {
-  serial_   pr_id;
-  text___   pr_name_ru;
-  text___   pr_name_en;
+  + <font color="gold"      >serial_     id;
+
+  + text___   name_ru;
+
+  + text___   name_en;
 }
 
 class Film_members
 {
-  serial_   fm_id;
-  integer   fm_id_film;
-  integer   fm_id_member;
-  integer   fm_id_profession;
+  + <font color="gold"      >serial_     id;
+
+  + <font color="lightgreen">integer   id_film;
+
+  + <font color="lightgreen">integer   id_member;
+
+  + <font color="lightgreen">integer   id_profession;
+}
+
+class Members
+{
+  + <font color="gold"      >serial_     id;
+
+  - text___   name_ru;
+
+  - text___   name_en;
+
+  + text___   text;
+
+  + text___   image_path;
+}
+
+class Professions
+{
+  + <font color="gold"      >serial_     id;
+
+  + text___   name;
+}
+
+}
+
+
+' = = = = = = = =
+' = = = MiS = = =
+' = = = = = = = =
+
+
+namespace MS_Rating {
+
+class Rating_films
+{
+  + <font color="gold"      >serial_     id;
+
+  + <font color="lightblue" >integer   id_film;
+
+  + integer   count;
+
+  + integer   rating_film;
+
+  + integer   rating_current;
+}
+
+class Rating_users
+{
+  + <font color="gold"      >serial_     id;
+
+  + <font color="lightblue" >integer   id_film;
+
+  + <font color="lightblue" >integer   id_user;
+
+  + integer   rating;
+}
+
+}
+
+
+' = = = = = = = =
+' = = = MiS = = =
+' = = = = = = = =
+
+
+namespace MS_Film_info {
+
+class Film_info
+{
+  + <font color="gold"      >serial_     id;
+
+  + <font color="lightblue" >integer   id_film;
+
+  + text___   text;
+
+  + text___   trailer_link;
+}
+
+}
+
+
+' = = = = = = = =
+' = = = MiS = = =
+' = = = = = = = =
+
+
+namespace MS_Profiles {
+
+class Profiles
+{
+  + <font color="gold"      >serial_     id;
+
+  + text___   profile_name;
+
+  - text___   image_path;
 }
 
 class Comments
 {
-  serial_   co_id;
-  integer   co_id_film;
-  integer   co_id_user;
-  text___   co_title;
-  text___   co_text;
-  date___   co_date;
-  integer   co_prev_id;
+  + <font color="gold"      >serial_     id;
+
+  + <font color="lightblue" >integer   id_film;
+
+  + <font color="lightgreen">integer   id_profile;
+
+  - text___   title;
+
+  + text___   text;
+
+  + date___   date;
+
+  - integer   prev_id;
 }
 
-class Profiles
-{
-  serial_   p_id;
-  text___   p_name;
-  text___   p_surname;
-  text___   p_image;
-  text___   p_phone;
 }
+
+
+' = = = = = = = =
+' = = = MiS = = =
+' = = = = = = = =
+
+
+namespace MS_Users {
 
 class Users
 {
-  serial_   u_id;
-  text___   u_email;
-  text___   u_password;
-  integer   u_id_role;
-  integer   u_id_profile;
+  + <font color="gold"      >serial_     id;
+
+  + text___   email;
+
+  + text___   password;
+
+  + <font color="lightgreen">integer   id_role;
+
+  + <font color="lightblue" >integer   id_profile;
 }
 
 class Roles
 {
-  serial_   r_id;
-  text___   r_name;
-  text___   r_description;
+  + <font color="gold"      >serial_     id;
+
+  + text___   name;
+
+  - text___   description;
+}
+
 }
 
 
-' =====
+' = = = = = = = =
+' = = = = = = = =
+' = = = = = = = =
 
 
 Films        <|-- Countries
@@ -113,10 +229,23 @@ Film_genres  <|-- Genres
 Film_members <|-- Films
 Film_members <|-- Members
 Film_members <|-- Professions
-Comments     <|-- Films
-Comments     <|-- Users
-Users        <|-- Profiles
+
+Comments     <|-- Profiles
 Users        <|-- Roles
+
+
+' = = = = = = = =
+' = = = RMQ = = =
+' = = = = = = = =
+
+
+Film_info    <--o Films
+Rating_films <--o Films
+Rating_users <--o Films
+Rating_users <--o Users
+
+Comments     <--o Films
+Users        <--o Profiles
 
 
 @enduml

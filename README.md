@@ -16,7 +16,7 @@
 -----
 
 ### <i> The project was created for:
-  
+
 * The project was created as a task of the command stage of Hotels.ru training
 
 ### <i> Worked on the project:
@@ -32,8 +32,8 @@
 - ### <i> Users
 - ### <i> Profiles
 - ### <i> Films
-- ### <i> Members
-- ### <i> Comments
+- ### <i> Film_info
+- ### <i> Rating
 
 -----
 -----

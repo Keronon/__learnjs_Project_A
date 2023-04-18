@@ -49,12 +49,10 @@ services:
     depends_on:
       - pg
       - rabbitmq
-    env_file:
-      - ./_users/.env
     ports:
       - 12121:12121
     volumes:
-      - ./_users:/users_root
+      - ./_users:/root
     networks:
       - local_net
 
@@ -65,11 +63,51 @@ services:
     depends_on:
       - pg
       - rabbitmq
-    env_file:
-      - ./_profiles/.env
     ports:
       - 12122:12122
     volumes:
-      - ./_profiles:/profiles_root
+      - ./_profiles:/root
+    networks:
+      - local_net
+
+  films:
+    build: ./_films
+    container_name: films
+    restart: on-failure
+    depends_on:
+      - pg
+      - rabbitmq
+    ports:
+      - 12123:12123
+    volumes:
+      - ./_films:/root
+    networks:
+      - local_net
+
+  film_info:
+    build: ./_film_info
+    container_name: film_info
+    restart: on-failure
+    depends_on:
+      - pg
+      - rabbitmq
+    ports:
+      - 12124:12124
+    volumes:
+      - ./_film_info:/root
+    networks:
+      - local_net
+
+  rating:
+    build: ./_rating
+    container_name: rating
+    restart: on-failure
+    depends_on:
+      - pg
+      - rabbitmq
+    ports:
+      - 12125:12125
+    volumes:
+      - ./_rating:/root
     networks:
       - local_net
