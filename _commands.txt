@@ -1,0 +1,111 @@
+
+# # # # #
+# init :
+# # # # #
+
+nest.cmd new -p npm -g _users
+nest.cmd new -p npm -g _profiles
+nest.cmd new -p npm -g _films
+nest.cmd new -p npm -g _film_info
+nest.cmd new -p npm -g _rating
+
+# - - -
+
+
+
+# # # # #
+# packages - global :
+# # # # #
+
+npm i -g
+
+npm          << package manager
+typescript   << language
+@nestjs/cli  << nestJS console-line-interface
+
+# - - -
+
+
+
+# # # # #
+# packages - all :
+# # # # #
+
+npm i
+
+@nestjs/config        << модуль считывания .env-файла
+class-validator       << валидатор запросов
+class-transformer     << ↑ assist
+@nestjs/jwt           << auth
+pg                    << Postgres
+@nestjs/sequelize     << ORM
+sequelize             << ↑
+sequelize-typescript  << ↑
+amqplib               << RabbitMQ
+
+! @nestjs/swagger     << создание сайта-документации
+! swagger-ui-express  << ↑ дополнение для графики
+
+# - - -
+
+npm i -D
+
+@types/pg             << PG types
+@types/sequelize      << ORM types
+@types/amqplib        << RMQ types
+
+# - - -
+
+
+
+# # # # #
+# packages - users :
+# # # # #
+
+npm i
+
+bcryptjs              << encryption
+
+# - - -
+
+npm i -D
+
+@types/bcryptjs       << Crypt types
+
+# - - -
+
+
+
+# # # # #
+# packages profiles :
+# # # # #
+
+npm i
+
+@nestjs/serve-static  << static images
+uuid                  << генерация имён
+
+# - - -
+
+npm i -D
+
+@types/uuid           << генерация имён types
+
+# - - -
+
+
+
+# # # # #
+# packages - films :
+# # # # #
+
+npm i
+
+@nestjs/serve-static  << static images
+uuid                  << генерация имён
+
+# - - -
+
+npm i -D
+
+@types/uuid           << генерация имён types

@@ -1,0 +1,12 @@
+
+rename package's in .json
+
+create .gitignore's
+
+create docker-compose.yml
+create Dockerfile's
+create .dockerignore's
+
+create .env's
+create rabbit.core.ts's
+create console.colors.ts's
