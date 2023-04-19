@@ -43,8 +43,8 @@ sequelize             << ↑
 sequelize-typescript  << ↑
 amqplib               << RabbitMQ
 
-! @nestjs/swagger     << создание сайта-документации
-! swagger-ui-express  << ↑ дополнение для графики
+@nestjs/swagger     << создание сайта-документации
+swagger-ui-express  << ↑ дополнение для графики
 
 # - - -
 
