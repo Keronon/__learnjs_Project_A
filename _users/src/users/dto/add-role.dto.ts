@@ -2,11 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsString } from 'class-validator';
 
 export class AddRoleDto {
-    @ApiProperty({ example: 'ADMIN', description: 'Значение роли' })
-    @IsString({ message: 'Должно быть строкой' })
-    readonly value: string;
+    @ApiProperty({ example: 'ADMIN', description: 'role name' })
+    @IsString({ message: 'Must be a string' })
+    readonly role_name: string;
 
-    @ApiProperty({ example: 1, description: 'Id пользователя' })
-    @IsNumber({}, { message: 'Должно быть числом' })
-    readonly userId: number;
+    @ApiProperty({ example: 1, description: 'user id' })
+    @IsNumber({}, { message: 'Must be a number' })
+    readonly id_user: number;
 }

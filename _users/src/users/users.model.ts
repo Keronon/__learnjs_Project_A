@@ -9,7 +9,7 @@ interface UserCreationAttrs {
 
 @Table({ tableName: 'users' })
 export class User extends Model<User, UserCreationAttrs> {
-    @ApiProperty({ example: '1', description: 'Id пользователя' })
+    @ApiProperty({ example: '1', description: 'user id' })
     @Column({
         type: DataType.INTEGER,
         unique: true,
@@ -18,18 +18,18 @@ export class User extends Model<User, UserCreationAttrs> {
     })
     id: number;
 
-    @ApiProperty({ example: 'user@mail.ru', description: 'Почтовый адрес' })
+    @ApiProperty({ example: 'user@mail.ru', description: 'email' })
     @Column({ type: DataType.STRING, unique: true, allowNull: false })
     email: string;
 
-    @ApiProperty({ example: '12345678', description: 'Пароль' })
+    @ApiProperty({ example: '12cdEF_*', description: 'password' })
     @Column({ type: DataType.STRING, allowNull: false })
     password: string;
 
-    @ApiProperty({ example: "1", description: "Id роли" })
+    @ApiProperty({ example: "1", description: "role id" })
     @Column({ type: DataType.INTEGER })
     @ForeignKey(() => Role)
-    roleId: number;
+    id_role: number;
 
     @BelongsTo(() => Role)
     role: Role;

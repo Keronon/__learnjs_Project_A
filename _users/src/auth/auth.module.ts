@@ -11,15 +11,11 @@ import { AuthService } from "./auth.service";
   imports: [
     forwardRef(() => UsersModule),
 
-    // Регистрируем JwtModule внутри нашего AuthModule
+    // Jwt Auth checker
     JwtModule.register({
-      // Секретный ключ
-      secret: process.env.SECRET_KEY || "SECRET",
+      secret: process.env.SECRET_KEY || "SECRET", // secret key
 
-      // Время жизни токена
-      signOptions: {
-        expiresIn: "24h",
-      },
+      signOptions: { expiresIn: "24h", }, // token lifetime
     }),
   ],
 

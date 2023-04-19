@@ -1,9 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './users.model';
-import { AddRoleDto } from './dto/add-role.dto';
 import { RolesService } from './../roles/roles.service';
+import { User } from './users.model';
+import { CreateUserDto } from './dto/create-user.dto';
+import { AddRoleDto } from './dto/add-role.dto';
 
 @Injectable()
 export class UsersService {
@@ -36,7 +36,7 @@ export class UsersService {
     async createUser(dto: CreateUserDto): Promise<User> {
         const user = await this.userRepository.create(dto);
 
-        // Назначение роли пользователю
+        // set role
         const role = await this.rolesService.getRoleByValue('USER');
         await user.$set('role', role.id);
         user.role = role;
@@ -45,15 +45,15 @@ export class UsersService {
     }
 
     async addRole(addRoleDto: AddRoleDto): Promise<User> {
-        const user = await this.getUserById(addRoleDto.userId);
-        const role = await this.rolesService.getRoleByValue(addRoleDto.value);
+        const user = await this.getUserById(addRoleDto.id_user);
+        const role = await this.rolesService.getRoleByValue(addRoleDto.role_name);
 
         if (!(role && user)) {
-            throw new HttpException('Пользователь или роль не найдены', HttpStatus.NOT_FOUND);
+            throw new NotFoundException({ message: 'User or role not found' });
         }
 
         await user.$add('role', role.id);
-        return await this.getUserById(addRoleDto.userId);
+        return await this.getUserById(addRoleDto.id_user);
     }
 
     async deleteUserById(id: number): Promise<void> {

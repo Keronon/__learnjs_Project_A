@@ -1,10 +1,14 @@
-import { User } from '../users/users.model';
-import { CreateUserDto } from './../users/dto/create-user.dto';
-import { UsersService } from './../users/users.service';
-import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+
 import * as bcrypt from 'bcryptjs';
+import { BadRequestException,
+         ForbiddenException,
+         NotFoundException,
+         Injectable } from '@nestjs/common';
+import { UsersService } from '../users/users.service';
+import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/auth.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { User } from '../users/users.model';
 
 @Injectable()
 export class AuthService {
@@ -18,43 +22,38 @@ export class AuthService {
     async registration(authDto: AuthDto) {
         const candidate = await this.usersService.getUserByEmail(authDto.email);
         if (candidate) {
-            throw new HttpException(
-                'Пользователь с таким email существует',
-                HttpStatus.BAD_REQUEST,
-            );
+            throw new BadRequestException({ message: 'User with this email already exists' });
         }
 
-        // bcrypt.hash - пароль + соль
-        const hashPassword = await bcrypt.hash(authDto.password, 5);
+        const hashPassword = await bcrypt.hash(authDto.password, 5); // encryption. data, count of rounds (salt)
         const user = await this.usersService.createUser({
             ...authDto,
             password: hashPassword,
         });
 
-        // Отправляем микросервису Profiles сообщение с созданным пользователем
+        // data + uid -> Profiles
         // await rabbitMQ.publishMessage(RoutingKeys.registrationFromAuth, JSON.stringify(user));
     }
 
     private async generateToken(user: User) {
-        const payload = { email: user.email, id: user.id, roles: user.role };
+        const payload = { email: user.email, id: user.id, role: user.role };
         return {
-            // sign - метод, который используется для создания JWT-токена
-            token: this.jwtService.sign(payload),
+            token: this.jwtService.sign(payload), // creates token
         };
     }
 
     private async validateUser(userDto: CreateUserDto) {
         const user = await this.usersService.getUserByEmail(userDto.email);
         if (!user) {
-            throw new UnauthorizedException({
-                message: 'Некорректный email',
+            throw new NotFoundException({
+                message: 'Incorrect email',
             });
         }
 
         const passwordEquals = await bcrypt.compare(userDto.password, user.password);
         if (!passwordEquals) {
-            throw new UnauthorizedException({
-                message: 'Некорректный пароль',
+            throw new ForbiddenException({
+                message: 'Incorrect password',
             });
         }
 

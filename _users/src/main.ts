@@ -20,7 +20,7 @@ async function bootstrap() {
     app.setGlobalPrefix('/api');
     app.useGlobalPipes(new ValidationPipe());
 
-    await app.listen(PORT, () => console.log(`MS Users started on port = ${PORT}`));
+    await app.listen(PORT, () => console.log(`\n = > micro Users\n => started\n => port : ${PORT}\n`));
 }
 
 bootstrap();

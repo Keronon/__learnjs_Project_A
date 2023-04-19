@@ -6,8 +6,8 @@ import { AuthDto } from './dto/auth.dto';
 export class AuthController {
     constructor(private authService: AuthService) {}
 
-    // @Post('/login')
-    // login(@Body() authDto: AuthDto): Promise<{ token: string }> {
-    //     return this.authService.login(authDto);
-    // }
+    @Post('/login')
+    login(@Body() authDto: AuthDto): Promise<{ token: string }> {
+        return this.authService.login(authDto);
+    }
 }
