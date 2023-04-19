@@ -5,6 +5,8 @@ title  База данных
 header Носаченко А.
 footer \n Схема таблиц
 
+skinparam defaultFontName VL Gothic
+
 
 ' = = = = = = = =
 ' = = = = = = = =
@@ -15,7 +17,7 @@ namespace MS_Films {
 
 class Films
 {
-  + <font color="gold"      >serial_     id;
+  + <font color="gold"      >serial_   id;
 
   - text___   name_ru;
 
@@ -36,7 +38,7 @@ class Films
 
 class Countries
 {
-  + <font color="gold"      >serial_     id;
+  + <font color="gold"      >serial_   id;
 
   + text___   name_ru;
 
@@ -45,7 +47,7 @@ class Countries
 
 class Film_genres
 {
-  + <font color="gold"      >serial_     id;
+  + <font color="gold"      >serial_   id;
 
   + <font color="lightgreen">integer   id_film;
 
@@ -54,7 +56,7 @@ class Film_genres
 
 class Genres
 {
-  + <font color="gold"      >serial_     id;
+  + <font color="gold"      >serial_   id;
 
   + text___   name_ru;
 
@@ -63,7 +65,7 @@ class Genres
 
 class Film_members
 {
-  + <font color="gold"      >serial_     id;
+  + <font color="gold"      >serial_   id;
 
   + <font color="lightgreen">integer   id_film;
 
@@ -74,7 +76,7 @@ class Film_members
 
 class Members
 {
-  + <font color="gold"      >serial_     id;
+  + <font color="gold"      >serial_   id;
 
   - text___   name_ru;
 
@@ -87,7 +89,7 @@ class Members
 
 class Professions
 {
-  + <font color="gold"      >serial_     id;
+  + <font color="gold"      >serial_   id;
 
   + text___   name;
 }
@@ -104,7 +106,7 @@ namespace MS_Rating {
 
 class Rating_films
 {
-  + <font color="gold"      >serial_     id;
+  + <font color="gold"      >serial_   id;
 
   + <font color="lightblue" >integer   id_film;
 
@@ -117,7 +119,7 @@ class Rating_films
 
 class Rating_users
 {
-  + <font color="gold"      >serial_     id;
+  + <font color="gold"      >serial_   id;
 
   + <font color="lightblue" >integer   id_film;
 
@@ -138,7 +140,7 @@ namespace MS_Film_info {
 
 class Film_info
 {
-  + <font color="gold"      >serial_     id;
+  + <font color="gold"      >serial_   id;
 
   + <font color="lightblue" >integer   id_film;
 
@@ -159,7 +161,9 @@ namespace MS_Profiles {
 
 class Profiles
 {
-  + <font color="gold"      >serial_     id;
+  + <font color="gold"      >serial_   id;
+
+  + <font color="lightblue" >integer   id_user;
 
   + text___   profile_name;
 
@@ -168,7 +172,7 @@ class Profiles
 
 class Comments
 {
-  + <font color="gold"      >serial_     id;
+  + <font color="gold"      >serial_   id;
 
   + <font color="lightblue" >integer   id_film;
 
@@ -195,20 +199,18 @@ namespace MS_Users {
 
 class Users
 {
-  + <font color="gold"      >serial_     id;
+  + <font color="gold"      >serial_   id;
 
   + text___   email;
 
   + text___   password;
 
   + <font color="lightgreen">integer   id_role;
-
-  + <font color="lightblue" >integer   id_profile;
 }
 
 class Roles
 {
-  + <font color="gold"      >serial_     id;
+  + <font color="gold"      >serial_   id;
 
   + text___   name;
 
@@ -245,7 +247,7 @@ Rating_users <--o Films
 Rating_users <--o Users
 
 Comments     <--o Films
-Users        <--o Profiles
+Profiles     <--o Users
 
 
 @enduml
