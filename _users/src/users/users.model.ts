@@ -26,10 +26,10 @@ export class User extends Model<User, UserCreationAttrs> {
     @Column({ type: DataType.STRING, allowNull: false })
     password: string;
 
-    @ApiProperty({ example: "1", description: "id роли" })
+    @ApiProperty({ example: '1', description: 'id роли' })
     @Column({ type: DataType.INTEGER })
     @ForeignKey(() => Role)
-    id_role: number;
+    idRole: number;
 
     @BelongsTo(() => Role)
     role: Role;

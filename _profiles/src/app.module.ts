@@ -1,11 +1,8 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
-import { User } from './users/users.model';
-import { Role } from './roles/roles.model';
-import { UsersModule } from './users/users.module';
-import { RolesModule } from './roles/roles.module';
-import { AuthModule } from './auth/auth.module';
+import { Profile } from './profiles/profiles.model';
+import { ProfilesModule } from './profiles/profiles.module';
 
 @Module({
     controllers: [],
@@ -20,14 +17,12 @@ import { AuthModule } from './auth/auth.module';
             port: Number(process.env.PG_PORT) || 5432,
             username: process.env.PG_USER || 'postgres',
             password: process.env.PG_PASS || 'root',
-            database: process.env.PG_DB || 'DB_users',
-            models: [User, Role],
+            database: process.env.PG_DB || 'DB_profiles',
+            models: [Profile],
             autoLoadModels: true,
         }),
 
-        UsersModule,
-        RolesModule,
-        AuthModule,
+        ProfilesModule,
     ],
 })
 export class AppModule {}
