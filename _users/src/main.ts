@@ -10,8 +10,8 @@ async function bootstrap() {
 
     // Documentation
     const config = new DocumentBuilder()
-        .setTitle('Microservice Users')
-        .setDescription('REST API документация для микросервиса пользователей (авторизация)')
+        .setTitle('Microservice Users (RU)')
+        .setDescription('REST API документация для микросервиса пользователей\nМикросервис содержит функционал регистрации и авторизации')
         .setVersion('1.0.0')
         .build();
     const document = SwaggerModule.createDocument(app, config);
@@ -20,7 +20,7 @@ async function bootstrap() {
     app.setGlobalPrefix('/api');
     app.useGlobalPipes(new ValidationPipe());
 
-    await app.listen(PORT, () => console.log(`\n = > micro Users\n => started\n => port : ${PORT}\n`));
+    await app.listen(PORT, () => console.log(`\n = > micro Users\n = > started\n = > port : ${PORT}\n`));
 }
 
 bootstrap();

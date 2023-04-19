@@ -9,7 +9,7 @@ interface RoleCreationAttrs {
 
 @Table({ tableName: 'roles' })
 export class Role extends Model<Role, RoleCreationAttrs> {
-    @ApiProperty({ example: '1', description: 'role id' })
+    @ApiProperty({ example: '1', description: 'id роли' })
     @Column({
         type: DataType.INTEGER,
         unique: true,
@@ -18,11 +18,11 @@ export class Role extends Model<Role, RoleCreationAttrs> {
     })
     id: number;
 
-    @ApiProperty({ example: 'ADMIN', description: 'role name' })
+    @ApiProperty({ example: 'ADMIN', description: 'название роли' })
     @Column({ type: DataType.STRING, unique: true, allowNull: false })
     name: string;
 
-    @ApiProperty({ example: 'Администратор', description: 'role description' })
+    @ApiProperty({ example: 'Администратор', description: 'описание роли' })
     @Column({ type: DataType.STRING, allowNull: false })
     description: string;
 
