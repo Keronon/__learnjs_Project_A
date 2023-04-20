@@ -1,3 +1,4 @@
+
 import { ApiProperty } from '@nestjs/swagger';
 import { Model, Table, Column, DataType } from 'sequelize-typescript';
 
@@ -18,7 +19,7 @@ export class FilmInfo extends Model<FilmInfo, FilmInfoCreationAttrs> {
     })
     id: number;
 
-    @ApiProperty({ example: 'Этот фильм о...', description: 'опиание фильма' })
+    @ApiProperty({ example: 'Этот фильм о...', description: 'опиcание фильма' })
     @Column({ type: DataType.STRING, allowNull: false })
     text: string;
 

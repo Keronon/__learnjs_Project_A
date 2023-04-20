@@ -1,3 +1,4 @@
+
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
@@ -20,6 +21,7 @@ import { FilmInfo } from './film_info/film-info.model';
             database: process.env.PG_DB || 'DB_film_info',
             models: [FilmInfo],
             autoLoadModels: true,
+            logging: false
         }),
 
         FilmInfoModule,

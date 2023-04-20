@@ -1,3 +1,4 @@
+
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { FilmInfo } from './film-info.model';
@@ -21,7 +22,7 @@ export class FilmInfoService {
     async updateFilmInfo(updateFilmInfoDto: UpdateFilmInfoDto): Promise<FilmInfo> {
         const filmInfo = await this.getFilmInfoById(updateFilmInfoDto.id);
         if (!filmInfo) {
-            throw new BadRequestException({ message: 'FilmInfo not found' });
+            throw new BadRequestException({ message: 'Film info not found' });
         }
 
         for (let key in updateFilmInfoDto) {
@@ -35,7 +36,7 @@ export class FilmInfoService {
     async deleteFilmInfoById(id: number): Promise<number> {
         const filmInfo = await this.getFilmInfoById(id);
         if (!filmInfo) {
-            throw new BadRequestException({ message: 'FilmInfo not found' });
+            throw new BadRequestException({ message: 'Film info not found' });
         }
 
         return await this.filmInfoDB.destroy({ where: { id } });
