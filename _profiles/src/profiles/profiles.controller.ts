@@ -24,10 +24,10 @@ export class ProfilesController {
         return this.profilesService.getProfileById(id);
     }
 
-    @Get()
-    getProfileByUserId(@Query( `uid` ) uid: number): Promise<Profile> {
+    @Get('/user/:id')
+    getProfileByUserId(@Param('id') idUser: number): Promise<Profile> {
         log('getProfileByUserId');
-        return this.profilesService.getProfileByUserId(uid);
+        return this.profilesService.getProfileByUserId(idUser);
     }
 
     @Put(":id")
