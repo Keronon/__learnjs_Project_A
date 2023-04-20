@@ -1,9 +1,10 @@
-import { User } from '../users/users.model';
+
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Role } from './roles.model';
-import { RolesService } from './roles.service';
 import { AuthModule } from './../auth/auth.module';
+import { RolesService } from './roles.service';
+import { User } from '../users/users.model';
+import { Role } from './roles.model';
 
 @Module({
     controllers: [],

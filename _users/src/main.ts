@@ -1,3 +1,4 @@
+
 import { SwaggerModule } from '@nestjs/swagger';
 import { DocumentBuilder } from '@nestjs/swagger';
 import { NestFactory } from '@nestjs/core';
@@ -13,7 +14,7 @@ async function bootstrap() {
         .setTitle('Microservice Users (RU)')
         .setDescription(
             'REST API документация для микросервиса пользователей\n' +
-            'Микросервис содержит функционал регистрации и авторизации',
+            'Микросервис содержит функционал регистрации и авторизации пользователей',
         )
         .setVersion('1.0.0')
         .build();

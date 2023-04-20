@@ -1,9 +1,10 @@
+
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { ValidationException } from '../../_exceptions/validation.exception';
 
-// Валидация входных данных
+// validate incoming data
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
     async transform(value: any, metadata: ArgumentMetadata): Promise<any> {

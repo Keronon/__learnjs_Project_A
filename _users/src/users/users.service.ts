@@ -1,4 +1,5 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { RolesService } from './../roles/roles.service';
 import { User } from './users.model';
@@ -8,25 +9,25 @@ import { AddRoleDto } from './dto/add-role.dto';
 @Injectable()
 export class UsersService {
     constructor(
-        @InjectModel(User) private userRepository: typeof User,
+        @InjectModel(User) private usersDB: typeof User,
         private rolesService: RolesService,
     ) {}
 
     async getAllUsers(): Promise<User[]> {
-        return await this.userRepository.findAll({
+        return await this.usersDB.findAll({
             include: { all: true },
         });
     }
 
     async getUserById(id: number): Promise<User> {
-        return await this.userRepository.findOne({
+        return await this.usersDB.findOne({
             where: { id },
             include: { all: true },
         });
     }
 
     async getUserByEmail(email: string): Promise<User> {
-        const user = await this.userRepository.findOne({
+        const user = await this.usersDB.findOne({
             where: { email },
             include: { all: true },
         });
@@ -34,7 +35,7 @@ export class UsersService {
     }
 
     async createUser(dto: CreateUserDto): Promise<User> {
-        const user = await this.userRepository.create(dto);
+        const user = await this.usersDB.create(dto);
 
         // set role
         const role = await this.rolesService.getRoleByValue('USER');
@@ -57,6 +58,6 @@ export class UsersService {
     }
 
     async deleteUserById(id: number): Promise<void> {
-        await this.userRepository.destroy({ where: { id } });
+        await this.usersDB.destroy({ where: { id } });
     }
 }

@@ -1,8 +1,9 @@
+
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
-import { Profile } from './profiles/profiles.model';
 import { ProfilesModule } from './profiles/profiles.module';
+import { Profile } from './profiles/profiles.model';
 
 @Module({
     controllers: [],

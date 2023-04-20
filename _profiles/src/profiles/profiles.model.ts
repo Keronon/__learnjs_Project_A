@@ -1,3 +1,4 @@
+
 import { ApiProperty } from '@nestjs/swagger';
 import { Model, Table, Column, DataType } from 'sequelize-typescript';
 
@@ -21,7 +22,7 @@ export class Profile extends Model<Profile, ProfileCreationAttrs> {
     @Column({ type: DataType.STRING, allowNull: false })
     profileName: string;
 
-    @ApiProperty({ example: 'u12dflf.png', description: 'путь до фото профиля' })
+    @ApiProperty({ example: './static/u12dflf.png', description: 'путь к аватару пользователя' })
     @Column({ type: DataType.STRING, unique: true, allowNull: true })
     imagePath: string;
 

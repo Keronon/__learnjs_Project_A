@@ -1,15 +1,18 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
-import { Profile } from './profiles.model';
-import { RegistrationDto } from './dto/registration.dto';
+
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { InjectModel      } from '@nestjs/sequelize';
+import { Profile          } from './profiles.model';
+import { RegistrationDto  } from './dto/registration.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class ProfilesService {
-    constructor(@InjectModel(Profile) private profilesRepository: typeof Profile) {}
+    constructor(@InjectModel(Profile) private profilesDB: typeof Profile) {}
 
-    async registration(registrationDto: RegistrationDto): Promise<Profile> {
-        const authData = {
+    async registration(registrationDto: RegistrationDto): Promise<Profile>
+    {
+        const authData =
+        {
             email: registrationDto.email,
             password: registrationDto.password,
         };
@@ -21,41 +24,47 @@ export class ProfilesService {
         // );
 
         // Ждём ответ от микросервиса Auth
-        // await this.answer()
+        // await this.waitAnswer()
 
-        const createProfileData = {
+        const createProfileData =
+        {
             profileName: registrationDto.profileName,
-            idUser: 1, // изменить на пришедший
+            idUser: 1, // изменить на пришедший ↑
         };
 
-        const profile = this.profilesRepository.create(createProfileData);
+        const profile = this.profilesDB.create(createProfileData);
         return profile;
     }
 
-    async getProfileById(id: number): Promise<Profile> {
-        const profile = await this.profilesRepository.findByPk(id);
+    async getProfileById(id: number): Promise<Profile>
+    {
+        const profile = await this.profilesDB.findByPk(id);
         return profile;
     }
 
-    // async getProfileByUserId(id: number): Promise<Profile> {
-    //     const profile = await this.profilesRepository.findOne({
-    //         where: { idUser: id },
-    //     });
-    //     return profile;
-    // }
+    async getProfileByUserId(id: number): Promise<Profile>
+    {
+        const profile = await this.profilesDB.findOne({
+            where: { idUser: id },
+        });
+        return profile;
+    }
 
-    async updateProfile(id: number, updateProfileDto: UpdateProfileDto): Promise<Profile> {
-        // Нужно ли делать put запрос с id, если оно уже есть в body???
-        if (id != updateProfileDto.id) {
-            throw new HttpException('Id не совпадают', HttpStatus.BAD_REQUEST);
+    async updateProfile(id: number, updateProfileDto: UpdateProfileDto): Promise<Profile>
+    {
+        if (id != updateProfileDto.id)
+        {
+            throw new InternalServerErrorException({ message: 'Current user and changing user ids not equal' });
         }
 
         const profile = await this.getProfileById(id);
-        if (!profile) {
-            throw new HttpException('Profile not found', HttpStatus.BAD_REQUEST);
+        if (!profile)
+        {
+            throw new BadRequestException({ message: 'Profile not found' });
         }
 
-        for (let key in updateProfileDto) {
+        for (let key in updateProfileDto)
+        {
             profile[key] = updateProfileDto[key];
         }
         profile.save();
@@ -63,13 +72,15 @@ export class ProfilesService {
         return profile;
     }
 
-    async deleteProfileByIdWithUser(id: number): Promise<void> {
+    async deleteAccountByProfileId(id: number): Promise<void>
+    {
         const profile = await this.getProfileById(id);
-        if (!profile) {
-            throw new HttpException('Profile not found', HttpStatus.BAD_REQUEST);
+        if (!profile)
+        {
+            throw new NotFoundException({ message: 'Profile not found' });
         }
 
-        await this.profilesRepository.destroy({ where: { id } });
+        await this.profilesDB.destroy({ where: { id } });
 
         // Отправляем микросервису Auth запрос на удаление пользователя
         // await rabbitMQ.publishMessage(
@@ -78,9 +89,13 @@ export class ProfilesService {
         // );
     }
 
-    // private async answer() {
-    //   return new Promise((resolve, reject) => {
-    //     setTimeout(() => {resolve("res")}, 3000);
-    //   });
-    // }
+    private async waitAnswer( whatToWait: Promise<any> )
+    {
+        const timeout = new Promise((res) =>
+        {
+            setTimeout(() => {res('timeout')}, 3000);
+        });
+
+        return Promise.race([ timeout, whatToWait ]);
+    }
 }

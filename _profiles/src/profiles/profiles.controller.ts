@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Param, Post, Delete, Put } from '@nestjs/common';
+
+import { Body, Controller, Get, Param, Post, Delete, Put, Query } from '@nestjs/common';
 import { RegistrationDto } from './dto/registration.dto';
 import { ProfilesService } from './profiles.service';
 import { Profile } from './profiles.model';
@@ -13,23 +14,23 @@ export class ProfilesController {
         return this.profilesService.registration(registrationDto);
     }
 
-    // @Get(':id')
-    // getProfileById(@Param('id') id: number): Promise<Profile> {
-    //     return this.profilesService.getProfileById(id);
-    // }
+    @Get(':id')
+    getProfileById(@Param('id') id: number): Promise<Profile> {
+        return this.profilesService.getProfileById(id);
+    }
 
-    // @Get('/user/:id')
-    // getProfileByUserId(@Param('id') id: number): Promise<Profile> {
-    //     return this.profilesService.getProfileByUserId(id);
-    // }
+    @Get()
+    getProfileByUserId(@Query( `uid` ) uid: number): Promise<Profile> {
+        return this.profilesService.getProfileByUserId(uid);
+    }
 
-    // @Put(":id")
-    // updateProfile(@Param("id") id: number, @Body() updateProfileDto: UpdateProfileDto): Promise<Profile> {
-    //   return this.profilesService.updateProfile(id, updateProfileDto);
-    // }
+    @Put(":id")
+    updateProfile(@Param("id") id: number, @Body() updateProfileDto: UpdateProfileDto): Promise<Profile> {
+        return this.profilesService.updateProfile(id, updateProfileDto);
+    }
 
-    // @Delete(':id')
-    // deleteProfileByIdWithUser(@Param('id') id: number): void {
-    //     this.profilesService.deleteProfileByIdWithUser(id);
-    // }
+    @Delete(':id')
+    deleteAccountByProfileId(@Param('id') id: number): void {
+        this.profilesService.deleteAccountByProfileId(id);
+    }
 }
