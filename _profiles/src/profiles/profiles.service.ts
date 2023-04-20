@@ -32,10 +32,6 @@ export class ProfilesService {
 
         // res <- Auth
         const res = await RMQ.acceptRes(id_msg);
-        if ('name' in res && (res.name.includes('Exception') ||
-                              res.name.includes('Error'    ) ))
-            throw res;
-
         const createProfileData =
         {
             profileName: registrationDto.profileName,
