@@ -19,72 +19,72 @@ class Films
 {
   + <font color="gold"      >serial_   id;
 
-  - text___   name_ru;
+  - text___   nameRU;
 
-  - text___   name_en;
+  - text___   nameRU;
 
-  + <font color="lightgreen">integer   id_country;
+  + <font color="lightgreen">integer   idCountry;
 
   + integer   year;
 
-  + text___   age_rating;
+  + text___   ageRating;
 
   - integer   rating;
 
   + integer   duration;
 
-  + text___   image_path;
+  + text___   imagePath;
 }
 
 class Countries
 {
   + <font color="gold"      >serial_   id;
 
-  + text___   name_ru;
+  + text___   nameRU;
 
-  + text___   name_en;
+  + text___   nameEN;
 }
 
 class Film_genres
 {
   + <font color="gold"      >serial_   id;
 
-  + <font color="lightgreen">integer   id_film;
+  + <font color="lightgreen">integer   idFilm;
 
-  + <font color="lightgreen">integer   id_genre;
+  + <font color="lightgreen">integer   idGenre;
 }
 
 class Genres
 {
   + <font color="gold"      >serial_   id;
 
-  + text___   name_ru;
+  + text___   nameRU;
 
-  + text___   name_en;
+  + text___   nameEN;
 }
 
 class Film_members
 {
   + <font color="gold"      >serial_   id;
 
-  + <font color="lightgreen">integer   id_film;
+  + <font color="lightgreen">integer   idFilm;
 
-  + <font color="lightgreen">integer   id_member;
+  + <font color="lightgreen">integer   idMember;
 
-  + <font color="lightgreen">integer   id_profession;
+  + <font color="lightgreen">integer   idProfession;
 }
 
 class Members
 {
   + <font color="gold"      >serial_   id;
 
-  - text___   name_ru;
+  - text___   nameRU;
 
-  - text___   name_en;
+  - text___   nameEN;
 
   + text___   text;
 
-  + text___   image_path;
+  + text___   imagePath;
 }
 
 class Professions
@@ -108,22 +108,22 @@ class Rating_films
 {
   + <font color="gold"      >serial_   id;
 
-  + <font color="lightblue" >integer   id_film;
+  + <font color="lightblue" >integer   idFilm;
 
   + integer   count;
 
-  + integer   rating_film;
+  + integer   ratingFilm;
 
-  + integer   rating_current;
+  + integer   ratingCurrent;
 }
 
 class Rating_users
 {
   + <font color="gold"      >serial_   id;
 
-  + <font color="lightblue" >integer   id_film;
+  + <font color="lightblue" >integer   idFilm;
 
-  + <font color="lightblue" >integer   id_user;
+  + <font color="lightblue" >integer   idUser;
 
   + integer   rating;
 }
@@ -142,11 +142,11 @@ class Film_info
 {
   + <font color="gold"      >serial_   id;
 
-  + <font color="lightblue" >integer   id_film;
+  + <font color="lightblue" >integer   idFilm;
 
   + text___   text;
 
-  + text___   trailer_link;
+  + text___   trailerLink;
 }
 
 }
@@ -163,28 +163,26 @@ class Profiles
 {
   + <font color="gold"      >serial_   id;
 
-  + <font color="lightblue" >integer   id_user;
+  + <font color="lightblue" >integer   idUser;
 
-  + text___   profile_name;
+  + text___   profileName;
 
-  - text___   image_path;
+  - text___   imagePath;
 }
 
 class Comments
 {
   + <font color="gold"      >serial_   id;
 
-  + <font color="lightblue" >integer   id_film;
+  + <font color="lightblue" >integer   idFilm;
 
-  + <font color="lightgreen">integer   id_profile;
+  + <font color="lightgreen">integer   idProfile;
 
   - text___   title;
 
   + text___   text;
 
-  + date___   date;
-
-  - integer   prev_id;
+  - integer   prevId;
 }
 
 }
@@ -205,7 +203,7 @@ class Users
 
   + text___   password;
 
-  + <font color="lightgreen">integer   id_role;
+  + <font color="lightgreen">integer   idRole;
 }
 
 class Roles

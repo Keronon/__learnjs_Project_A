@@ -18,6 +18,7 @@ export class ProfilesController {
     constructor(private profilesService: ProfilesService) {}
 
     @ApiOperation({ summary: 'Регистрация нового аккаунта' })
+    @ApiBody({ required: true, type: RegistrationDto, description: 'Объект с данными для регистрации аккаунта' })
     @ApiResponse({ status: 200, type: Profile })
     @Post('/registration')
     registration(@Body() registrationDto: RegistrationDto): Promise<Profile> {

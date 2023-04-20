@@ -90,7 +90,7 @@ class Rabbit
 
         if ('name' in data.data && (data.data.name.includes('Exception') ||
                                     data.data.name.includes('Error'    ) ))
-            throw data.data;
+            throw data.data; // throw eval('new ' + data.data.name + '(data.data.response);');
 
         return data.data;
     }

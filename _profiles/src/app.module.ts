@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
 import { ProfilesModule } from './profiles/profiles.module';
 import { Profile } from './profiles/profiles.model';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
     controllers: [],
@@ -25,6 +26,7 @@ import { Profile } from './profiles/profiles.model';
         }),
 
         ProfilesModule,
+        CommentsModule,
     ],
 })
 export class AppModule {}

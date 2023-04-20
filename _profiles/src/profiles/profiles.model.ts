@@ -1,6 +1,7 @@
 
 import { ApiProperty } from '@nestjs/swagger';
-import { Model, Table, Column, DataType } from 'sequelize-typescript';
+import { Model, Table, Column, DataType, HasMany } from 'sequelize-typescript';
+import { Comment } from 'src/comments/comments.model';
 
 interface ProfileCreationAttrs {
     profileName: string;
@@ -29,4 +30,7 @@ export class Profile extends Model<Profile, ProfileCreationAttrs> {
     @ApiProperty({ example: '1', description: 'id пользователя' })
     @Column({ type: DataType.INTEGER, unique: true, allowNull: false })
     idUser: number;
+
+    @HasMany(() => Comment)
+    comments: Comment[];
 }
