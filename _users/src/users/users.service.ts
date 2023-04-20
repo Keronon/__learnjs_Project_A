@@ -44,7 +44,7 @@ export class UsersService {
         return user;
     }
 
-    async addRole(addRoleDto: AddRoleDto): Promise<User> {
+    async setRole(addRoleDto: AddRoleDto): Promise<User> {
         const user = await this.getUserById(addRoleDto.id_user);
         const role = await this.rolesService.getRoleByValue(addRoleDto.role_name);
 
