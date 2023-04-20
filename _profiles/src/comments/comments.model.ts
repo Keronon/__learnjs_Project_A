@@ -9,7 +9,7 @@ interface CommentCreationAttrs {
     text: string;
 }
 
-@Table({ tableName: 'profiles' })
+@Table({ tableName: 'comments' })
 export class Comment extends Model<Comment, CommentCreationAttrs> {
     @ApiProperty({ example: '1', description: 'id комментария' })
     @Column({

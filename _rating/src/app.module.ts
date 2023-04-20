@@ -2,16 +2,16 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
-import { ProfilesModule } from './profiles/profiles.module';
-import { CommentsModule } from './comments/comments.module';
-import { Profile } from './profiles/profiles.model';
-import { Comment } from './comments/comments.model';
+import { RatingFilmsModule } from './rating_films/rating_films.module';
+import { RatingUsersModule } from './rating_users/rating_users.module';
+import { RatingFilm } from './rating_films/rating_films.model';
+import { RatingUser } from './rating_users/rating_users.model';
 
-@Module({
+@Module( {
     controllers: [],
     providers: [],
-
-    imports: [
+    imports:
+    [
         ConfigModule.forRoot({ envFilePath: '.env' }),
 
         SequelizeModule.forRoot({
@@ -20,14 +20,14 @@ import { Comment } from './comments/comments.model';
             port: Number(process.env.PG_PORT) || 5432,
             username: process.env.PG_USER || 'postgres',
             password: process.env.PG_PASS || 'root',
-            database: process.env.PG_DB || 'DB_profiles',
-            models: [Profile, Comment],
+            database: process.env.PG_DB || 'DB_rating',
+            models: [RatingFilm, RatingUser],
             autoLoadModels: true,
             logging: false
         }),
 
-        ProfilesModule,
-        CommentsModule,
+        RatingFilmsModule,
+        RatingUsersModule
     ],
-})
-export class AppModule {}
+} )
+export class AppModule { }
