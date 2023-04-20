@@ -6,7 +6,7 @@ import { FilmInfoService } from './film-info.service';
 import { FilmInfo } from './film-info.model';
 import { UpdateFilmInfoDto } from './dto/update-film-info.dto';
 
-@ApiTags('Дополнительная информация о фильмах')
+@ApiTags('Дополнительная информация о фильме')
 @Controller('film-info')
 export class FilmInfoController {
     constructor(private filmInfoService: FilmInfoService) {}
@@ -21,11 +21,8 @@ export class FilmInfoController {
 
     @ApiOperation({ summary: 'Изменение доп информации о фильме' })
     @ApiResponse({ status: 200, type: FilmInfo })
-    @Put(':id')
-    updateProfile(
-        @Param('id') id: number,
-        @Body() updateFilmInfoDto: UpdateFilmInfoDto,
-    ): Promise<FilmInfo> {
+    @Put()
+    updateProfile(@Body() updateFilmInfoDto: UpdateFilmInfoDto): Promise<FilmInfo> {
         return this.filmInfoService.updateFilmInfo(updateFilmInfoDto);
     }
 }

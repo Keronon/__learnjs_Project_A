@@ -7,7 +7,7 @@ interface FilmInfoCreationAttrs {
     idUser: number;
 }
 
-@Table({ tableName: 'filmsInfo' })
+@Table({ tableName: 'filmInfo' })
 export class FilmInfo extends Model<FilmInfo, FilmInfoCreationAttrs> {
     @ApiProperty({ example: '1', description: 'id доп информации о фильме' })
     @Column({
