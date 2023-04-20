@@ -1,13 +1,18 @@
 
+import * as uuid from 'uuid';
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel      } from '@nestjs/sequelize';
 import { Profile          } from './profiles.model';
 import { RegistrationDto  } from './dto/registration.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { RMQ } from 'src/rabbit.core';
 
 @Injectable()
 export class ProfilesService {
-    constructor(@InjectModel(Profile) private profilesDB: typeof Profile) {}
+    constructor(@InjectModel(Profile) private profilesDB: typeof Profile)
+    {
+        RMQ.connect();
+    }
 
     async registration(registrationDto: RegistrationDto): Promise<Profile>
     {
@@ -17,19 +22,24 @@ export class ProfilesService {
             password: registrationDto.password,
         };
 
-        // Отправляем микросервису Auth запрос на регистрацию пользователя
-        // await rabbitMQ.publishMessage(
-        //   RoutingKeys.registrationFromProfiles,
-        //   JSON.stringify(authData)
-        // );
+        // reg data -> Auth
+        const id_msg = uuid.v4();
+        await RMQ.publishReq({
+            id_msg: id_msg,
+            cmd: 'registration',
+            data: authData
+        });
 
-        // Ждём ответ от микросервиса Auth
-        // await this.waitAnswer()
+        // res <- Auth
+        const res = await RMQ.acceptRes(id_msg);
+        if ('name' in res && (res.name.includes('Exception') ||
+                              res.name.includes('Error'    ) ))
+            throw res;
 
         const createProfileData =
         {
             profileName: registrationDto.profileName,
-            idUser: 1, // изменить на пришедший ↑
+            idUser: res.id,
         };
 
         const profile = this.profilesDB.create(createProfileData);
@@ -82,20 +92,12 @@ export class ProfilesService {
 
         await this.profilesDB.destroy({ where: { id } });
 
-        // Отправляем микросервису Auth запрос на удаление пользователя
-        // await rabbitMQ.publishMessage(
-        //     RoutingKeys.deleteUserFromProfiles,
-        //     JSON.stringify({ id: profile.userId }),
-        // );
-    }
-
-    private async waitAnswer( whatToWait: Promise<any> )
-    {
-        const timeout = new Promise((res) =>
-        {
-            setTimeout(() => {res('timeout')}, 3000);
+        // del user -> Auth
+        const id_msg = uuid.v4();
+        await RMQ.publishReq({
+            id_msg: id_msg,
+            cmd: 'deleteUserById',
+            data: profile.idUser
         });
-
-        return Promise.race([ timeout, whatToWait ]);
     }
 }

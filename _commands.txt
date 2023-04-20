@@ -14,6 +14,16 @@ nest.cmd new -p npm -g _rating
 
 
 # # # # #
+# docker :
+# # # # #
+
+docker-compose up -d --build
+
+# - - -
+
+
+
+# # # # #
 # packages - global :
 # # # # #
 

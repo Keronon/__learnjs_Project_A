@@ -24,6 +24,7 @@ import { AuthModule } from './auth/auth.module';
             database: process.env.PG_DB || 'DB_users',
             models: [User, Role],
             autoLoadModels: true,
+            logging: false
         }),
 
         UsersModule,

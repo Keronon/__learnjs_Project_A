@@ -10,7 +10,7 @@ import { AddRoleDto } from './dto/add-role.dto';
 export class UsersService {
     constructor(
         @InjectModel(User) private usersDB: typeof User,
-        private rolesService: RolesService,
+        private rolesService: RolesService
     ) {}
 
     async getAllUsers(): Promise<User[]> {
@@ -27,11 +27,10 @@ export class UsersService {
     }
 
     async getUserByEmail(email: string): Promise<User> {
-        const user = await this.usersDB.findOne({
+        return await this.usersDB.findOne({
             where: { email },
             include: { all: true },
         });
-        return user;
     }
 
     async createUser(dto: CreateUserDto): Promise<User> {

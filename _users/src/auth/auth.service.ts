@@ -3,16 +3,21 @@ import * as bcrypt from 'bcryptjs';
 import { BadRequestException,
          ForbiddenException,
          NotFoundException,
-         Injectable } from '@nestjs/common';
+         Injectable} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/auth.dto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { User } from '../users/users.model';
+import { RMQ } from 'src/rabbit.core';
 
 @Injectable()
 export class AuthService {
-    constructor(private usersService: UsersService, private jwtService: JwtService) {}
+    constructor(private usersService: UsersService,
+                private jwtService: JwtService)
+    {
+        RMQ.connect().then(RMQ.setCmdConsumer(this));
+    }
 
     async login(authDto: AuthDto): Promise<{ token: string }> {
         const user = await this.validateUser(authDto);
@@ -31,8 +36,7 @@ export class AuthService {
             password: hashPassword,
         });
 
-        // data + uid -> Profiles
-        // await rabbitMQ.publishMessage(RoutingKeys.registrationFromAuth, JSON.stringify(user));
+        return user;
     }
 
     private async generateToken(user: User) {

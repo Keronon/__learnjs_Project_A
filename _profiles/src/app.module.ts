@@ -21,6 +21,7 @@ import { Profile } from './profiles/profiles.model';
             database: process.env.PG_DB || 'DB_profiles',
             models: [Profile],
             autoLoadModels: true,
+            logging: false
         }),
 
         ProfilesModule,
