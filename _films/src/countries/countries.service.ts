@@ -1,3 +1,4 @@
+
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Country } from './countries.struct';

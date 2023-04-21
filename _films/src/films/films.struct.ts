@@ -1,13 +1,5 @@
 
-import {
-    Model,
-    Table,
-    Column,
-    DataType,
-    BelongsToMany,
-    ForeignKey,
-    BelongsTo,
-} from 'sequelize-typescript';
+import { Model, Table, Column, DataType, BelongsToMany, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { Country } from '../countries/countries.struct';
 import { Genre } from '../genres/genres.struct';

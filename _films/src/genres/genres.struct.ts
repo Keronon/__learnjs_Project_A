@@ -1,3 +1,4 @@
+
 import { Model, Table, Column, DataType, BelongsToMany } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { Film } from '../films/films.struct';
