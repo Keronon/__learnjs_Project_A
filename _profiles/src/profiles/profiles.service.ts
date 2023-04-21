@@ -2,14 +2,16 @@
 import * as uuid from 'uuid';
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel      } from '@nestjs/sequelize';
+import { JwtService       } from '@nestjs/jwt';
 import { Profile          } from './profiles.model';
 import { RegistrationDto  } from './dto/registration.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { RMQ } from 'src/rabbit.core';
+import { RMQ              } from 'src/rabbit.core';
 
 @Injectable()
 export class ProfilesService {
-    constructor(@InjectModel(Profile) private profilesDB: typeof Profile)
+    constructor(@InjectModel(Profile) private profilesDB: typeof Profile,
+                private jwtService: JwtService)
     {
         RMQ.connect();
     }
@@ -32,14 +34,16 @@ export class ProfilesService {
 
         // res <- Auth
         const res = await RMQ.acceptRes(id_msg);
+
+        const user = this.jwtService.verify(res.token);
         const createProfileData =
         {
             profileName: registrationDto.profileName,
-            idUser: res.id,
+            idUser: user.id,
         };
+        this.profilesDB.create(createProfileData);
 
-        const profile = this.profilesDB.create(createProfileData);
-        return profile;
+        return res.token; // string
     }
 
     async getProfileById(id: number): Promise<Profile>

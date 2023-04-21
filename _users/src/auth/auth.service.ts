@@ -36,7 +36,7 @@ export class AuthService {
             password: hashPassword,
         });
 
-        return user;
+        return await this.generateToken(user);
     }
 
     private async generateToken(user: User) {
