@@ -1,7 +1,8 @@
 
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { CountriesModule } from 'src/countries/countries.module';
+import { CountriesModule } from './../countries/countries.module';
+import { GenresModule } from './../genres/genres.module';
 import { FilmsController } from './films.controller';
 import { FilmsService } from './films.service';
 import { Film } from './films.struct';
@@ -13,7 +14,8 @@ import { Film } from './films.struct';
     [
         SequelizeModule.forFeature([Film]),
 
-        CountriesModule
+        CountriesModule,
+        GenresModule
     ],
     exports: [FilmsService],
 })
