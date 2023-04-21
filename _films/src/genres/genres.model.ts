@@ -1,10 +1,12 @@
 
-import { Model, Table, Column, DataType } from 'sequelize-typescript';
+import { Model, Table, Column, DataType, BelongsToMany } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
+import { Film } from './../films/films.model';
+import { FilmGenre } from './film-genres.model';
 
 interface GenreCreationAttrs {
-    email: string;
-    password: string;
+    nameRU: string;
+    nameEN: string;
 }
 
 @Table({ tableName: 'genres' })
@@ -17,4 +19,15 @@ export class Genre extends Model<Genre, GenreCreationAttrs> {
         primaryKey: true,
     })
     id: number;
+
+    @ApiProperty({ example: 'драма', description: 'название жанра фильма (русское)' })
+    @Column({ type: DataType.STRING, allowNull: false })
+    nameRU: string;
+
+    @ApiProperty({ example: 'drama', description: 'название жанра фильма (английское)' })
+    @Column({ type: DataType.STRING, allowNull: true })
+    nameEN: string;
+
+    @BelongsToMany(() => Film, () => FilmGenre)
+    films: Film[];
 }

@@ -12,6 +12,7 @@ import { Genre } from './genres/genres.model';
 import { Country } from './countries/countries.model';
 import { Member } from './members/members.model';
 import { Profession } from './professions/professions.model';
+import { FilmGenre } from './genres/film-genres.model';
 
 @Module( {
     controllers: [],
@@ -27,7 +28,7 @@ import { Profession } from './professions/professions.model';
             username: process.env.PG_USER || 'postgres',
             password: process.env.PG_PASS || 'root',
             database: process.env.PG_DB || 'DB_films',
-            models: [Film, Genre, Country, Member, Profession],
+            models: [Film, Genre, FilmGenre, Country], //Member, Profession],
             autoLoadModels: true,
             logging: false
         }),
