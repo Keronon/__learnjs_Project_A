@@ -20,8 +20,8 @@ export class ProfilesService {
     {
         const authData =
         {
-            email: registrationDto.email,
-            password: registrationDto.password,
+            email: registrationDto.email,       // check 1
+            password: registrationDto.password, // check 2
         };
 
         // reg data -> Auth
