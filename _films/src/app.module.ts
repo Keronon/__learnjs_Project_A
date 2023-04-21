@@ -1,20 +1,18 @@
-
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
 import { FilmsModule } from './films/films.module';
 import { GenresModule } from './genres/genres.module';
 import { CountriesModule } from './countries/countries.module';
-import { Film } from './films/films.model';
-import { Genre } from './genres/genres.model';
-import { Country } from './countries/countries.model';
-import { FilmGenre } from './genres/film-genres.model';
+import { Film } from './films/films.struct';
+import { Genre } from './genres/genres.struct';
+import { Country } from './countries/countries.struct';
+import { FilmGenre } from './genres/film-genres.struct';
 
-@Module( {
+@Module({
     controllers: [],
     providers: [],
-    imports:
-    [
+    imports: [
         ConfigModule.forRoot({ envFilePath: '.env' }),
 
         SequelizeModule.forRoot({
@@ -26,12 +24,12 @@ import { FilmGenre } from './genres/film-genres.model';
             database: process.env.PG_DB || 'DB_films',
             models: [Film, Genre, FilmGenre, Country],
             autoLoadModels: true,
-            logging: false
+            logging: false,
         }),
 
         FilmsModule,
         GenresModule,
-        CountriesModule
+        CountriesModule,
     ],
-} )
-export class AppModule { }
+})
+export class AppModule {}

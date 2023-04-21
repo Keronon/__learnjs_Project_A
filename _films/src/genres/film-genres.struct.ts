@@ -1,8 +1,7 @@
-
 import { Model, Table, Column, DataType, ForeignKey } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
-import { Film } from './../films/films.model';
-import { Genre } from './genres.model';
+import { Film } from '../films/films.struct';
+import { Genre } from './genres.struct';
 
 @Table({ tableName: 'film_genres', createdAt: false, updatedAt: false })
 export class FilmGenre extends Model<FilmGenre> {

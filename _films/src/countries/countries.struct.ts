@@ -1,7 +1,6 @@
-
 import { Model, Table, Column, DataType, HasMany } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
-import { Film } from 'src/films/films.model';
+import { Film } from 'src/films/films.struct';
 
 interface CountryCreationAttrs {
     nameRU: string;

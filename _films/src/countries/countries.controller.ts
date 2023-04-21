@@ -4,7 +4,7 @@ import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/s
 import { CountriesService } from './countries.service';
 import { Roles } from './../_decorators/roles-auth.decorator';
 import { RolesGuard } from './../_decorators/guards/roles.guard';
-import { Country } from './countries.model';
+import { Country } from './countries.struct';
 import { CreateCountryDto } from './dto/create-country.dto';
 
 @ApiTags('Страны')
@@ -31,11 +31,10 @@ export class CountriesController {
 
     @ApiOperation({ summary: 'Удаление страны (ADMIN)' })
     @ApiParam({ required: true, name: 'id', description: 'id страны', example: 1 })
-    @ApiResponse({ status: 204 })
+    @ApiResponse({ status: 200, type: Number, description: "количество удалённых строк" })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Delete(':id')
-    @HttpCode(204)
     deleteCountryById(@Param('id') id: number): Promise<number> {
         return this.countriesService.deleteCountryById(id);
     }

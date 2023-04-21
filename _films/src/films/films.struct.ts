@@ -1,9 +1,16 @@
-
-import { Model, Table, Column, DataType, BelongsToMany, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import {
+    Model,
+    Table,
+    Column,
+    DataType,
+    BelongsToMany,
+    ForeignKey,
+    BelongsTo,
+} from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
-import { Country } from './../countries/countries.model';
-import { Genre } from './../genres/genres.model';
-import { FilmGenre } from './../genres/film-genres.model';
+import { Country } from '../countries/countries.struct';
+import { Genre } from '../genres/genres.struct';
+import { FilmGenre } from '../genres/film-genres.struct';
 
 interface FilmCreationAttrs {
     nameRU: string;

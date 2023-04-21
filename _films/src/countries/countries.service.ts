@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Country } from './countries.model';
+import { Country } from './countries.struct';
 import { CreateCountryDto } from './dto/create-country.dto';
 import { Op } from 'sequelize';
 

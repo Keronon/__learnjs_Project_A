@@ -1,9 +1,8 @@
-
 import { Module } from '@nestjs/common';
 import { FilmsController } from './films.controller';
 import { FilmsService } from './films.service';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Film } from './films.model';
+import { Film } from './films.struct';
 
 @Module({
     controllers: [FilmsController],
