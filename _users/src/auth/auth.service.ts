@@ -8,7 +8,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/auth.dto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import { User } from '../users/users.model';
+import { User } from '../users/users.struct';
 import { RMQ } from 'src/rabbit.core';
 
 @Injectable()

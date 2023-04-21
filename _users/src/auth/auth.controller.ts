@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 
 @ApiTags('Авторизационный пользовательский функционал')
-@Controller('auth')
+@Controller('api/auth')
 export class AuthController {
     constructor(private authService: AuthService) {}
 

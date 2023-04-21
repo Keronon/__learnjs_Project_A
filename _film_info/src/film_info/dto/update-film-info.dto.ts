@@ -12,7 +12,7 @@ export class UpdateFilmInfoDto {
     readonly text: string;
 
     @ApiProperty({
-        example: 'https://widgets.kinopoisk.ru/discovery/film/251733/trailer/18381?noAd=0&embedId=&hidden=&muted=&loop=0&autoplay=1&from=&extraTrailers=&onlyPlayer=1',
+        example: 'https://widgets.kinopoisk.ru/discovery/film/81338/trailer/47737?noAd=0&embedId=&hidden=&muted=&loop=0&autoplay=1&from=&extraTrailers=&onlyPlayer=1',
         description: 'ссылка на трейлер фильма',
     })
     @IsString({ message: 'Must be a string' })

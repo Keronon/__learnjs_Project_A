@@ -3,8 +3,6 @@ import { Model, Table, Column, DataType } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 
 interface RatingUserCreationAttrs {
-    email: string;
-    password: string;
 }
 
 @Table({ tableName: 'rating_users' })

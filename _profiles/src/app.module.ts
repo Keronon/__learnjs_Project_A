@@ -4,8 +4,8 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
 import { ProfilesModule } from './profiles/profiles.module';
 import { CommentsModule } from './comments/comments.module';
-import { Profile } from './profiles/profiles.model';
-import { Comment } from './comments/comments.model';
+import { Profile } from './profiles/profiles.struct';
+import { Comment } from './comments/comments.struct';
 
 @Module({
     controllers: [],

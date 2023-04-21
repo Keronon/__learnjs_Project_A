@@ -1,7 +1,7 @@
 
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { FilmInfo } from './film-info.model';
+import { FilmInfo } from './film-info.struct';
 import { CreateFilmInfoDto } from './dto/create-film-info.dto';
 import { UpdateFilmInfoDto } from './dto/update-film-info.dto';
 

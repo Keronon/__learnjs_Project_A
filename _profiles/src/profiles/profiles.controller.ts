@@ -5,7 +5,7 @@ const log = ( data: any ) => console.log( colors.fg.blue, `- - > C-Profiles :`, 
 import { ApiBody, ApiResponse, ApiOperation, ApiTags, ApiParam } from '@nestjs/swagger';
 import { Body, Controller, Get, Param, Post, Delete, Put, UseGuards } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
-import { Profile } from './profiles.model';
+import { Profile } from './profiles.struct';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { RegistrationDto } from './dto/registration.dto';
 import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
@@ -13,7 +13,7 @@ import { Roles } from 'src/_decorators/roles-auth.decorator';
 import { RolesGuard } from 'src/_decorators/guards/roles.guard';
 
 @ApiTags('Профили пользователей')
-@Controller('profiles')
+@Controller('api/profiles')
 export class ProfilesController {
     constructor(private profilesService: ProfilesService) {}
 

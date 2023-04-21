@@ -5,14 +5,14 @@ const log = ( data: any ) => console.log( colors.fg.blue, `- - > C-Users :`, dat
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from './users.model';
+import { User } from './users.struct';
 import { AddRoleDto } from './dto/add-role.dto';
 import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
 import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { Roles } from '../_decorators/roles-auth.decorator';
 
 @ApiTags('Пользователи')
-@Controller('users')
+@Controller('api/users')
 export class UsersController {
     constructor(private usersService: UsersService) {}
 

@@ -2,11 +2,11 @@
 import { ApiBody, ApiParam, ApiResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Body, Controller, Get, Param, Put } from '@nestjs/common';
 import { FilmInfoService } from './film-info.service';
-import { FilmInfo } from './film-info.model';
+import { FilmInfo } from './film-info.struct';
 import { UpdateFilmInfoDto } from './dto/update-film-info.dto';
 
 @ApiTags('Дополнительная информация о фильме')
-@Controller('film-info')
+@Controller('api/film-info')
 export class FilmInfoController {
     constructor(private filmInfoService: FilmInfoService) {}
 

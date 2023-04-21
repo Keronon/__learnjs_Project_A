@@ -4,8 +4,8 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
 import { MembersModule } from './members/members.module';
 import { ProfessionsModule } from './professions/professions.module';
-import { Member } from './members/members.model';
-import { Profession } from './professions/professions.model';
+import { Member } from './members/members.struct';
+import { Profession } from './professions/professions.struct';
 
 @Module( {
     controllers: [],
@@ -24,7 +24,8 @@ import { Profession } from './professions/professions.model';
             models: [ Member, Profession ],
             autoLoadModels: true,
             logging: false
-        } ), ,
+        } ),
+
         MembersModule,
         ProfessionsModule
     ],

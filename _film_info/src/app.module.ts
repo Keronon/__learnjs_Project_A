@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
 import { FilmInfoModule } from './film_info/film-info.module';
-import { FilmInfo } from './film_info/film-info.model';
+import { FilmInfo } from './film_info/film-info.struct';
 
 @Module({
     controllers: [],

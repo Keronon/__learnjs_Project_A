@@ -1,5 +1,5 @@
 
 import { Controller } from '@nestjs/common';
 
-@Controller('rating-users')
+@Controller('api/rating-users')
 export class RatingUsersController {}

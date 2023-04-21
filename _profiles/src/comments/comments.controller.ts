@@ -5,12 +5,12 @@ const log = ( data: any ) => console.log( colors.fg.blue, `- - > C-Users :`, dat
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CommentsService } from './comments.service';
-import { Comment } from './comments.model';
+import { Comment } from './comments.struct';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
 
 @ApiTags('Комментарии к фильмама')
-@Controller('comments')
+@Controller('api/comments')
 export class CommentsController {
     constructor(private commentsService: CommentsService) {}
 

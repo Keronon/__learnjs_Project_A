@@ -3,7 +3,7 @@ import * as uuid from 'uuid';
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel      } from '@nestjs/sequelize';
 import { JwtService       } from '@nestjs/jwt';
-import { Profile          } from './profiles.model';
+import { Profile          } from './profiles.struct';
 import { RegistrationDto  } from './dto/registration.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { RMQ              } from 'src/rabbit.core';
