@@ -1,6 +1,4 @@
 
-authService > registration > верный ли Dto
-authService > registration > в профиль надо отправлять данные для нового профиля + id_user
-authService > validateUser > верный ли Dto
+Exceptions : All > проверить, попадают ли они к пользователю.
 
 ProfileService > создать метод для изменения фото профиля

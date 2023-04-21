@@ -3,7 +3,7 @@
 
 title  База данных
 header Носаченко А.
-footer \n Схема таблиц
+footer Схема таблиц
 
 skinparam defaultFontName VL Gothic
 
@@ -13,15 +13,56 @@ skinparam defaultFontName VL Gothic
 ' = = = = = = = =
 
 
+namespace MS_Members {
+
+class Film_members
+{
+  + <font color="gold"      >serial_   id;
+
+  + <font color="lightblue" >integer   idFilm;
+
+  + <font color="lightgreen">integer   idMember;
+
+  + <font color="lightgreen">integer   idProfession;
+}
+
+class Members
+{
+  + <font color="gold"      >serial_   id;
+
+  - text___   nameRU;
+
+  - text___   nameEN;
+
+  + text___   text;
+
+  + text___   imagePath;
+}
+
+class Professions
+{
+  + <font color="gold"      >serial_   id;
+
+  + text___   name;
+}
+
+}
+
+
+' = = = = = = = =
+' = = = MiS = = =
+' = = = = = = = =
+
+
 namespace MS_Films {
 
 class Films
 {
   + <font color="gold"      >serial_   id;
 
-  - text___   nameRU;
+  + text___   nameRU;
 
-  - text___   nameRU;
+  - text___   nameEN;
 
   + <font color="lightgreen">integer   idCountry;
 
@@ -63,35 +104,25 @@ class Genres
   + text___   nameEN;
 }
 
-class Film_members
-{
-  + <font color="gold"      >serial_   id;
-
-  + <font color="lightgreen">integer   idFilm;
-
-  + <font color="lightgreen">integer   idMember;
-
-  + <font color="lightgreen">integer   idProfession;
 }
 
-class Members
+
+' = = = = = = = =
+' = = = MiS = = =
+' = = = = = = = =
+
+
+namespace MS_Film_info {
+
+class Film_info
 {
   + <font color="gold"      >serial_   id;
 
-  - text___   nameRU;
-
-  - text___   nameEN;
+  + <font color="lightblue" >integer   idFilm;
 
   + text___   text;
 
-  + text___   imagePath;
-}
-
-class Professions
-{
-  + <font color="gold"      >serial_   id;
-
-  + text___   name;
+  + text___   trailerLink;
 }
 
 }
@@ -126,27 +157,6 @@ class Rating_users
   + <font color="lightblue" >integer   idUser;
 
   + integer   rating;
-}
-
-}
-
-
-' = = = = = = = =
-' = = = MiS = = =
-' = = = = = = = =
-
-
-namespace MS_Film_info {
-
-class Film_info
-{
-  + <font color="gold"      >serial_   id;
-
-  + <font color="lightblue" >integer   idFilm;
-
-  + text___   text;
-
-  + text___   trailerLink;
 }
 
 }
@@ -223,14 +233,15 @@ class Roles
 ' = = = = = = = =
 
 
-Films        <|-- Countries
-Film_genres  <|-- Films
-Film_genres  <|-- Genres
-Film_members <|-- Films
 Film_members <|-- Members
 Film_members <|-- Professions
 
+Films        <|-- Countries
+Film_genres  <|-- Films
+Film_genres  <|-- Genres
+
 Comments     <|-- Profiles
+
 Users        <|-- Roles
 
 
@@ -239,12 +250,16 @@ Users        <|-- Roles
 ' = = = = = = = =
 
 
+Film_members <--o Films
+
 Film_info    <--o Films
+
 Rating_films <--o Films
 Rating_users <--o Films
 Rating_users <--o Users
 
 Comments     <--o Films
+
 Profiles     <--o Users
 
 
