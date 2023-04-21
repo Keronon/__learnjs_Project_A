@@ -2,6 +2,7 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
+import { JwtGlobalModule } from './jwt.module';
 import { FilmsModule } from './films/films.module';
 import { GenresModule } from './genres/genres.module';
 import { CountriesModule } from './countries/countries.module';
@@ -28,6 +29,7 @@ import { FilmGenre } from './genres/film-genres.struct';
             logging: false,
         }),
 
+        JwtGlobalModule,
         FilmsModule,
         GenresModule,
         CountriesModule,

@@ -1,17 +1,15 @@
 
 import { Module } from '@nestjs/common';
-import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
-import { User } from './users/users.struct';
-import { Role } from './roles/roles.struct';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { JwtGlobalModule } from './jwt.module';
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { AuthModule } from './auth/auth.module';
+import { User } from './users/users.struct';
+import { Role } from './roles/roles.struct';
 
 @Module({
-    controllers: [],
-    providers: [],
-
     imports: [
         ConfigModule.forRoot({ envFilePath: '.env' }),
 
@@ -27,9 +25,10 @@ import { AuthModule } from './auth/auth.module';
             logging: false
         }),
 
+        JwtGlobalModule,
         UsersModule,
         RolesModule,
         AuthModule,
-    ],
+    ]
 })
 export class AppModule {}

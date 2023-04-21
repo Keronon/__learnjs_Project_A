@@ -1,7 +1,6 @@
 
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { JwtModule } from '@nestjs/jwt';
 import { ProfilesController } from './profiles.controller';
 import { ProfilesService } from './profiles.service';
 import { Profile } from './profiles.struct';
@@ -10,13 +9,8 @@ import { Profile } from './profiles.struct';
     controllers: [ProfilesController],
     providers: [ProfilesService],
     imports: [
-        JwtModule.register( {
-            secret: process.env.SECRET_KEY || "SECRET", // secret key
-            signOptions: { expiresIn: "24h", },         // token lifetime
-        } ),
-
         SequelizeModule.forFeature([Profile])
     ],
-    exports: [ProfilesService, JwtModule],
+    exports: [ProfilesService],
 })
 export class ProfilesModule {}

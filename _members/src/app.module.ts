@@ -2,6 +2,7 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
+import { JwtGlobalModule } from './jwt.module';
 import { MembersModule } from './members/members.module';
 import { ProfessionsModule } from './professions/professions.module';
 import { Member } from './members/members.struct';
@@ -28,6 +29,7 @@ import { FilmMember } from './film_members/film_members.struct';
             logging: false
         } ),
 
+        JwtGlobalModule,
         MembersModule,
         ProfessionsModule,
         FilmMembersModule

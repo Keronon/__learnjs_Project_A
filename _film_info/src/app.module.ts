@@ -2,6 +2,7 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
+import { JwtGlobalModule } from './jwt.module';
 import { FilmInfoModule } from './film_info/film-info.module';
 import { FilmInfo } from './film_info/film-info.struct';
 
@@ -24,6 +25,7 @@ import { FilmInfo } from './film_info/film-info.struct';
             logging: false
         }),
 
+        JwtGlobalModule,
         FilmInfoModule,
     ],
 })

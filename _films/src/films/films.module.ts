@@ -10,10 +10,8 @@ import { Film } from './films.struct';
 @Module({
     controllers: [FilmsController],
     providers: [FilmsService],
-    imports:
-    [
+    imports: [
         SequelizeModule.forFeature([Film]),
-
         CountriesModule,
         GenresModule
     ],

@@ -2,6 +2,7 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
+import { JwtGlobalModule } from './jwt.module';
 import { RatingFilmsModule } from './rating_films/rating_films.module';
 import { RatingUsersModule } from './rating_users/rating_users.module';
 import { RatingFilm } from './rating_films/rating_films.struct';
@@ -26,6 +27,7 @@ import { RatingUser } from './rating_users/rating_users.struct';
             logging: false
         }),
 
+        JwtGlobalModule,
         RatingFilmsModule,
         RatingUsersModule
     ],

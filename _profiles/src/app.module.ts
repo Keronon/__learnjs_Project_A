@@ -2,6 +2,7 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
+import { JwtGlobalModule } from './jwt.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { CommentsModule } from './comments/comments.module';
 import { Profile } from './profiles/profiles.struct';
@@ -26,6 +27,7 @@ import { Comment } from './comments/comments.struct';
             logging: false
         }),
 
+        JwtGlobalModule,
         ProfilesModule,
         CommentsModule,
     ],
