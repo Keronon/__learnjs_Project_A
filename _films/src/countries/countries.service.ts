@@ -24,13 +24,13 @@ export class CountriesService {
         return await this.countriesDB.create(createCountryDto);
     }
 
-    async deleteCountryById(id: number): Promise<void> {
+    async deleteCountryById(id: number): Promise<number> {
         const country = await this.getCountryById(id);
         if (!country) {
             throw new BadRequestException({ message: 'Country not found' });
         }
 
-        await this.countriesDB.destroy({ where: { id } });
+        return await this.countriesDB.destroy({ where: { id } });
     }
 
     private async CheckExistenceName(nameRU: string, nameEN: string) {
