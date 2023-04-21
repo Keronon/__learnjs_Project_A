@@ -6,6 +6,8 @@ import { MembersModule } from './members/members.module';
 import { ProfessionsModule } from './professions/professions.module';
 import { Member } from './members/members.struct';
 import { Profession } from './professions/professions.struct';
+import { FilmMembersModule } from './film_members/film_members.module';
+import { FilmMember } from './film_members/film_members.struct';
 
 @Module( {
     controllers: [],
@@ -21,13 +23,14 @@ import { Profession } from './professions/professions.struct';
             username: process.env.PG_USER || 'postgres',
             password: process.env.PG_PASS || 'root',
             database: process.env.PG_DB || 'DB_members',
-            models: [ Member, Profession ],
+            models: [ Member, Profession, FilmMember ],
             autoLoadModels: true,
             logging: false
         } ),
 
         MembersModule,
-        ProfessionsModule
+        ProfessionsModule,
+        FilmMembersModule
     ],
 } )
 export class AppModule { }

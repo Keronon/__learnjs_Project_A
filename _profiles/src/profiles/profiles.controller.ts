@@ -64,8 +64,8 @@ export class ProfilesController {
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Delete(':id')
-    deleteAccountByProfileId(@Param('id') id: number): void {
+    deleteAccountByProfileId(@Param('id') id: number): Promise<boolean> {
         log('deleteAccountByProfileId');
-        this.profilesService.deleteAccountByProfileId(id);
+        return this.profilesService.deleteAccountByProfileId(id);
     }
 }

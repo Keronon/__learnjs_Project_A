@@ -8,9 +8,8 @@ import { AddRoleDto } from './dto/add-role.dto';
 
 @Injectable()
 export class UsersService {
-    constructor(
-        @InjectModel(User) private usersDB: typeof User,
-        private rolesService: RolesService
+    constructor(@InjectModel(User) private usersDB: typeof User,
+                private rolesService: RolesService
     ) {}
 
     async getAllUsers(): Promise<User[]> {
@@ -56,7 +55,8 @@ export class UsersService {
         return await this.getUserById(addRoleDto.id_user);
     }
 
-    async deleteUserById(id: number): Promise<void> {
+    async deleteUserById(id: number): Promise<boolean> {
         await this.usersDB.destroy({ where: { id } });
+        return true;
     }
 }

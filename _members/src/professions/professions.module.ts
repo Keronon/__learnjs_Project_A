@@ -6,14 +6,14 @@ import { ProfessionsController } from './professions.controller';
 import { ProfessionsService } from './professions.service';
 import { Profession } from './professions.struct';
 
-@Module({
-  controllers: [ProfessionsController],
-  providers: [ProfessionsService],
-  imports:
-  [
-    SequelizeModule.forFeature([Profession]),
+@Module( {
+    controllers: [ ProfessionsController ],
+    providers: [ ProfessionsService ],
+    imports:
+        [
+            SequelizeModule.forFeature( [ Profession ] ),
 
-    MembersModule
-  ]
-})
-export class ProfessionsModule {}
+            MembersModule
+        ]
+} )
+export class ProfessionsModule { }

@@ -14,9 +14,8 @@ import { RMQ } from 'src/rabbit.core';
 
 @Injectable()
 export class ProfilesService {
-    constructor(
-        @InjectModel(Profile) private profilesDB: typeof Profile,
-        private jwtService: JwtService,
+    constructor(@InjectModel(Profile) private profilesDB: typeof Profile,
+                private jwtService: JwtService,
     ) {
         RMQ.connect();
     }
@@ -45,7 +44,7 @@ export class ProfilesService {
             profileName: registrationDto.profileName,
             idUser: user.id,
         };
-        this.profilesDB.create(createProfileData);
+        await this.profilesDB.create(createProfileData);
 
         return res.token; // string
     }
@@ -77,12 +76,12 @@ export class ProfilesService {
         for (let key in updateProfileDto) {
             profile[key] = updateProfileDto[key];
         }
-        profile.save();
+        await profile.save();
 
         return profile;
     }
 
-    async deleteAccountByProfileId(id: number): Promise<void> {
+    async deleteAccountByProfileId(id: number): Promise<boolean> {
         const profile = await this.getProfileById(id);
         if (!profile) {
             throw new NotFoundException({ message: 'Profile not found' });
@@ -97,5 +96,7 @@ export class ProfilesService {
             cmd: 'deleteUserById',
             data: profile.idUser,
         });
+
+        return true;
     }
 }

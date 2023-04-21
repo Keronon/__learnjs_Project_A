@@ -10,9 +10,9 @@ export class CommentsService {
         @InjectModel(Comment) private commentsDB: typeof Comment
     ) {}
 
-    async createComment ( createCommentDto: CreateCommentDto ): Promise<Comment>
+    async createComment ( dto: CreateCommentDto ): Promise<Comment>
     {
-        return await this.commentsDB.create(createCommentDto);
+        return await this.commentsDB.create(dto);
     }
 
     async getCommentsByFilm ( idFilm: number ): Promise<Comment[]>
