@@ -22,8 +22,8 @@ export class CountriesController {
     @ApiOperation({ summary: 'Создание страны (ADMIN)' })
     @ApiBody({ required: true, type: CreateCountryDto, description: 'Объект с данными для создания страны' })
     @ApiResponse({ status: 200, type: Country })
-    // @Roles('ADMIN')
-    // @UseGuards(RolesGuard)
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
     @Post()
     createCountry(@Body() createCountryDto: CreateCountryDto): Promise<Country> {
         return this.countriesService.createCountry(createCountryDto);
@@ -32,11 +32,11 @@ export class CountriesController {
     @ApiOperation({ summary: 'Удаление страны (ADMIN)' })
     @ApiParam({ required: true, name: 'id', description: 'id страны', example: 1 })
     @ApiResponse({ status: 204 })
-    // @Roles('ADMIN')
-    // @UseGuards(RolesGuard)
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
     @Delete(':id')
     @HttpCode(204)
-    deleteCountryById(@Param('id') id: number): void {
-        this.countriesService.deleteCountryById(id);
+    deleteCountryById(@Param('id') id: number): Promise<number> {
+        return this.countriesService.deleteCountryById(id);
     }
 }
