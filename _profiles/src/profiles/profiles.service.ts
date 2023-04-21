@@ -21,10 +21,12 @@ export class ProfilesService {
         RMQ.connect();
     }
 
-    async registration(registrationDto: RegistrationDto): Promise<Profile> {
-        const authData = {
-            email: registrationDto.email,
-            password: registrationDto.password,
+    async registration(registrationDto: RegistrationDto): Promise<Profile>
+    {
+        const authData =
+        {
+            email: registrationDto.email,       // check 1
+            password: registrationDto.password, // check 2
         };
 
         // reg data -> Auth
