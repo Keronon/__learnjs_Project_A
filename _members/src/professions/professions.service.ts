@@ -13,14 +13,13 @@ export class ProfessionsService {
         return await this.professionsDB.create({name: name});
     }
 
-    async getProfessions (): Promise<Profession[]>
+    async getAllProfessions (): Promise<Profession[]>
     {
         return await this.professionsDB.findAll();
     }
 
-    async deleteProfession ( name: string ): Promise<boolean>
+    async deleteProfession ( name: string ): Promise<number>
     {
-        await this.professionsDB.destroy({ where: { name } });
-        return true;
+        return this.professionsDB.destroy({ where: { name } });
     }
 }

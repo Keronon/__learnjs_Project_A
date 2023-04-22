@@ -11,37 +11,35 @@ import { RolesGuard } from './../_decorators/guards/roles.guard';
 import { CreateFilmDto } from './dto/create-film.dto';
 
 @ApiTags('Фильмы')
+@UseGuards(RolesGuard)
 @Controller('api/films')
 export class FilmsController {
     constructor(private filmsService: FilmsService) {}
 
-    @ApiOperation({ summary: 'Создание фильма (ADMIN)' })
+    @ApiOperation({ summary: 'Создание фильма' })
     @ApiBody({ required: true, type: CreateFilmDto, description: 'Объект с данными для создания фильма' })
     @ApiResponse({ status: 200, type: Film })
     @Roles('ADMIN')
-    @UseGuards(RolesGuard)
     @Post()
-    createCountry(@Body() createFilmDto: CreateFilmDto): Promise<Film> {
+    createFilm(@Body() createFilmDto: CreateFilmDto): Promise<Film> {
         return this.filmsService.createFilm(createFilmDto);
     }
 
-    @ApiOperation({ summary: 'Изменение информации о фильме (ADMIN)' })
+    @ApiOperation({ summary: 'Изменение информации о фильме' })
     @ApiBody({ required: true, type: UpdateFilmDto, description: 'Объект с изменёнными полями информации о фильме' })
     @ApiResponse({ status: 200, type: Film })
     @Roles('ADMIN')
-    @UseGuards(RolesGuard)
     @Put()
     updateFilm(@Body() updateFilmDto: UpdateFilmDto): Promise<Film> {
         return this.filmsService.updateFilm(updateFilmDto);
     }
 
-    @ApiOperation({ summary: 'Удаление фильма (ADMIN)' })
+    @ApiOperation({ summary: 'Удаление фильма' })
     @ApiParam({ required: true, name: 'id', description: 'id фильма', example: 1 })
     @ApiResponse({ status: 200, type: Number, description: "количество удалённых строк" })
     @Roles('ADMIN')
-    @UseGuards(RolesGuard)
     @Delete(':id')
-    deleteCountryById(@Param('id') id: number): Promise<boolean> {
+    deleteFilmById(@Param('id') id: number): Promise<boolean> {
         return this.filmsService.deleteFilmById(id);
     }
 }

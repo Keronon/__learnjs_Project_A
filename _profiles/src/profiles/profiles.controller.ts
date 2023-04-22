@@ -60,11 +60,11 @@ export class ProfilesController {
 
     @ApiOperation({ summary: 'Удаление аккаунта' })
     @ApiParam({ required: true, name: 'id', description: 'id профиля', example: 1 })
-    @ApiResponse({ status: 200, type: Profile })
+    @ApiResponse({ status: 200, type: Number, description: "количество удалённых строк" })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Delete(':id')
-    deleteAccountByProfileId(@Param('id') id: number): Promise<boolean> {
+    deleteAccountByProfileId(@Param('id') id: number): Promise<number> {
         log('deleteAccountByProfileId');
         return this.profilesService.deleteAccountByProfileId(id);
     }

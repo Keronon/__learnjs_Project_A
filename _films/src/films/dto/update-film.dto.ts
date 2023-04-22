@@ -6,7 +6,7 @@ export class UpdateFilmDto {
     @ApiProperty({ example: '1', description: 'id доп. информации о фильме' })
     @IsNumber({}, { message: 'Must be a number' })
     readonly id: number;
-    
+
     @ApiProperty({ example: 'Зеленая миля', description: 'название фильма (русское)' })
     @IsString({ message: 'Must be a string' })
     readonly nameRU: string;

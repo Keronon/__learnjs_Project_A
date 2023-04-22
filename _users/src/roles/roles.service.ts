@@ -15,8 +15,4 @@ export class RolesService {
     async getRoleByValue(name: string): Promise<Role> {
         return await this.rolesDB.findOne({ where: { name } });
     }
-
-    async createRole(createRoleDto: CreateRoleDto): Promise<Role> {
-        return await this.rolesDB.create(createRoleDto);
-    }
 }

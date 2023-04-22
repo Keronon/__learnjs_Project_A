@@ -29,11 +29,11 @@ export class FilmMembersController {
 
     @ApiOperation({ summary: 'Удаление участника фильма' })
     @ApiParam({ required: true, name: 'id', description: 'id участника фильма', example: 1 })
-    @ApiResponse({ status: 200, type: DataType.BOOLEAN })
+    @ApiResponse({ status: 200, type: Number, description: "количество удалённых строк" })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Delete(':id')
-    deleteFilmMember(@Param('id') id: number): Promise<boolean> {
+    deleteFilmMember(@Param('id') id: number): Promise<number> {
         log('deleteFilmMember');
         return this.filmMembersService.deleteFilmMember(id);
     }

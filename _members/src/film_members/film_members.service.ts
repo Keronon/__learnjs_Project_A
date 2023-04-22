@@ -14,9 +14,8 @@ export class FilmMembersService {
         return await this.filmMembersDB.create(dto);
     }
 
-    async deleteFilmMember ( id: number ): Promise<boolean>
+    async deleteFilmMember ( id: number ): Promise<number>
     {
-        await this.filmMembersDB.destroy({ where: { id } });
-        return true;
+        return await this.filmMembersDB.destroy({ where: { id } });
     }
 }

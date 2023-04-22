@@ -6,10 +6,10 @@ import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/s
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './users.struct';
-import { AddRoleDto } from './dto/add-role.dto';
 import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
 import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { Roles } from '../_decorators/roles-auth.decorator';
+import { DataType } from 'sequelize-typescript';
 
 @ApiTags('Пользователи')
 @Controller('api/users')
@@ -37,12 +37,14 @@ export class UsersController {
     }
 
     @ApiOperation({ summary: 'Установка роли пользователю' })
-    @ApiBody({ required: true, type: AddRoleDto, description: 'Объект с данными для установки роли' })
+    @ApiParam({ required: true, name: 'id', description: 'id пользователя', example: 1 })
+    @ApiBody({ required: true, schema: { description: 'Название роли', example: {roleName: "ADMIN"} }})
     @ApiResponse({ status: 200, type: User })
-    @UseGuards(JwtAuthGuard)
-    @Post('/role')
-    setRole(@Body() addRoleDto: AddRoleDto): Promise<User> {
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
+    @Post('/:id/role')
+    setRole(@Param('id') id: number, @Body() roleName: {roleName: string}): Promise<User> {
         log('addRole');
-        return this.usersService.setRole(addRoleDto);
+        return this.usersService.setRole(id, roleName);
     }
 }

@@ -4,7 +4,6 @@ import { InjectModel } from '@nestjs/sequelize';
 import { RolesService } from './../roles/roles.service';
 import { User } from './users.struct';
 import { CreateUserDto } from './dto/create-user.dto';
-import { AddRoleDto } from './dto/add-role.dto';
 
 @Injectable()
 export class UsersService {
@@ -43,20 +42,19 @@ export class UsersService {
         return user;
     }
 
-    async setRole(addRoleDto: AddRoleDto): Promise<User> {
-        const user = await this.getUserById(addRoleDto.id_user);
-        const role = await this.rolesService.getRoleByValue(addRoleDto.role_name);
+    async setRole(id: number, roleName: {roleName: string}): Promise<User> {
+        const user = await this.getUserById(id);
+        const role = await this.rolesService.getRoleByValue(roleName.roleName);
 
         if (!(role && user)) {
             throw new NotFoundException({ message: 'User or role not found' });
         }
 
         await user.$add('role', role.id);
-        return await this.getUserById(addRoleDto.id_user);
+        return await this.getUserById(id);
     }
 
-    async deleteUserById(id: number): Promise<boolean> {
-        await this.usersDB.destroy({ where: { id } });
-        return true;
+    async deleteUserById(id: number): Promise<number> {
+        return await this.usersDB.destroy({ where: { id } });
     }
 }

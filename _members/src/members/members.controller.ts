@@ -32,18 +32,18 @@ export class MembersController {
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Get()
-    getMembers(): Promise<Member[]> {
-        log('getMembers');
-        return this.membersService.getMembers();
+    getAllMembers(): Promise<Member[]> {
+        log('getAllMembers');
+        return this.membersService.getAllMembers();
     }
 
     @ApiOperation({ summary: 'Удаление работника киноиндустрии' })
     @ApiParam({ required: true, name: 'id', description: 'id работника', example: 1 })
-    @ApiResponse({ status: 200, type: DataType.BOOLEAN })
+    @ApiResponse({ status: 200, type: Number, description: "количество удалённых строк" })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Delete(':id')
-    deleteMember(@Param('id') id: number): Promise<boolean> {
+    deleteMember(@Param('id') id: number): Promise<number> {
         log('deleteMember');
         return this.membersService.deleteMember(id);
     }

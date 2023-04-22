@@ -62,12 +62,6 @@ export class ProfilesService {
     }
 
     async updateProfile(id: number, updateProfileDto: UpdateProfileDto): Promise<Profile> {
-        if (id != updateProfileDto.id) {
-            throw new InternalServerErrorException({
-                message: 'Current user and changing user ids not equal',
-            });
-        }
-
         const profile = await this.getProfileById(id);
         if (!profile) {
             throw new BadRequestException({ message: 'Profile not found' });
@@ -81,13 +75,11 @@ export class ProfilesService {
         return profile;
     }
 
-    async deleteAccountByProfileId(id: number): Promise<boolean> {
+    async deleteAccountByProfileId(id: number): Promise<number> {
         const profile = await this.getProfileById(id);
         if (!profile) {
             throw new NotFoundException({ message: 'Profile not found' });
         }
-
-        await this.profilesDB.destroy({ where: { id } });
 
         // del user -> Auth
         const id_msg = uuid.v4();
@@ -97,6 +89,6 @@ export class ProfilesService {
             data: profile.idUser,
         });
 
-        return true;
+        return await this.profilesDB.destroy({ where: { id } });
     }
 }

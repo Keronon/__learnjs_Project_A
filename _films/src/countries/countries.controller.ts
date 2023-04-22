@@ -6,20 +6,14 @@ import { Roles } from './../_decorators/roles-auth.decorator';
 import { RolesGuard } from './../_decorators/guards/roles.guard';
 import { Country } from './countries.struct';
 import { CreateCountryDto } from './dto/create-country.dto';
+import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
 
 @ApiTags('Страны')
 @Controller('api/countries')
 export class CountriesController {
     constructor(private countriesService: CountriesService) {}
 
-    @ApiOperation({ summary: 'Получение массива всех стран' })
-    @ApiResponse({ status: 200, type: [Country] })
-    @Get()
-    getAllCountries(): Promise<Country[]> {
-        return this.countriesService.getAllCountries();
-    }
-
-    @ApiOperation({ summary: 'Создание страны (ADMIN)' })
+    @ApiOperation({ summary: 'Создание страны' })
     @ApiBody({ required: true, type: CreateCountryDto, description: 'Объект с данными для создания страны' })
     @ApiResponse({ status: 200, type: Country })
     @Roles('ADMIN')
@@ -29,7 +23,15 @@ export class CountriesController {
         return this.countriesService.createCountry(createCountryDto);
     }
 
-    @ApiOperation({ summary: 'Удаление страны (ADMIN)' })
+    @ApiOperation({ summary: 'Получение массива всех стран' })
+    @ApiResponse({ status: 200, type: [Country] })
+    @UseGuards(JwtAuthGuard)
+    @Get()
+    getAllCountries(): Promise<Country[]> {
+        return this.countriesService.getAllCountries();
+    }
+
+    @ApiOperation({ summary: 'Удаление страны' })
     @ApiParam({ required: true, name: 'id', description: 'id страны', example: 1 })
     @ApiResponse({ status: 200, type: Number, description: "количество удалённых строк" })
     @Roles('ADMIN')

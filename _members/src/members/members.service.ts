@@ -14,14 +14,13 @@ export class MembersService {
         return await this.membersDB.create(dto);
     }
 
-    async getMembers (): Promise<Member[]>
+    async getAllMembers (): Promise<Member[]>
     {
         return await this.membersDB.findAll();
     }
 
-    async deleteMember ( id: number ): Promise<boolean>
+    async deleteMember ( id: number ): Promise<number>
     {
-        await this.membersDB.destroy({ where: { id } });
-        return true;
+        return await this.membersDB.destroy({ where: { id } });
     }
 }

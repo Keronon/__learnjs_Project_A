@@ -11,6 +11,7 @@ import { DataType } from 'sequelize-typescript';
 import { Profession } from './professions.struct';
 
 @ApiTags('Профессии работников киноиндустрии')
+@UseGuards(RolesGuard)
 @Controller('api/professions')
 export class ProfessionsController {
     constructor(private professionsService: ProfessionsService) {}
@@ -19,7 +20,6 @@ export class ProfessionsController {
     @ApiParam({ required: true, name: 'name', description: 'название профессии', example: 'актёр' })
     @ApiResponse({ status: 200, type: Profession })
     @Roles('ADMIN')
-    @UseGuards(RolesGuard)
     @Post(':name')
     createProfession(@Param('name') name: string): Promise<Profession> {
         log('createProfession');
@@ -29,20 +29,18 @@ export class ProfessionsController {
     @ApiOperation({ summary: 'Получение всех профессий' })
     @ApiResponse({ status: 200, type: [Profession] })
     @Roles('ADMIN')
-    @UseGuards(RolesGuard)
     @Get()
-    getProfessions(): Promise<Profession[]> {
-        log('getProfessions');
-        return this.professionsService.getProfessions();
+    getAllProfessions(): Promise<Profession[]> {
+        log('getAllProfessions');
+        return this.professionsService.getAllProfessions();
     }
 
     @ApiOperation({ summary: 'Удаление профессии' })
     @ApiParam({ required: true, name: 'name', description: 'название профессии', example: 'актёр' })
-    @ApiResponse({ status: 200, type: DataType.BOOLEAN })
+    @ApiResponse({ status: 200, type: Number, description: "количество удалённых строк" })
     @Roles('ADMIN')
-    @UseGuards(RolesGuard)
     @Delete(':name')
-    deleteProfession(@Param('name') name: string): Promise<boolean> {
+    deleteProfession(@Param('name') name: string): Promise<number> {
         log('deleteProfession');
         return this.professionsService.deleteProfession(name);
     }

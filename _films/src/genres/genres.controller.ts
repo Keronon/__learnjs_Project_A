@@ -7,6 +7,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { ApiParam } from '@nestjs/swagger';
 import { Roles } from './../_decorators/roles-auth.decorator';
 import { RolesGuard } from './../_decorators/guards/roles.guard';
+import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
 import { GenresService } from './genres.service';
 import { Genre } from './genres.struct';
 import { CreateGenreDto } from './dto/create-genre.dto';
@@ -16,30 +17,31 @@ import { CreateGenreDto } from './dto/create-genre.dto';
 export class GenresController {
     constructor(private genresService: GenresService) {}
 
-    @ApiOperation({ summary: 'Получение массива всех жанров фильмов' })
-    @ApiResponse({ status: 200, type: [Genre] })
-    @Get()
-    getAllCountries(): Promise<Genre[]> {
-        return this.genresService.getAllGenres();
-    }
-
-    @ApiOperation({ summary: 'Создание жанра фильма (ADMIN)' })
+    @ApiOperation({ summary: 'Создание жанра фильма' })
     @ApiBody({ required: true, type: CreateGenreDto, description: 'Объект с данными для создания жанра фильма' })
     @ApiResponse({ status: 200, type: Genre })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Post()
-    createCountry(@Body() createGenreDto: CreateGenreDto): Promise<Genre> {
+    createGenre(@Body() createGenreDto: CreateGenreDto): Promise<Genre> {
         return this.genresService.createGenre(createGenreDto);
     }
 
-    @ApiOperation({ summary: 'Удаление жанра фильма (ADMIN)' })
+    @ApiOperation({ summary: 'Получение массива всех жанров фильмов' })
+    @ApiResponse({ status: 200, type: [Genre] })
+    @UseGuards(JwtAuthGuard)
+    @Get()
+    getAllGenres(): Promise<Genre[]> {
+        return this.genresService.getAllGenres();
+    }
+
+    @ApiOperation({ summary: 'Удаление жанра фильма' })
     @ApiParam({ required: true, name: 'id', description: 'id жанра фильма', example: 1 })
     @ApiResponse({ status: 200, type: Number, description: "количество удалённых строк" })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Delete(':id')
-    deleteCountryById(@Param('id') id: number): Promise<number> {
+    deleteGenreById(@Param('id') id: number): Promise<number> {
         return this.genresService.deleteGenreById(id);
     }
 }
