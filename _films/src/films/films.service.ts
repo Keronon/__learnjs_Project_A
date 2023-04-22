@@ -1,3 +1,4 @@
+import * as uuid from 'uuid';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { GenresService } from './../genres/genres.service';
@@ -5,6 +6,7 @@ import { CountriesService } from './../countries/countries.service';
 import { Film } from './films.struct';
 import { CreateFilmDto } from './dto/create-film.dto';
 import { UpdateFilmDto } from './dto/update-film.dto';
+import { RMQ } from './../rabbit.core';
 
 @Injectable()
 export class FilmsService {
@@ -12,18 +14,22 @@ export class FilmsService {
         @InjectModel(Film) private filmsDB: typeof Film,
         private countriesService: CountriesService,
         private genresService: GenresService,
-    ) {}
+    ) {
+        RMQ.connect();
+    }
 
     async getFilmById(id: number): Promise<Film> {
         return await this.filmsDB.findByPk(id);
     }
 
+    // сделать добавление жанров и фото
     async createFilm(createFilmDto: CreateFilmDto): Promise<Film> {
         const country = await this.countriesService.getCountryById(createFilmDto.idCountry);
         if (!country) {
             throw new BadRequestException({ message: 'Country not found' });
         }
- 
+
+        // Не выводится ошибка
         createFilmDto.arrIdGenres.forEach(async (item) => {
             const genre = await this.genresService.getGenreById(item);
             if (!genre) {
@@ -31,11 +37,23 @@ export class FilmsService {
             }
         });
 
-        const filmInfoData = {
+        const film = await this.filmsDB.create(createFilmDto);
 
+        const filmInfoData = {
+            text: createFilmDto.text,
+            trailerLink: createFilmDto.trailerLink,
+            idFilm: film.id,
         };
 
-        return await this.filmsDB.create(createFilmDto);
+        // create film info -> FilmInfo
+        const id_msg = uuid.v4();
+        await RMQ.publishReq({
+            id_msg: id_msg,
+            cmd: 'createFilmInfo',
+            data: filmInfoData,
+        });
+
+        return film;
     }
 
     async updateFilm(updateFilmDto: UpdateFilmDto): Promise<Film> {
@@ -52,12 +70,22 @@ export class FilmsService {
         return film;
     }
 
-    async deleteFilmById(id: number): Promise<number> {
+    async deleteFilmById(id: number): Promise<boolean> {
         const film = await this.getFilmById(id);
         if (!film) {
             throw new BadRequestException({ message: 'Film not found' });
         }
 
-        return await this.filmsDB.destroy({ where: { id } });
+        await this.filmsDB.destroy({ where: { id } });
+
+        // del film info -> FilmInfo
+        const id_msg = uuid.v4();
+        await RMQ.publishReq({
+            id_msg: id_msg,
+            cmd: 'deleteFilmInfoByFilmId',
+            data: film.id,
+        });
+
+        return true;
     }
 }

@@ -1,6 +1,6 @@
 
 import { colors } from './console.colors';
-const log = ( data: any ) => console.log( colors.fg.yellow, `- - > R-Users :`, data, colors.reset );
+const log = ( data: any ) => console.log( colors.fg.yellow, `- - > R-Films :`, data, colors.reset );
 
 import * as amqp from 'amqplib';
 import { ConflictException, RequestTimeoutException } from '@nestjs/common';
@@ -9,7 +9,7 @@ export interface Message { id_msg: string, cmd: string, data: any }
 
 const exchangeTypes = { ByKEY: undefined, ByBindKEY: 'direct', ToALL: 'fanout', HEADERS: 'headers', ByFILTER: 'topic' };
 
-const exchangeNames = { P_A: `profiles - auth` }; // ! need to change
+const exchangeNames = { P_A: `films - film_info` }; 
 
 export const queueNames   = { CMDs: `cmd`, DATA: `data` };
        const queueOptions : amqp.Options.AssertQueue = { expires : 5000 };

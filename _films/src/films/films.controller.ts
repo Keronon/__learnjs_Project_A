@@ -41,7 +41,7 @@ export class FilmsController {
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Delete(':id')
-    deleteCountryById(@Param('id') id: number): Promise<number> {
+    deleteCountryById(@Param('id') id: number): Promise<boolean> {
         return this.filmsService.deleteFilmById(id);
     }
 }
