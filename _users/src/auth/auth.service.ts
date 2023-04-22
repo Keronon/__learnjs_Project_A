@@ -9,14 +9,14 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/auth.dto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { User } from '../users/users.struct';
-import { RMQ } from 'src/rabbit.core';
+import { ExchangeNames, RMQ } from 'src/rabbit.core';
 
 @Injectable()
 export class AuthService {
     constructor(private usersService: UsersService,
                 private jwtService: JwtService)
     {
-        RMQ.connect().then(RMQ.setCmdConsumer(this));
+        RMQ.connect().then(RMQ.setCmdConsumer(this, ExchangeNames.P_A));
     }
 
     async login(authDto: AuthDto): Promise<{ token: string }> {

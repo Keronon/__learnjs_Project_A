@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Profile } from './profiles.struct';
 import { RegistrationDto } from './dto/registration.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { RMQ } from 'src/rabbit.core';
+import { ExchangeNames, RMQ } from 'src/rabbit.core';
 
 @Injectable()
 export class ProfilesService {
@@ -29,7 +29,7 @@ export class ProfilesService {
 
         // ! reg data -> Auth
         const id_msg = uuid.v4();
-        await RMQ.publishReq({
+        await RMQ.publishReq(ExchangeNames.P_A, {
             id_msg: id_msg,
             cmd: 'registration',
             data: authData,
@@ -82,9 +82,9 @@ export class ProfilesService {
             throw new NotFoundException({ message: 'Profile not found' });
         }
 
-        // ! del user -> Auth
+        // ! del user -> User
         const id_msg = uuid.v4();
-        await RMQ.publishReq({
+        await RMQ.publishReq(ExchangeNames.P_U, {
             id_msg: id_msg,
             cmd: 'deleteUserById',
             data: profile.idUser,

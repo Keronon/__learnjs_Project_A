@@ -3,12 +3,12 @@ import { InjectModel } from '@nestjs/sequelize';
 import { FilmInfo } from './film-info.struct';
 import { CreateFilmInfoDto } from './dto/create-film-info.dto';
 import { UpdateFilmInfoDto } from './dto/update-film-info.dto';
-import { RMQ } from './../rabbit.core';
+import { ExchangeNames, RMQ } from './../rabbit.core';
 
 @Injectable()
 export class FilmInfoService {
     constructor(@InjectModel(FilmInfo) private filmInfoDB: typeof FilmInfo) {
-        RMQ.connect().then(RMQ.setCmdConsumer(this));
+        RMQ.connect().then(RMQ.setCmdConsumer(this, ExchangeNames.F_FI));
     }
 
     async getFilmInfoByFilmId(idFilm: number): Promise<FilmInfo> {
