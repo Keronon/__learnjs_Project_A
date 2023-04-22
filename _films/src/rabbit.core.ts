@@ -9,7 +9,7 @@ export interface Message { id_msg: string, cmd: string, data: any }
 
 const exchangeTypes = { ByKEY: undefined, ByBindKEY: 'direct', ToALL: 'fanout', HEADERS: 'headers', ByFILTER: 'topic' };
 
-const exchangeNames = { P_A: `films - film_info` }; 
+const exchangeNames = { F_FI: `films - film_info` };
 
 export const queueNames   = { CMDs: `cmd`, DATA: `data` };
        const queueOptions : amqp.Options.AssertQueue = { expires : 5000 };
@@ -24,7 +24,7 @@ class Rabbit
         log('connect');
 
         this.channel = await ( await amqp.connect( process.env.AMQP_URL ) ).createChannel();
-        await this.channel.assertExchange( exchangeNames.P_A, exchangeTypes.ByKEY );
+        await this.channel.assertExchange( exchangeNames.F_FI, exchangeTypes.ByKEY );
     }
 
     async assertQueue(queueName: string)
@@ -35,7 +35,7 @@ class Rabbit
 
         // join data queue
         const queue = await RMQ.channel.assertQueue( queueName, queueOptions );
-        await this.channel.bindQueue( queue.queue, exchangeNames.P_A, queueName );
+        await this.channel.bindQueue( queue.queue, exchangeNames.F_FI, queueName );
 
         return queue;
     }
@@ -60,7 +60,7 @@ class Rabbit
 
         await this.assertQueue(queueName);
 
-        this.channel.publish( exchangeNames.P_A, queueName,
+        this.channel.publish( exchangeNames.F_FI, queueName,
             Buffer.from( JSON.stringify( message ) ) );
     }
 

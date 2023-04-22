@@ -25,6 +25,7 @@ export class CountriesService {
         return await this.countriesDB.create(createCountryDto);
     }
 
+    // TODO : контролировать каскадное удаление фильмов по стране
     async deleteCountryById(id: number): Promise<number> {
         const country = await this.getCountryById(id);
         if (!country) {

@@ -2,7 +2,6 @@ import * as uuid from 'uuid';
 import {
     BadRequestException,
     Injectable,
-    InternalServerErrorException,
     NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
@@ -28,7 +27,7 @@ export class ProfilesService {
             password: registrationDto.password,
         };
 
-        // reg data -> Auth
+        // ! reg data -> Auth
         const id_msg = uuid.v4();
         await RMQ.publishReq({
             id_msg: id_msg,
@@ -36,7 +35,7 @@ export class ProfilesService {
             data: authData,
         });
 
-        // res <- Auth
+        // ! res <- Auth
         const res = await RMQ.acceptRes(id_msg);
 
         const user = this.jwtService.verify(res.token);
@@ -75,13 +74,15 @@ export class ProfilesService {
         return profile;
     }
 
+    // TODO : создать метод для изменения фото профиля
+
     async deleteAccountByProfileId(id: number): Promise<number> {
         const profile = await this.getProfileById(id);
         if (!profile) {
             throw new NotFoundException({ message: 'Profile not found' });
         }
 
-        // del user -> Auth
+        // ! del user -> Auth
         const id_msg = uuid.v4();
         await RMQ.publishReq({
             id_msg: id_msg,

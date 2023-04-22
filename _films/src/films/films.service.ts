@@ -22,14 +22,15 @@ export class FilmsService {
         return await this.filmsDB.findByPk(id);
     }
 
-    // сделать добавление жанров и фото
+    // TODO : сделать добавление жанров и фото
+
     async createFilm(createFilmDto: CreateFilmDto): Promise<Film> {
         const country = await this.countriesService.getCountryById(createFilmDto.idCountry);
         if (!country) {
             throw new BadRequestException({ message: 'Country not found' });
         }
 
-        // Не выводится ошибка
+        // FIXME : Не выводится ошибка
         createFilmDto.arrIdGenres.forEach(async (item) => {
             const genre = await this.genresService.getGenreById(item);
             if (!genre) {
@@ -45,7 +46,7 @@ export class FilmsService {
             idFilm: film.id,
         };
 
-        // create film info -> FilmInfo
+        // ! create film info -> FilmInfo
         const id_msg = uuid.v4();
         await RMQ.publishReq({
             id_msg: id_msg,
@@ -78,7 +79,7 @@ export class FilmsService {
 
         await this.filmsDB.destroy({ where: { id } });
 
-        // del film info -> FilmInfo
+        // ! del film info -> FilmInfo
         const id_msg = uuid.v4();
         await RMQ.publishReq({
             id_msg: id_msg,
