@@ -39,7 +39,7 @@ export class FilmsController {
     @ApiResponse({ status: 200, type: Number, description: "количество удалённых строк" })
     @Roles('ADMIN')
     @Delete(':id')
-    deleteFilmById(@Param('id') id: number): Promise<boolean> {
+    deleteFilmById(@Param('id') id: number): Promise<number> {
         return this.filmsService.deleteFilmById(id);
     }
 }

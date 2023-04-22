@@ -71,13 +71,11 @@ export class FilmsService {
         return film;
     }
 
-    async deleteFilmById(id: number): Promise<boolean> {
+    async deleteFilmById(id: number): Promise<number> {
         const film = await this.getFilmById(id);
         if (!film) {
             throw new BadRequestException({ message: 'Film not found' });
         }
-
-        await this.filmsDB.destroy({ where: { id } });
 
         // ! del film info -> FilmInfo
         const id_msg = uuid.v4();
@@ -87,6 +85,6 @@ export class FilmsService {
             data: film.id,
         });
 
-        return true;
+        return await this.filmsDB.destroy({ where: { id } });;
     }
 }
