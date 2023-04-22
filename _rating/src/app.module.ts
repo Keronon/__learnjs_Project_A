@@ -1,18 +1,16 @@
-
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
 import { JwtGlobalModule } from './jwt.module';
-import { RatingFilmsModule } from './rating_films/rating_films.module';
-import { RatingUsersModule } from './rating_users/rating_users.module';
-import { RatingFilm } from './rating_films/rating_films.struct';
-import { RatingUser } from './rating_users/rating_users.struct';
+import { RatingFilmsModule } from './rating_films/rating-films.module';
+import { RatingUsersModule } from './rating_profiles/rating-profiles.module';
+import { RatingFilm } from './rating_films/rating-films.struct';
+import { RatingUser } from './rating_profiles/rating-profiles.struct';
 
-@Module( {
+@Module({
     controllers: [],
     providers: [],
-    imports:
-    [
+    imports: [
         ConfigModule.forRoot({ envFilePath: '.env' }),
 
         SequelizeModule.forRoot({
@@ -24,12 +22,12 @@ import { RatingUser } from './rating_users/rating_users.struct';
             database: process.env.PG_DB || 'DB_rating',
             models: [RatingFilm, RatingUser],
             autoLoadModels: true,
-            logging: false
+            logging: false,
         }),
 
         JwtGlobalModule,
         RatingFilmsModule,
-        RatingUsersModule
+        RatingUsersModule,
     ],
-} )
-export class AppModule { }
+})
+export class AppModule {}
