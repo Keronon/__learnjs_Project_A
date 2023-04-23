@@ -3,9 +3,9 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
 import { JwtGlobalModule } from './jwt.module';
 import { RatingFilmsModule } from './rating_films/rating-films.module';
-import { RatingUsersModule } from './rating_profiles/rating-profiles.module';
+import { RatingUsersModule } from './rating_users/rating-users.module';
 import { RatingFilm } from './rating_films/rating-films.struct';
-import { RatingUser } from './rating_profiles/rating-profiles.struct';
+import { RatingUser } from './rating_users/rating-users.struct';
 
 @Module({
     controllers: [],

@@ -23,6 +23,7 @@ export class FilmsService {
     }
 
     // TODO : сделать добавление жанров и фото
+    // TODO : создание записи в rating-films
 
     async createFilm(createFilmDto: CreateFilmDto): Promise<Film> {
         const country = await this.countriesService.getCountryById(createFilmDto.idCountry);

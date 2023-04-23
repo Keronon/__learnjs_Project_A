@@ -9,7 +9,6 @@ import { User } from './users.struct';
 import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
 import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { Roles } from '../_decorators/roles-auth.decorator';
-import { DataType } from 'sequelize-typescript';
 
 @ApiTags('Пользователи')
 @Controller('api/users')

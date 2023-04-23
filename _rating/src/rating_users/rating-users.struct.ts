@@ -2,14 +2,14 @@
 import { Model, Table, Column, DataType } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 
-interface RatingProfileCreationAttrs {
+interface RatingUserCreationAttrs {
     rating: number;
     idFilm: number;
-    idProfile: number;
+    idUser: number;
 }
 
-@Table({ tableName: 'ratingProfiles' })
-export class RatingProfile extends Model<RatingProfile, RatingProfileCreationAttrs> {
+@Table({ tableName: 'ratingUsers' })
+export class RatingUser extends Model<RatingUser, RatingUserCreationAttrs> {
     @ApiProperty({ example: 1, description: 'id пользовательской оценки фильма' })
     @Column({
         type: DataType.INTEGER,
@@ -27,7 +27,7 @@ export class RatingProfile extends Model<RatingProfile, RatingProfileCreationAtt
     @Column({ type: DataType.INTEGER })
     idFilm: number;
 
-    @ApiProperty({ example: 1, description: 'id профиля пользователя' })
+    @ApiProperty({ example: 1, description: 'id пользователя' })
     @Column({ type: DataType.INTEGER })
-    idProfile: number;
+    idUser: number;
 }
