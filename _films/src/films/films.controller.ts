@@ -1,8 +1,9 @@
-import { Delete, Param } from '@nestjs/common';
-import { ApiParam } from '@nestjs/swagger';
 
-import { Body, Controller, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { colors } from '../console.colors';
+const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Films :`, data, colors.reset );
+
+import { Delete, Param, Body, Controller, Post, Put, UseGuards } from '@nestjs/common';
+import { ApiParam, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FilmsService } from './films.service';
 import { UpdateFilmDto } from './dto/update-film.dto';
 import { Film } from './films.struct';
@@ -22,6 +23,7 @@ export class FilmsController {
     @Roles('ADMIN')
     @Post()
     createFilm(@Body() createFilmDto: CreateFilmDto): Promise<Film> {
+        log('createFilm');
         return this.filmsService.createFilm(createFilmDto);
     }
 
@@ -31,6 +33,7 @@ export class FilmsController {
     @Roles('ADMIN')
     @Put()
     updateFilm(@Body() updateFilmDto: UpdateFilmDto): Promise<Film> {
+        log('updateFilm');
         return this.filmsService.updateFilm(updateFilmDto);
     }
 
@@ -40,6 +43,7 @@ export class FilmsController {
     @Roles('ADMIN')
     @Delete(':id')
     deleteFilmById(@Param('id') id: number): Promise<number> {
+        log('deleteFilmById');
         return this.filmsService.deleteFilmById(id);
     }
 }

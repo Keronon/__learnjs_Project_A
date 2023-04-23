@@ -1,19 +1,24 @@
 
+import { colors } from '../../console.colors';
+const log = ( data: any ) => console.log( colors.fg.crimson, `- - > GS-Rating :`, data, colors.reset );
+
 import {
     ExecutionContext,
     ForbiddenException,
     Injectable,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { CheckAuth } from './jwt-auth.guard';
+import { checkAuth } from './jwt-auth.guard';
 import { RolesGuard } from './roles.guard';
 
 @Injectable()
 export class RatingUsersSelfGuard extends RolesGuard {
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+        log('canActivate');
+
         try {
             const req = context.switchToHttp().getRequest();
-            const user = CheckAuth( req.headers.authorization );
+            const user = checkAuth( req.headers.authorization );
 
             let idUser = req.params[`idUser`];
             if (!idUser) idUser = req.body.idUser;

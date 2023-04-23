@@ -1,6 +1,6 @@
 
 import { colors } from 'src/console.colors';
-const log = ( data: any ) => console.log( colors.fg.blue, `- - > C-Profiles :`, data, colors.reset );
+const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Profiles :`, data, colors.reset );
 
 import { ApiBody, ApiResponse, ApiOperation, ApiTags, ApiParam } from '@nestjs/swagger';
 import { Body, Controller, Get, Param, Post, Delete, Put, UseGuards } from '@nestjs/common';
@@ -19,7 +19,7 @@ export class ProfilesController {
 
     @ApiOperation({ summary: 'Регистрация нового аккаунта' })
     @ApiBody({ required: true, type: RegistrationDto, description: 'Объект с данными для регистрации аккаунта' })
-    @ApiResponse({ status: 200, type: Profile })
+    @ApiResponse({ status: 200, schema: {example: {token: 'h123fgh213fh12j31jh23.h12g3h1'}} })
     @Post('/registration')
     registration(@Body() registrationDto: RegistrationDto): Promise<Profile> {
         log('registration');

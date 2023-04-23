@@ -1,13 +1,12 @@
 
 import { colors } from 'src/console.colors';
-const log = ( data: any ) => console.log( colors.fg.blue, `- - > C-Profiles :`, data, colors.reset );
+const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Professions :`, data, colors.reset );
 
 import { ApiResponse, ApiOperation, ApiTags, ApiParam } from '@nestjs/swagger';
 import { Controller, Get, Param, Post, Delete, UseGuards } from '@nestjs/common';
 import { ProfessionsService } from './professions.service';
 import { Roles } from 'src/_decorators/roles-auth.decorator';
 import { RolesGuard } from 'src/_decorators/guards/roles.guard';
-import { DataType } from 'sequelize-typescript';
 import { Profession } from './professions.struct';
 
 @ApiTags('Профессии работников киноиндустрии')

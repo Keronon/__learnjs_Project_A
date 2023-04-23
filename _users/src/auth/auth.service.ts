@@ -1,4 +1,7 @@
 
+import { colors } from '../console.colors';
+const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Auth :`, data, colors.reset );
+
 import * as bcrypt from 'bcryptjs';
 import { BadRequestException,
          ForbiddenException,
@@ -20,11 +23,15 @@ export class AuthService {
     }
 
     async login(authDto: AuthDto): Promise<{ token: string }> {
+        log('login');
+
         const user = await this.validateUser(authDto);
         return this.generateToken(user);
     }
 
     async registration(authDto: AuthDto) {
+        log('registration');
+
         const candidate = await this.usersService.getUserByEmail(authDto.email);
         if (candidate) {
             throw new BadRequestException({ message: 'User with this email already exists' });
@@ -40,6 +47,8 @@ export class AuthService {
     }
 
     private async generateToken(user: User) {
+        log('generateToken');
+
         const payload = { email: user.email, id: user.id, role: user.role };
         return {
             token: this.jwtService.sign(payload), // creates token
@@ -47,6 +56,8 @@ export class AuthService {
     }
 
     private async validateUser(userDto: CreateUserDto) {
+        log('validateUser');
+
         const user = await this.usersService.getUserByEmail(userDto.email);
         if (!user) {
             throw new NotFoundException({

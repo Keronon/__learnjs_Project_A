@@ -1,4 +1,7 @@
 
+import { colors } from '../../console.colors';
+const log = ( data: any ) => console.log( colors.fg.crimson, `- - > GR-Films :`, data, colors.reset );
+
 import {
     CanActivate,
     ExecutionContext,
@@ -8,13 +11,15 @@ import {
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../roles-auth.decorator';
-import { CheckAuth } from './jwt-auth.guard';
+import { checkAuth } from './jwt-auth.guard';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
     constructor(private reflector: Reflector) {}
 
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+        log('canActivate');
+
         try {
             const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
                 context.getHandler(),
@@ -24,7 +29,7 @@ export class RolesGuard implements CanActivate {
                 return true;
             }
 
-            const user = CheckAuth(context.switchToHttp().getRequest().headers.authorization);
+            const user = checkAuth(context.switchToHttp().getRequest().headers.authorization);
 
             return requiredRoles.includes(user.role);
         } catch (e) {

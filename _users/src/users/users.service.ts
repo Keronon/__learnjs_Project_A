@@ -1,4 +1,7 @@
 
+import { colors } from '../console.colors';
+const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Users :`, data, colors.reset );
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { RolesService } from './../roles/roles.service';
@@ -15,12 +18,16 @@ export class UsersService {
     }
 
     async getAllUsers(): Promise<User[]> {
+        log('getAllUsers');
+
         return await this.usersDB.findAll({
             include: { all: true },
         });
     }
 
     async getUserById(id: number): Promise<User> {
+        log('getUserById');
+
         return await this.usersDB.findOne({
             where: { id },
             include: { all: true },
@@ -28,6 +35,8 @@ export class UsersService {
     }
 
     async getUserByEmail(email: string): Promise<User> {
+        log('getUserByEmail');
+
         return await this.usersDB.findOne({
             where: { email },
             include: { all: true },
@@ -35,6 +44,8 @@ export class UsersService {
     }
 
     async createUser(dto: CreateUserDto): Promise<User> {
+        log('createUser');
+
         const user = await this.usersDB.create(dto);
 
         // set role
@@ -46,6 +57,8 @@ export class UsersService {
     }
 
     async setRole(id: number, roleName: {roleName: string}): Promise<User> {
+        log('setRole');
+
         const user = await this.getUserById(id);
         const role = await this.rolesService.getRoleByValue(roleName.roleName);
 
@@ -58,6 +71,7 @@ export class UsersService {
     }
 
     async deleteUserById(id: number): Promise<number> {
+        log('deleteUserById');
         return await this.usersDB.destroy({ where: { id } });
     }
 }

@@ -1,4 +1,7 @@
 
+import { colors } from '../../console.colors';
+const log = ( data: any ) => console.log( colors.fg.crimson, `- - > GJwt-Film_info :`, data, colors.reset );
+
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { JwtService } from '@nestjs/jwt';
@@ -11,8 +14,10 @@ export class JwtAuthGuard implements CanActivate {
 
     // return : access right
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+        log('canActivate');
+
         try {
-            const user = CheckAuth(context.switchToHttp().getRequest().headers.authorization);
+            const user = checkAuth(context.switchToHttp().getRequest().headers.authorization);
 
             if (user) return true;
             return false;
@@ -24,8 +29,10 @@ export class JwtAuthGuard implements CanActivate {
     }
 }
 
-export function CheckAuth(authHeader)
+export function checkAuth(authHeader)
 {
+    log('checkAuth');
+
     const [ token_type, token ] = authHeader.split(' ');
 
     if (token_type !== 'Bearer' || !token) {

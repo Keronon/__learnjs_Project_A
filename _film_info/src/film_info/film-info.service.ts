@@ -1,3 +1,7 @@
+
+import { colors } from '../console.colors';
+const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Film_info :`, data, colors.reset );
+
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { FilmInfo } from './film-info.struct';
@@ -11,17 +15,27 @@ export class FilmInfoService {
         RMQ.connect().then(RMQ.setCmdConsumer(this, ExchangeNames.F_FI));
     }
 
+    async createFilmInfo(createFilmInfoDto: CreateFilmInfoDto): Promise<FilmInfo> {
+        log('createFilmInfo');
+        return await this.filmInfoDB.create(createFilmInfoDto);
+    }
+
     async getFilmInfoByFilmId(idFilm: number): Promise<FilmInfo> {
+        log('getFilmInfoByFilmId');
+
         return await this.filmInfoDB.findOne({
             where: { idFilm },
         });
     }
 
-    async createFilmInfo(createFilmInfoDto: CreateFilmInfoDto): Promise<FilmInfo> {
-        return await this.filmInfoDB.create(createFilmInfoDto);
+    private async getFilmInfoById(id: number): Promise<FilmInfo> {
+        log('getFilmInfoById');
+        return await this.filmInfoDB.findByPk(id);
     }
 
     async updateFilmInfo(updateFilmInfoDto: UpdateFilmInfoDto): Promise<FilmInfo> {
+        log('updateFilmInfo');
+
         const filmInfo = await this.getFilmInfoById(updateFilmInfoDto.id);
         if (!filmInfo) {
             throw new BadRequestException({ message: 'Film info not found' });
@@ -36,15 +50,13 @@ export class FilmInfoService {
     }
 
     async deleteFilmInfoByFilmId(idFilm: number): Promise<number> {
+        log('deleteFilmInfoByFilmId');
+
         const filmInfo = await this.getFilmInfoByFilmId(idFilm);
         if (!filmInfo) {
             throw new BadRequestException({ message: 'Film info not found' });
         }
 
         return await this.filmInfoDB.destroy({ where: { id: filmInfo.id } });
-    }
-
-    private async getFilmInfoById(id: number): Promise<FilmInfo> {
-        return await this.filmInfoDB.findByPk(id);
     }
 }

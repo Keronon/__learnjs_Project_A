@@ -1,6 +1,6 @@
 
 import { colors } from './console.colors';
-const log = ( data: any ) => console.log( colors.fg.yellow, `- - > R-Profiles :`, data, colors.reset );
+const log = ( data: any ) => console.log( colors.fg.gray, `- - > R-Films :`, data, colors.reset );
 
 import * as amqp from 'amqplib';
 import { ConflictException, RequestTimeoutException } from '@nestjs/common';

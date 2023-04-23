@@ -1,4 +1,7 @@
 
+import { colors } from '../console.colors';
+const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Counties :`, data, colors.reset );
+
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CountriesService } from './countries.service';
@@ -20,6 +23,7 @@ export class CountriesController {
     @UseGuards(RolesGuard)
     @Post()
     createCountry(@Body() createCountryDto: CreateCountryDto): Promise<Country> {
+        log('createCountry');
         return this.countriesService.createCountry(createCountryDto);
     }
 
@@ -28,6 +32,7 @@ export class CountriesController {
     @UseGuards(JwtAuthGuard)
     @Get()
     getAllCountries(): Promise<Country[]> {
+        log('getAllCountries');
         return this.countriesService.getAllCountries();
     }
 
@@ -38,6 +43,7 @@ export class CountriesController {
     @UseGuards(RolesGuard)
     @Delete(':id')
     deleteCountryById(@Param('id') id: number): Promise<number> {
+        log('deleteCountryById');
         return this.countriesService.deleteCountryById(id);
     }
 }

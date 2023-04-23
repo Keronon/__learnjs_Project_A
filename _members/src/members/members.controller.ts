@@ -1,13 +1,12 @@
 
 import { colors } from 'src/console.colors';
-const log = ( data: any ) => console.log( colors.fg.blue, `- - > C-Profiles :`, data, colors.reset );
+const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Members :`, data, colors.reset );
 
 import { ApiResponse, ApiOperation, ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
 import { Controller, Get, Param, Post, Delete, UseGuards, Body } from '@nestjs/common';
 import { Roles } from 'src/_decorators/roles-auth.decorator';
 import { RolesGuard } from 'src/_decorators/guards/roles.guard';
 import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
-import { DataType } from 'sequelize-typescript';
 import { MembersService } from './members.service';
 import { Member } from './members.struct';
 import { CreateMemberDto } from './dto/create-member.dto';

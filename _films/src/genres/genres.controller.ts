@@ -1,4 +1,7 @@
 
+import { colors } from '../console.colors';
+const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Genres :`, data, colors.reset );
+
 import { Delete, Param } from '@nestjs/common';
 import { Body, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -24,6 +27,7 @@ export class GenresController {
     @UseGuards(RolesGuard)
     @Post()
     createGenre(@Body() createGenreDto: CreateGenreDto): Promise<Genre> {
+        log('createGenre');
         return this.genresService.createGenre(createGenreDto);
     }
 
@@ -32,6 +36,7 @@ export class GenresController {
     @UseGuards(JwtAuthGuard)
     @Get()
     getAllGenres(): Promise<Genre[]> {
+        log('getAllGenres');
         return this.genresService.getAllGenres();
     }
 
@@ -42,6 +47,7 @@ export class GenresController {
     @UseGuards(RolesGuard)
     @Delete(':id')
     deleteGenreById(@Param('id') id: number): Promise<number> {
+        log('deleteGenreById');
         return this.genresService.deleteGenreById(id);
     }
 }

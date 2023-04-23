@@ -1,3 +1,7 @@
+
+import { colors } from '../console.colors';
+const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Films :`, data, colors.reset );
+
 import * as uuid from 'uuid';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
@@ -19,6 +23,7 @@ export class FilmsService {
     }
 
     async getFilmById(id: number): Promise<Film> {
+        log('getFilmById');
         return await this.filmsDB.findByPk(id);
     }
 
@@ -26,6 +31,8 @@ export class FilmsService {
     // TODO : создание записи в rating-films
 
     async createFilm(createFilmDto: CreateFilmDto): Promise<Film> {
+        log('createFilm');
+
         const country = await this.countriesService.getCountryById(createFilmDto.idCountry);
         if (!country) {
             throw new BadRequestException({ message: 'Country not found' });
@@ -59,6 +66,8 @@ export class FilmsService {
     }
 
     async updateFilm(updateFilmDto: UpdateFilmDto): Promise<Film> {
+        log('updateFilm');
+
         const film = await this.getFilmById(updateFilmDto.id);
         if (!film) {
             throw new BadRequestException({ message: 'Film not found' });
@@ -73,6 +82,8 @@ export class FilmsService {
     }
 
     async deleteFilmById(id: number): Promise<number> {
+        log('deleteFilmById');
+
         const film = await this.getFilmById(id);
         if (!film) {
             throw new BadRequestException({ message: 'Film not found' });

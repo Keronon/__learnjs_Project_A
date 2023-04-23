@@ -1,3 +1,7 @@
+
+import { colors } from '../console.colors';
+const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Rating_users :`, data, colors.reset );
+
 import { Injectable } from '@nestjs/common';
 import { CreateRatingUserDto } from './dto/create-rating-user.dto';
 import { RatingUser } from './rating-users.struct';
@@ -11,6 +15,8 @@ export class RatingUsersService {
     async getRatingUserByFilmIdAndUserId(idFilm: number, idUser: number): Promise<RatingUser> {
         // TODO : проверить токен-пользователь
 
+        log('getRatingUserByFilmIdAndUserId');
+
         return await this.ratingUsersDB.findOne({
             where: {
                 [Op.and]: [{ idFilm }, { idUser }],
@@ -19,6 +25,8 @@ export class RatingUsersService {
     }
 
     async сreateRatingUser(createRatingUserDto: CreateRatingUserDto): Promise<RatingUser> {
+        log('createRatingUser');
+
         // TODO : проверка на существование исходя из таблицы rating-films, тк там запись создаётся при создании фильма
         const idFilm = createRatingUserDto.idFilm;
 

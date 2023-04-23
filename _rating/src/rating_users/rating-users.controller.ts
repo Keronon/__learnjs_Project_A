@@ -1,3 +1,7 @@
+
+import { colors } from '../console.colors';
+const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Rating_users :`, data, colors.reset );
+
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RatingUsersService } from './rating-users.service';
@@ -17,6 +21,7 @@ export class RatinUsersController {
     @UseGuards(RatingUsersSelfGuard)
     @Get('/film/:idFilm/user/:idUser')
     getRatingUserByFilmIdAndUserId(@Param() param: { idFilm: number; idUser: number }): Promise<RatingUser> {
+        log('getRatingUserByFilmIdAndUserId');
         return this.ratingUsersService.getRatingUserByFilmIdAndUserId(param.idFilm, param.idUser);
     }
 
@@ -30,6 +35,7 @@ export class RatinUsersController {
     @UseGuards(RatingUsersSelfGuard)
     @Post()
     сreateRatingUser(@Body() createRatingUserDto: CreateRatingUserDto): Promise<RatingUser> {
+        log('createRatingUser');
         return this.ratingUsersService.сreateRatingUser(createRatingUserDto);
     }
 }

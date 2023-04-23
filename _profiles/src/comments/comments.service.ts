@@ -1,4 +1,7 @@
 
+import { colors } from '../console.colors';
+const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Comments :`, data, colors.reset );
+
 import { Injectable } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Comment } from './comments.struct';
@@ -12,11 +15,14 @@ export class CommentsService {
 
     async createComment ( dto: CreateCommentDto ): Promise<Comment>
     {
+        log('createComment');
         return await this.commentsDB.create(dto);
     }
 
     async getCommentsByFilm ( idFilm: number ): Promise<Comment[]>
     {
+        log('getCommentsByFilm');
+
         return await this.commentsDB.findAll({
             where: { idFilm },
             include: { all: true },
@@ -25,6 +31,8 @@ export class CommentsService {
 
     async getCommentsByComment ( idComment: number ): Promise<Comment[]>
     {
+        log('getCommentsByComment');
+
         let comments: Comment[] = [];
         let found: Comment[] | number[] = [idComment];
 

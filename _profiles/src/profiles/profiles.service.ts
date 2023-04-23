@@ -1,3 +1,7 @@
+
+import { colors } from '../console.colors';
+const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Profiles :`, data, colors.reset );
+
 import * as uuid from 'uuid';
 import {
     BadRequestException,
@@ -21,6 +25,8 @@ export class ProfilesService {
 
     async registration(registrationDto: RegistrationDto): Promise<Profile>
     {
+        log('registration');
+
         const authData =
         {
             email: registrationDto.email,
@@ -45,15 +51,19 @@ export class ProfilesService {
         };
         await this.profilesDB.create(createProfileData);
 
-        return res.token; // string
+        return res; // { token: string }
     }
 
     async getProfileById(id: number): Promise<Profile> {
+        log('getProfileById');
+
         const profile = await this.profilesDB.findByPk(id);
         return profile;
     }
 
     async getProfileByUserId(id: number): Promise<Profile> {
+        log('getProfileByUserId');
+
         const profile = await this.profilesDB.findOne({
             where: { idUser: id },
         });
@@ -61,6 +71,8 @@ export class ProfilesService {
     }
 
     async updateProfile(id: number, updateProfileDto: UpdateProfileDto): Promise<Profile> {
+        log('updateProfile');
+
         const profile = await this.getProfileById(id);
         if (!profile) {
             throw new BadRequestException({ message: 'Profile not found' });
@@ -77,6 +89,8 @@ export class ProfilesService {
     // TODO : создать метод для изменения фото профиля
 
     async deleteAccountByProfileId(id: number): Promise<number> {
+        log('deleteAccountByProfileId');
+
         const profile = await this.getProfileById(id);
         if (!profile) {
             throw new NotFoundException({ message: 'Profile not found' });

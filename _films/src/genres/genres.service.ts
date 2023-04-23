@@ -1,4 +1,7 @@
 
+import { colors } from '../console.colors';
+const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Genres :`, data, colors.reset );
+
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
@@ -10,15 +13,19 @@ export class GenresService {
     constructor(@InjectModel(Genre) private genresDB: typeof Genre) {}
 
     async getAllGenres(): Promise<Genre[]> {
+        log('getAllGenres');
         return await this.genresDB.findAll();
     }
 
     async getGenreById(id: number): Promise<Genre> {
+        log('getGenreById');
         return await this.genresDB.findByPk(id);
     }
 
     async createGenre(createGenreDto: CreateGenreDto): Promise<Genre> {
-        if (await this.CheckExistenceName(createGenreDto.nameRU, createGenreDto.nameEN)) {
+        log('createGenre');
+
+        if (await this.checkExistenceName(createGenreDto.nameRU, createGenreDto.nameEN)) {
             throw new BadRequestException({ message: 'This genre name already exists' });
         }
 
@@ -26,6 +33,8 @@ export class GenresService {
     }
 
     async deleteGenreById(id: number): Promise<number> {
+        log('deleteGenreById');
+
         const country = await this.getGenreById(id);
         if (!country) {
             throw new BadRequestException({ message: 'Genre not found' });
@@ -34,7 +43,9 @@ export class GenresService {
         return await this.genresDB.destroy({ where: { id } });
     }
 
-    private async CheckExistenceName(nameRU: string, nameEN: string) {
+    private async checkExistenceName(nameRU: string, nameEN: string) {
+        log('checkExistenceName');
+
         const count = await this.genresDB.count({
             where: {
                 [Op.or]: [{ nameRU }, { nameEN }],

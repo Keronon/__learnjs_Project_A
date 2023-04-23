@@ -1,14 +1,14 @@
 
 import { colors } from 'src/console.colors';
-const log = ( data: any ) => console.log( colors.fg.blue, `- - > C-Auth :`, data, colors.reset );
+const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Auth :`, data, colors.reset );
 
-import { ApiBody, ApiResponse, PartialType, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 
 @ApiTags('Авторизационный пользовательский функционал')
-@Controller('api/auth')
+@Controller('api/users')
 export class AuthController {
     constructor(private authService: AuthService) {}
 
