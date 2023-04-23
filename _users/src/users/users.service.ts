@@ -7,14 +7,14 @@ import { InjectModel } from '@nestjs/sequelize';
 import { RolesService } from './../roles/roles.service';
 import { User } from './users.struct';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ExchangeNames, RMQ } from 'src/rabbit.core';
+import { QueueNames, RMQ } from 'src/rabbit.core';
 
 @Injectable()
 export class UsersService {
     constructor(@InjectModel(User) private usersDB: typeof User,
                 private rolesService: RolesService
     ) {
-        RMQ.connect().then(RMQ.setCmdConsumer(this, ExchangeNames.P_U));
+        RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.PU_cmd, QueueNames.PU_data));
     }
 
     async getAllUsers(): Promise<User[]> {

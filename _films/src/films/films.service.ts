@@ -10,7 +10,7 @@ import { CountriesService } from './../countries/countries.service';
 import { Film } from './films.struct';
 import { CreateFilmDto } from './dto/create-film.dto';
 import { UpdateFilmDto } from './dto/update-film.dto';
-import { ExchangeNames, RMQ } from './../rabbit.core';
+import { QueueNames, RMQ } from './../rabbit.core';
 
 @Injectable()
 export class FilmsService {
@@ -56,7 +56,7 @@ export class FilmsService {
 
         // ! create film info -> FilmInfo
         const id_msg = uuid.v4();
-        await RMQ.publishReq(ExchangeNames.F_FI, {
+        await RMQ.publishMessage(QueueNames.FFI_cmd, {
             id_msg: id_msg,
             cmd: 'createFilmInfo',
             data: filmInfoData,
@@ -91,7 +91,7 @@ export class FilmsService {
 
         // ! del film info -> FilmInfo
         const id_msg = uuid.v4();
-        await RMQ.publishReq(ExchangeNames.F_FI, {
+        await RMQ.publishMessage(QueueNames.FFI_cmd, {
             id_msg: id_msg,
             cmd: 'deleteFilmInfoByFilmId',
             data: film.id,

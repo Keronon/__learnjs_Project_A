@@ -1,6 +1,6 @@
 
 import { colors } from '../../console.colors';
-const log = ( data: any ) => console.log( colors.fg.crimson, `- - > GR-Users :`, data, colors.reset );
+const log = ( data: any ) => console.log( colors.fg.crimson, `- - > GR-Profiles :`, data, colors.reset );
 
 import {
     CanActivate,
@@ -12,10 +12,12 @@ import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../roles-auth.decorator';
 import { checkAuth } from './jwt-auth.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-    constructor(private reflector: Reflector) {}
+    constructor(private reflector: Reflector,
+                private jwtService: JwtService) {}
 
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         log('canActivate');
@@ -29,9 +31,9 @@ export class RolesGuard implements CanActivate {
                 return true;
             }
 
-            const user = checkAuth(context.switchToHttp().getRequest().headers.authorization);
+            const user = checkAuth(this.jwtService, context.switchToHttp().getRequest().headers.authorization);
 
-            return requiredRoles.includes(user.role);
+            return requiredRoles.includes(user.role.name);
         } catch (e) {
             throw new ForbiddenException({message: 'No access'});
         }

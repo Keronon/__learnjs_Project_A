@@ -13,7 +13,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Profile } from './profiles.struct';
 import { RegistrationDto } from './dto/registration.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { ExchangeNames, RMQ } from 'src/rabbit.core';
+import { QueueNames, RMQ } from 'src/rabbit.core';
 
 @Injectable()
 export class ProfilesService {
@@ -35,14 +35,14 @@ export class ProfilesService {
 
         // ! reg data -> Auth
         const id_msg = uuid.v4();
-        await RMQ.publishReq(ExchangeNames.P_A, {
+        await RMQ.publishMessage(QueueNames.PA_cmd, {
             id_msg: id_msg,
             cmd: 'registration',
             data: authData,
         });
 
         // ! res <- Auth
-        const res = await RMQ.acceptRes(id_msg);
+        const res = await RMQ.acceptRes(QueueNames.PA_data, id_msg);
 
         const user = this.jwtService.verify(res.token);
         const createProfileData = {
@@ -98,7 +98,7 @@ export class ProfilesService {
 
         // ! del user -> User
         const id_msg = uuid.v4();
-        await RMQ.publishReq(ExchangeNames.P_U, {
+        await RMQ.publishMessage(QueueNames.PU_cmd, {
             id_msg: id_msg,
             cmd: 'deleteUserById',
             data: profile.idUser,

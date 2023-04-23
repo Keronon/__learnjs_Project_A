@@ -1,17 +1,18 @@
 
 import { colors } from './console.colors';
-const log = ( data: any ) => console.log( colors.fg.gray, `- - > R-Film_info :`, data, colors.reset );
+const log = ( data: any ) => console.log( colors.fg.gray, `- - > R-Members :`, data, colors.reset );
 
 import * as amqp from 'amqplib';
-import { ConflictException, RequestTimeoutException } from '@nestjs/common';
+import { BadRequestException, ConflictException, RequestTimeoutException } from '@nestjs/common';
 
 export interface Message { id_msg: string, cmd: string, data: any }
 
 const ExchangeTypes = { ByKEY: undefined, ByBindKEY: 'direct', ToALL: 'fanout', HEADERS: 'headers', ByFILTER: 'topic' };
 const queueOptions  : amqp.Options.AssertQueue = { expires : 5000 };
 
-export enum ExchangeNames { F_FI = 'films - film_info' }; // ! different in any service
-export enum QueueNames    { CMDs = `cmd`, DATA = `data` };
+const exchangeName = 'CMDs - DATA';
+// ! different in any service
+export enum QueueNames { FFI_cmd = 'FFI_cmd', FFI_data = 'FFI_data' };
 
 class Rabbit
 {
@@ -23,9 +24,7 @@ class Rabbit
         log('connect');
 
         this.channel = await ( await amqp.connect( process.env.AMQP_URL ) ).createChannel();
-
-        // ! different in any service
-        await this.channel.assertExchange( ExchangeNames.F_FI, ExchangeTypes.ByKEY );
+        await this.channel.assertExchange( exchangeName, ExchangeTypes.ByKEY );
     }
 
     async assertQueue(queueName: string)
@@ -36,26 +35,12 @@ class Rabbit
 
         // join data queue
         const queue = await RMQ.channel.assertQueue( queueName, queueOptions );
-        await this.channel.bindQueue( queue.queue, ExchangeNames.F_FI, queueName );
+        await this.channel.bindQueue( queue.queue, exchangeName, queueName );
 
         return queue;
     }
 
-    async publishReq(exchangeName: string, message: Message)
-    {
-        log('publishReq');
-
-        this.publishMessage(exchangeName, QueueNames.CMDs, message);
-    }
-
-    async publishRes(exchangeName: string, message: Message)
-    {
-        log('publishRes');
-
-        this.publishMessage(exchangeName, QueueNames.DATA, message);
-    }
-
-    private async publishMessage(exchangeName: string, queueName: string, message: Message)
+    async publishMessage(queueName: string, message: Message)
     {
         log('publishMessage');
 
@@ -65,11 +50,11 @@ class Rabbit
             Buffer.from( JSON.stringify( message ) ) );
     }
 
-    async acceptRes( id_msg: string )
+    async acceptRes( queueName: string, id_msg: string )
     {
         log('acceptRes');
 
-        const queue = await this.assertQueue(QueueNames.DATA);
+        const queue = await this.assertQueue(queueName);
 
         let out = false;
         new Promise(() =>
@@ -91,18 +76,18 @@ class Rabbit
 
         if ('name' in data.data && (data.data.name.includes('Exception') ||
                                     data.data.name.includes('Error'    ) ))
-            throw eval('new ' + data.data.name + '(data.data.response);'); // throw data.data;
+            throw new BadRequestException(data.data.response);
 
         return data.data;
     }
 
-    setCmdConsumer(_this, exchangeName: string)
+    setCmdConsumer(_this, reqQueueName: string, resQueueName)
     {
         log('setCmdConsumer');
 
         return () =>
         {
-            RMQ.assertQueue(QueueNames.CMDs).then
+            RMQ.assertQueue(reqQueueName).then
             ((res) =>
                 RMQ.channel.consume( res.queue, ( msg ) =>
                 {
@@ -116,14 +101,14 @@ class Rabbit
 
                         const back = (res) =>
                         {
-                            RMQ.publishRes( exchangeName, { id_msg: message.id_msg, cmd: message.cmd, data: res } );
+                            RMQ.publishMessage( resQueueName, { id_msg: message.id_msg, cmd: message.cmd, data: res } );
                             RMQ.channel.ack( msg );
                         };
 
                         if ( deal instanceof Promise ) {
                             deal.then( back ).catch
                             ((ex) => {
-                                RMQ.publishRes( exchangeName, { id_msg: message.id_msg, cmd: message.cmd, data: ex } );
+                                RMQ.publishMessage( resQueueName, { id_msg: message.id_msg, cmd: message.cmd, data: ex } );
                                 RMQ.channel.ack( msg );
                             });
                         }
@@ -131,7 +116,7 @@ class Rabbit
                     }
                     catch (ex)
                     {
-                        RMQ.publishRes( exchangeName, { id_msg: message.id_msg, cmd: message.cmd, data: ex } );
+                        RMQ.publishMessage( resQueueName, { id_msg: message.id_msg, cmd: message.cmd, data: ex } );
                         RMQ.channel.ack( msg );
                     }
                 } )

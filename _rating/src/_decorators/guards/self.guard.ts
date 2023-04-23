@@ -18,7 +18,7 @@ export class RatingUsersSelfGuard extends RolesGuard {
 
         try {
             const req = context.switchToHttp().getRequest();
-            const user = checkAuth( req.headers.authorization );
+            const user = checkAuth( this.jwtService, req.headers.authorization );
 
             let idUser = req.params[`idUser`];
             if (!idUser) idUser = req.body.idUser;
