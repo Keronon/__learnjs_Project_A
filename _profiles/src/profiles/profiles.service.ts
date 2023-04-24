@@ -23,25 +23,26 @@ export class ProfilesService {
         RMQ.connect();
     }
 
-    async registration(registrationDto: RegistrationDto): Promise<{ token: string }>
+    async registration(registrationDto: RegistrationDto, roleName: string): Promise<{ token: string }>
     {
         log('registration');
 
-        const authData =
+        const regData =
         {
             email: registrationDto.email,
             password: registrationDto.password,
+            role: roleName
         };
 
-        // ! reg data -> Auth
+        // ! regData -> Auth
         const id_msg = uuid.v4();
         await RMQ.publishMessage(QueueNames.PA_cmd, {
             id_msg: id_msg,
             cmd: 'registration',
-            data: authData,
+            data: regData,
         });
 
-        // ! res <- Auth
+        // ! { token: string } <- Auth
         const res = await RMQ.acceptRes(QueueNames.PA_data, id_msg);
 
         const user = this.jwtService.verify(res.token);
@@ -51,7 +52,7 @@ export class ProfilesService {
         };
         await this.profilesDB.create(createProfileData);
 
-        return res; // { token: string }
+        return res;
     }
 
     async getProfileById(id: number): Promise<Profile> {

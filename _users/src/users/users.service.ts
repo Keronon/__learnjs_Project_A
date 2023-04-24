@@ -17,6 +17,22 @@ export class UsersService {
         RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.PU_cmd, QueueNames.PU_data));
     }
 
+    async createUser(dto: CreateUserDto): Promise<User> {
+        log('createUser');
+
+        const user = await this.usersDB.create(dto);
+        const role = await this.rolesService.getRoleByValue(dto.role);
+
+        if (!(role && user)) {
+            throw new NotFoundException({ message: 'User or role not found' });
+        }
+
+        await user.$set('role', role.id);
+        user.role = role;
+
+        return user;
+    }
+
     async getAllUsers(): Promise<User[]> {
         log('getAllUsers');
 
@@ -41,33 +57,6 @@ export class UsersService {
             where: { email },
             include: { all: true },
         });
-    }
-
-    async createUser(dto: CreateUserDto): Promise<User> {
-        log('createUser');
-
-        const user = await this.usersDB.create(dto);
-
-        // set role
-        const role = await this.rolesService.getRoleByValue('USER');
-        await user.$set('role', role.id);
-        user.role = role;
-
-        return user;
-    }
-
-    async setRole(id: number, roleName: {roleName: string}): Promise<User> {
-        log('setRole');
-
-        const user = await this.getUserById(id);
-        const role = await this.rolesService.getRoleByValue(roleName.roleName);
-
-        if (!(role && user)) {
-            throw new NotFoundException({ message: 'User or role not found' });
-        }
-
-        await user.$add('role', role.id);
-        return await this.getUserById(id);
     }
 
     async deleteUserById(id: number): Promise<number> {

@@ -10,9 +10,9 @@ import { BadRequestException,
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/auth.dto';
-import { CreateUserDto } from '../users/dto/create-user.dto';
 import { User } from '../users/users.struct';
 import { QueueNames, RMQ } from 'src/rabbit.core';
+import { RegistrationUserDto } from './dto/registration-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -25,22 +25,35 @@ export class AuthService {
     async login(authDto: AuthDto): Promise<{ token: string }> {
         log('login');
 
-        const user = await this.validateUser(authDto);
+        const user = await this.usersService.getUserByEmail(authDto.email);
+        if (!user) {
+            throw new NotFoundException({
+                message: 'Incorrect email',
+            });
+        }
+
+        const passwordEquals = await bcrypt.compare(authDto.password, user.password);
+        if (!passwordEquals) {
+            throw new ForbiddenException({
+                message: 'Incorrect password',
+            });
+        }
+
         return this.generateToken(user);
     }
 
-    async registration(authDto: AuthDto) {
+    async registration(regDto: RegistrationUserDto) {
         log('registration');
 
-        const candidate = await this.usersService.getUserByEmail(authDto.email);
+        const candidate = await this.usersService.getUserByEmail(regDto.email);
         if (candidate) {
             throw new BadRequestException({ message: 'User with this email already exists' });
         }
 
         // encryption : data, count of rounds (salt)
-        const hashPassword = await bcrypt.hash(authDto.password, 5);
+        const hashPassword = await bcrypt.hash(regDto.password, 5);
         const user = await this.usersService.createUser({
-            ...authDto,
+            ...regDto,
             password: hashPassword,
         });
 
@@ -54,25 +67,5 @@ export class AuthService {
         return {
             token: this.jwtService.sign(payload), // creates token
         };
-    }
-
-    private async validateUser(userDto: CreateUserDto) {
-        log('validateUser');
-
-        const user = await this.usersService.getUserByEmail(userDto.email);
-        if (!user) {
-            throw new NotFoundException({
-                message: 'Incorrect email',
-            });
-        }
-
-        const passwordEquals = await bcrypt.compare(userDto.password, user.password);
-        if (!passwordEquals) {
-            throw new ForbiddenException({
-                message: 'Incorrect password',
-            });
-        }
-
-        return user;
     }
 }

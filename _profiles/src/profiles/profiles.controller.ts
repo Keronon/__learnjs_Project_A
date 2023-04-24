@@ -12,18 +12,31 @@ import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
 import { Roles } from 'src/_decorators/roles-auth.decorator';
 import { RolesGuard } from 'src/_decorators/guards/roles.guard';
 
+enum RoleNames { Admin = 'ADMIN', User = 'USER' };
+
 @ApiTags('Профили пользователей')
 @Controller('api/profiles')
 export class ProfilesController {
     constructor(private profilesService: ProfilesService) {}
 
-    @ApiOperation({ summary: 'Регистрация нового аккаунта' })
+    @ApiOperation({ summary: 'Регистрация нового аккаунта пользователя' })
     @ApiBody({ required: true, type: RegistrationDto, description: 'Объект с данными для регистрации аккаунта' })
     @ApiResponse({ status: 200, schema: {example: {token: 'h123fgh213fh12j31jh23.h12g3h1'}} })
-    @Post('/registration')
-    registration(@Body() registrationDto: RegistrationDto): Promise<{ token: string }> {
-        log('registration');
-        return this.profilesService.registration(registrationDto);
+    @Post('/reg/user')
+    regUser(@Body() registrationDto: RegistrationDto): Promise<{ token: string }> {
+        log('regUser');
+        return this.profilesService.registration(registrationDto, RoleNames.User);
+    }
+
+    @ApiOperation({ summary: 'Регистрация нового аккаунта администратора' })
+    @ApiBody({ required: true, type: RegistrationDto, description: 'Объект с данными для регистрации аккаунта' })
+    @ApiResponse({ status: 200, schema: {example: {token: 'h123fgh213fh12j31jh23.h12g3h1'}} })
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
+    @Post('/reg/admin')
+    regAdmin(@Body() registrationDto: RegistrationDto): Promise<{ token: string }> {
+        log('regAdmin');
+        return this.profilesService.registration(registrationDto, RoleNames.Admin);
     }
 
     @ApiOperation({ summary: 'Получение профиля по его id' })
