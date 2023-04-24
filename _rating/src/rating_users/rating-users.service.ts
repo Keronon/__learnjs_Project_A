@@ -1,4 +1,3 @@
-
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Rating_users :`, data, colors.reset);
 
@@ -32,16 +31,21 @@ export class RatingUsersService {
         const idFilm = createRatingUserDto.idFilm;
         const idUser = createRatingUserDto.idUser;
 
-        await this.ratingFilmsService.createRatingUserToRatingFilm(idFilm, createRatingUserDto.rating);
-
         const ratingUser = await this.getRatingUserByFilmIdAndUserId(idFilm, idUser);
         if (ratingUser) {
+            await this.ratingFilmsService.createRatingUserToRatingFilm(
+                idFilm,
+                createRatingUserDto.rating,
+                ratingUser.rating,
+            );
+
             ratingUser.rating = createRatingUserDto.rating;
             await ratingUser.save();
 
             return ratingUser;
         }
 
+        await this.ratingFilmsService.createRatingUserToRatingFilm(idFilm, createRatingUserDto.rating);
         return await this.ratingUsersDB.create(createRatingUserDto);
     }
 }
