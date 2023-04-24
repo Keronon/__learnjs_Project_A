@@ -5,7 +5,7 @@ const log = (data: any) => console.log(colors.fg.yellow, `- - > C-Rating_films :
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RatingFilmsService } from './rating-films.service';
-import { RatingUsersSelfGuard } from './../_decorators/guards/self.guard';
+import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
 
 @ApiTags('Оценки фильмов')
 @Controller('api/rating-films')
@@ -15,7 +15,7 @@ export class RatingFilmsController {
     @ApiOperation({ summary: 'Получение количества пользовательских оценок по id фильма' })
     @ApiParam({ required: true, name: 'idFilm', description: 'id фильма', example: 1 })
     @ApiResponse({ status: 200, type: Number })
-    @UseGuards(RatingUsersSelfGuard)
+    @UseGuards(JwtAuthGuard)
     @Get(':idFilm')
     getRatingFilmCountByFilmId(@Param() idFilm: number): Promise<number> {
         log('getRatingFilmCountByFilmId');
