@@ -1,6 +1,7 @@
+import { RatingFilmsService } from './../rating_films/rating-films.service';
 
 import { colors } from '../console.colors';
-const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Rating_users :`, data, colors.reset );
+const log = (data: any) => console.log(colors.fg.blue, `- - > S-Rating_users :`, data, colors.reset);
 
 import { Injectable } from '@nestjs/common';
 import { CreateRatingUserDto } from './dto/create-rating-user.dto';
@@ -10,11 +11,12 @@ import { Op } from 'sequelize';
 
 @Injectable()
 export class RatingUsersService {
-    constructor(@InjectModel(RatingUser) private ratingUsersDB: typeof RatingUser) {}
+    constructor(
+        @InjectModel(RatingUser) private ratingUsersDB: typeof RatingUser,
+        private ratingFilmsService: RatingFilmsService,
+    ) {}
 
     async getRatingUserByFilmIdAndUserId(idFilm: number, idUser: number): Promise<RatingUser> {
-        // TODO : проверить токен-пользователь
-
         log('getRatingUserByFilmIdAndUserId');
 
         return await this.ratingUsersDB.findOne({
@@ -27,13 +29,11 @@ export class RatingUsersService {
     async сreateRatingUser(createRatingUserDto: CreateRatingUserDto): Promise<RatingUser> {
         log('createRatingUser');
 
-        // TODO : проверка на существование исходя из таблицы rating-films, тк там запись создаётся при создании фильма
         const idFilm = createRatingUserDto.idFilm;
-
-        // TODO : проверка на существование исходя из токена
         const idUser = createRatingUserDto.idUser;
 
-        // TODO : обновление записи в rating-films (и при изменении и при добавлении)
+        this.ratingFilmsService.createRatingUserToRatingFilm(idFilm, createRatingUserDto.rating);
+
         const ratingUser = await this.getRatingUserByFilmIdAndUserId(idFilm, idUser);
         if (ratingUser) {
             ratingUser.rating = createRatingUserDto.rating;

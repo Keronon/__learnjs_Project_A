@@ -7,7 +7,7 @@ import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/s
 import { RatingUsersService } from './rating-users.service';
 import { RatingUser } from './rating-users.struct';
 import { CreateRatingUserDto } from './dto/create-rating-user.dto';
-import { RatingUsersSelfGuard } from 'src/_decorators/guards/self.guard';
+import { RatingUsersSelfGuard } from './../_decorators/guards/self.guard';
 
 @ApiTags('Пользовательские оценки фильмов')
 @Controller('api/rating-users')
