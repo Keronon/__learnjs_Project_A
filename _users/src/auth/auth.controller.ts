@@ -21,7 +21,7 @@ export class AuthController {
     @ApiOperation({ summary: 'Авторизация' })
     @ApiBody({ type: AuthDto, description: 'Объект с данными для авторизации' })
     @ApiOkResponse({
-        schema: { example: { token: 'h123fgh213fh12j31jh23.h12g3h1' } },
+        schema: { example: {  idUser: 1, token: 'h123fgh213fh12j31jh23.h12g3h1' } },
         description: 'Успех. Ответ - токен',
     })
     @ApiNotFoundResponse({
