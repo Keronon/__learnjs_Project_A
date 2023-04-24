@@ -14,9 +14,9 @@ export class AuthController {
 
     @ApiOperation({ summary: 'Авторизация' })
     @ApiBody({ required: true, type: AuthDto, description: 'Объект с данными для авторизации' })
-    @ApiResponse({ status: 200, schema: {example: {token: 'h123fgh213fh12j31jh23.h12g3h1'}} })
+    @ApiResponse({ status: 200, schema: {example: {idUser: 1, token: 'h123fgh213fh12j31jh23.h12g3h1'}} })
     @Post('/login')
-    login(@Body() authDto: AuthDto): Promise<{ token: string }> {
+    login(@Body() authDto: AuthDto): Promise<{ idUser: number, token: string }> {
         log('login');
         return this.authService.login(authDto);
     }
