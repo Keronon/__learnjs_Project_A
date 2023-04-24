@@ -24,7 +24,7 @@ export class ProfilesService {
         RMQ.connect();
     }
 
-    async registration(registrationDto: RegistrationDto, roleName: string): Promise<{ token: string }>
+    async registration(registrationDto: RegistrationDto, roleName: string): Promise<{ idUser: number, token: string }>
     {
         log('registration');
 
@@ -35,17 +35,16 @@ export class ProfilesService {
             role: roleName
         };
 
-        // ! regData -> Auth -> { token: string }
+        // ! regData -> Auth -> { idUser: number, token: string }
         const res = await RMQ.publishReq(QueueNames.PA_cmd, QueueNames.PA_data, {
             id_msg: uuid.v4(),
             cmd: 'registration',
             data: regData,
         });
 
-        const user = this.jwtService.verify(res.token);
         const createProfileData = {
             profileName: registrationDto.profileName,
-            idUser: user.id,
+            idUser: res.idUser,
         };
         await this.profilesDB.create(createProfileData);
 

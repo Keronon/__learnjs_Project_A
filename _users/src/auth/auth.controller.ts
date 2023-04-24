@@ -9,7 +9,7 @@ import { ApiBody,
          ApiNotFoundResponse,
          ApiForbiddenResponse,
          ApiBadRequestResponse } from '@nestjs/swagger';
-import { Body, Controller, HttpStatus, Post, HttpCode } from '@nestjs/common';
+import { Body, Controller, Post, HttpCode } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 
@@ -43,7 +43,7 @@ export class AuthController {
     })
     @Post('/login')
     @HttpCode(200)
-    login(@Body() authDto: AuthDto): Promise<{ token: string }> {
+    login(@Body() authDto: AuthDto): Promise<{ idUser: number, token: string }> {
         log('login');
         return this.authService.login(authDto);
     }

@@ -22,11 +22,11 @@ export class ProfilesController {
     @ApiOperation({ summary: 'Регистрация нового аккаунта пользователя' })
     @ApiBody({ type: RegistrationDto, description: 'Объект с данными для регистрации аккаунта' })
     @ApiCreatedResponse({
-        schema: { example: { token: 'h123fgh213fh12j31jh23.h12g3h1' } },
+        schema: { example: { idUser: 1, token: 'h123fgh213fh12j31jh23.h12g3h1' } },
         description: 'Удачная регистрация. Ответ - токен',
     })
     @Post('/reg/user')
-    regUser(@Body() registrationDto: RegistrationDto): Promise<{ token: string }> {
+    regUser(@Body() registrationDto: RegistrationDto): Promise<{ idUser: number, token: string }> {
         log('regUser');
         return this.profilesService.registration(registrationDto, RoleNames.User);
     }
@@ -35,13 +35,13 @@ export class ProfilesController {
     @ApiOperation({ summary: 'Регистрация нового аккаунта администратора' })
     @ApiBody({ type: RegistrationDto, description: 'Объект с данными для регистрации аккаунта' })
     @ApiCreatedResponse({
-        schema: { example: { token: 'h123fgh213fh12j31jh23.h12g3h1' } },
+        schema: { example: { idUser: 1, token: 'h123fgh213fh12j31jh23.h12g3h1' } },
         description: 'Удачная регистрация. Ответ - токен',
     })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Post('/reg/admin')
-    regAdmin(@Body() registrationDto: RegistrationDto): Promise<{ token: string }> {
+    regAdmin(@Body() registrationDto: RegistrationDto): Promise<{ idUser: number, token: string }> {
         log('regAdmin');
         return this.profilesService.registration(registrationDto, RoleNames.Admin);
     }

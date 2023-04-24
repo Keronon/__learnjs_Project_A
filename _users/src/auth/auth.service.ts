@@ -22,7 +22,7 @@ export class AuthService {
         RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.PA_cmd, QueueNames.PA_data));
     }
 
-    async login(authDto: AuthDto): Promise<{ token: string }> {
+    async login(authDto: AuthDto): Promise<{ idUser: number, token: string }> {
         log('login');
 
         const user = await this.usersService.getUserByEmail(authDto.email);
@@ -39,7 +39,7 @@ export class AuthService {
             });
         }
 
-        return this.generateToken(user);
+        return { idUser: user.id, token: this.generateToken(user) };
     }
 
     async registration(regDto: RegistrationUserDto) {
@@ -57,15 +57,13 @@ export class AuthService {
             password: hashPassword,
         });
 
-        return await this.generateToken(user);
+        return { idUser: user.id, token: this.generateToken(user) };
     }
 
-    private async generateToken(user: User) {
+    private generateToken(user: User) {
         log('generateToken');
 
         const payload = { email: user.email, id: user.id, role: user.role };
-        return {
-            token: this.jwtService.sign(payload), // creates token
-        };
+        return this.jwtService.sign(payload); // creates token
     }
 }
