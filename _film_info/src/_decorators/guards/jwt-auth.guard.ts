@@ -1,6 +1,6 @@
 
 import { colors } from '../../console.colors';
-const log = ( data: any ) => console.log( colors.fg.crimson, `- - > GJwt-Profiles :`, data, colors.reset );
+const log = ( data: any ) => console.log( colors.fg.magenta, `- - > GJwt-Profiles :`, data, colors.reset );
 
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Observable } from 'rxjs';

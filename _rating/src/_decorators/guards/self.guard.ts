@@ -1,6 +1,6 @@
 
 import { colors } from '../../console.colors';
-const log = ( data: any ) => console.log( colors.fg.crimson, `- - > GS-Rating :`, data, colors.reset );
+const log = ( data: any ) => console.log( colors.fg.magenta, `- - > GS-Rating :`, data, colors.reset );
 
 import {
     ExecutionContext,
