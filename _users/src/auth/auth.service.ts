@@ -1,5 +1,5 @@
 
-import { colors } from '../console.colors';
+import { colors } from './../console.colors';
 const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Auth :`, data, colors.reset );
 
 import * as bcrypt from 'bcryptjs';
@@ -11,7 +11,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/auth.dto';
 import { User } from '../users/users.struct';
-import { QueueNames, RMQ } from 'src/rabbit.core';
+import { QueueNames, RMQ } from './../rabbit.core';
 import { RegistrationUserDto } from './dto/registration-user.dto';
 
 @Injectable()

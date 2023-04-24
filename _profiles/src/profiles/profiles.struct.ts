@@ -10,7 +10,7 @@ interface ProfileCreationAttrs {
 
 @Table({ tableName: 'profiles' })
 export class Profile extends Model<Profile, ProfileCreationAttrs> {
-    @ApiProperty({ example: '1', description: 'id профиля' })
+    @ApiProperty({ example: 1, description: 'id профиля' })
     @Column({
         type: DataType.INTEGER,
         unique: true,
@@ -27,7 +27,7 @@ export class Profile extends Model<Profile, ProfileCreationAttrs> {
     @Column({ type: DataType.STRING, unique: true, allowNull: true })
     imagePath: string;
 
-    @ApiProperty({ example: '1', description: 'id пользователя' })
+    @ApiProperty({ example: 1, description: 'id пользователя' })
     @Column({ type: DataType.INTEGER, unique: true, allowNull: false })
     idUser: number;
 

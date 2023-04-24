@@ -15,6 +15,7 @@ async function bootstrap() {
             'REST API документация для микросервиса профилей\n' +
             'Микросервис содержит функционал регистрации и управления профилями и комментариями',
         )
+        .addBearerAuth()
         .setVersion('1.0.0')
         .build();
     const document = SwaggerModule.createDocument(app, config);

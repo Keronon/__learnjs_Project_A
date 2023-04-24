@@ -15,6 +15,5 @@ export class RegistrationUserDto {
 
     @ApiProperty({ example: 'ADMIN', description: 'роль пользователя' })
     @IsString({ message: 'Must be a string' })
-    @Length(2, 12, { message: 'Must be longer then 2 and shorter then 12 symbols' })
     readonly role: string;
 }

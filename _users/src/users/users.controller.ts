@@ -1,34 +1,60 @@
+import { colors } from './../console.colors';
+const log = (data: any) => console.log(colors.fg.yellow, `- - > C-Users :`, data, colors.reset);
 
-import { colors } from 'src/console.colors';
-const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Users :`, data, colors.reset );
-
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+    ApiBearerAuth,
+    ApiForbiddenResponse,
+    ApiOkResponse,
+    ApiOperation,
+    ApiParam,
+    ApiTags,
+} from '@nestjs/swagger';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './users.struct';
-import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
 import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { Roles } from '../_decorators/roles-auth.decorator';
 
 @ApiTags('Пользователи')
+@ApiBearerAuth()
+@UseGuards(RolesGuard)
 @Controller('api/users')
 export class UsersController {
     constructor(private usersService: UsersService) {}
 
-    @ApiOperation({ summary: 'Получение массива всех пользователей' })
-    @ApiResponse({ status: 200, type: Array<User>, isArray: true })
+    @ApiOperation({ summary: 'Получение массива всех пользователей (ADMIN)' })
+    @ApiOkResponse({ type: [User], description: 'Успех. Ответ - массив пользователей' })
+    @ApiForbiddenResponse({
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
+    })
     @Roles('ADMIN')
-    @UseGuards(RolesGuard)
     @Get()
     getAllUsers(): Promise<User[]> {
         log('getAllUsers');
         return this.usersService.getAllUsers();
     }
 
-    @ApiOperation({ summary: 'Получение пользователя по его id' })
-    @ApiParam({ required: true, name: 'id', description: 'id пользователя', example: 1 })
-    @ApiResponse({ status: 200, type: User })
-    @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: 'Получение пользователя по его id (ADMIN)' })
+    @ApiParam({ name: 'id', description: 'id пользователя', example: 1 })
+    @ApiOkResponse({ type: User, description: 'Успех. Ответ - пользователь / ничего(не найден)' })
+    @ApiForbiddenResponse({
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
+    })
+    @Roles('ADMIN')
     @Get(':id')
     getUserById(@Param('id') id: number): Promise<User> {
         log('getUserById');

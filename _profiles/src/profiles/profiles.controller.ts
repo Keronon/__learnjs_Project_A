@@ -2,7 +2,7 @@
 import { colors } from 'src/console.colors';
 const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Profiles :`, data, colors.reset );
 
-import { ApiBody, ApiResponse, ApiOperation, ApiTags, ApiParam } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiOperation, ApiTags, ApiParam, ApiBearerAuth, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
 import { Body, Controller, Get, Param, Post, Delete, Put, UseGuards } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { Profile } from './profiles.struct';
@@ -20,17 +20,24 @@ export class ProfilesController {
     constructor(private profilesService: ProfilesService) {}
 
     @ApiOperation({ summary: 'Регистрация нового аккаунта пользователя' })
-    @ApiBody({ required: true, type: RegistrationDto, description: 'Объект с данными для регистрации аккаунта' })
-    @ApiResponse({ status: 200, schema: {example: {token: 'h123fgh213fh12j31jh23.h12g3h1'}} })
+    @ApiBody({ type: RegistrationDto, description: 'Объект с данными для регистрации аккаунта' })
+    @ApiCreatedResponse({
+        schema: { example: { token: 'h123fgh213fh12j31jh23.h12g3h1' } },
+        description: 'Удачная регистрация. Ответ - токен',
+    })
     @Post('/reg/user')
     regUser(@Body() registrationDto: RegistrationDto): Promise<{ token: string }> {
         log('regUser');
         return this.profilesService.registration(registrationDto, RoleNames.User);
     }
 
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Регистрация нового аккаунта администратора' })
-    @ApiBody({ required: true, type: RegistrationDto, description: 'Объект с данными для регистрации аккаунта' })
-    @ApiResponse({ status: 200, schema: {example: {token: 'h123fgh213fh12j31jh23.h12g3h1'}} })
+    @ApiBody({ type: RegistrationDto, description: 'Объект с данными для регистрации аккаунта' })
+    @ApiCreatedResponse({
+        schema: { example: { token: 'h123fgh213fh12j31jh23.h12g3h1' } },
+        description: 'Удачная регистрация. Ответ - токен',
+    })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Post('/reg/admin')
@@ -42,6 +49,7 @@ export class ProfilesController {
     @ApiOperation({ summary: 'Получение профиля по его id' })
     @ApiParam({ required: true, name: 'id', description: 'id профиля', example: 1 })
     @ApiResponse({ status: 200, type: Profile })
+    @ApiBearerAuth()
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Get(':id')
@@ -53,6 +61,7 @@ export class ProfilesController {
     @ApiOperation({ summary: 'Получение профиля по id пользователя, связанного с ним' })
     @ApiParam({ required: true, name: 'id', description: 'id пользователя', example: 1 })
     @ApiResponse({ status: 200, type: Profile })
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     @Get('/user/:id')
     getProfileByUserId(@Param('id') idUser: number): Promise<Profile> {
@@ -64,6 +73,7 @@ export class ProfilesController {
     @ApiParam({ required: true, name: 'id', description: 'id профиля', example: 1 })
     @ApiBody({ required: true, type: UpdateProfileDto, description: 'Объект с изменёнными полями профиля' })
     @ApiResponse({ status: 200, type: Profile })
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     @Put(":id")
     updateProfile(@Param("id") id: number, @Body() updateProfileDto: UpdateProfileDto): Promise<Profile> {
@@ -73,7 +83,8 @@ export class ProfilesController {
 
     @ApiOperation({ summary: 'Удаление аккаунта' })
     @ApiParam({ required: true, name: 'id', description: 'id профиля', example: 1 })
-    @ApiResponse({ status: 200, type: Number, description: "количество удалённых строк" })
+    @ApiOkResponse({ type: Number, description: "количество удалённых строк" })
+    @ApiBearerAuth()
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Delete(':id')
