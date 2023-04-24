@@ -8,8 +8,7 @@ import { RatingUsersService } from './rating-users.service';
 import { RatingUser } from './rating-users.struct';
 import { CreateRatingUserDto } from './dto/create-rating-user.dto';
 import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/_decorators/guards/roles.guard';
-import { Roles } from 'src/_decorators/roles-auth.decorator';
+import { RatingUsersSelfGuard } from 'src/_decorators/guards/self.guard';
 
 @ApiTags('Пользовательские оценки фильмов')
 @Controller('api/rating-users')
@@ -20,8 +19,7 @@ export class RatinUsersController {
     @ApiParam({ required: true, name: 'idFilm', description: 'id фильма', example: 1 })
     @ApiParam({ required: true, name: 'idUser', description: 'id пользователя', example: 1 })
     @ApiResponse({ status: 200, type: RatingUser })
-    @Roles('ADMIN')
-    @UseGuards(RolesGuard)
+    @UseGuards(RatingUsersSelfGuard)
     @Get('/film/:idFilm/user/:idUser')
     getRatingUserByFilmIdAndUserId(@Param() param: { idFilm: number; idUser: number }): Promise<RatingUser> {
         log('getRatingUserByFilmIdAndUserId');
@@ -29,7 +27,7 @@ export class RatinUsersController {
     }
 
     // FIXME : RatingUsersSelfGuard будет блокировать создание оценок пользователями
-    // - - - - он не подходит совсем
+    // - - - - он здесь не подходит
     // - - - - нужно иначе проверять принадлежность
     @ApiOperation({ summary: 'Создание/обновление пользовательской оценки фильма' })
     @ApiBody({
