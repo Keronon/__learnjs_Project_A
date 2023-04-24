@@ -1,12 +1,12 @@
-import { RatingFilmsService } from './../rating_films/rating-films.service';
 
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Rating_users :`, data, colors.reset);
 
 import { Injectable } from '@nestjs/common';
-import { CreateRatingUserDto } from './dto/create-rating-user.dto';
-import { RatingUser } from './rating-users.struct';
 import { InjectModel } from '@nestjs/sequelize';
+import { RatingUser } from './rating-users.struct';
+import { CreateRatingUserDto } from './dto/create-rating-user.dto';
+import { RatingFilmsService } from './../rating_films/rating-films.service';
 import { Op } from 'sequelize';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class RatingUsersService {
         const idFilm = createRatingUserDto.idFilm;
         const idUser = createRatingUserDto.idUser;
 
-        this.ratingFilmsService.createRatingUserToRatingFilm(idFilm, createRatingUserDto.rating);
+        await this.ratingFilmsService.createRatingUserToRatingFilm(idFilm, createRatingUserDto.rating);
 
         const ratingUser = await this.getRatingUserByFilmIdAndUserId(idFilm, idUser);
         if (ratingUser) {
