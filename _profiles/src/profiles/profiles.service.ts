@@ -23,7 +23,7 @@ export class ProfilesService {
         RMQ.connect();
     }
 
-    async registration(registrationDto: RegistrationDto): Promise<Profile>
+    async registration(registrationDto: RegistrationDto): Promise<{ token: string }>
     {
         log('registration');
 

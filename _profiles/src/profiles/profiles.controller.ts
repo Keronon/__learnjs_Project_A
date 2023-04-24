@@ -21,7 +21,7 @@ export class ProfilesController {
     @ApiBody({ required: true, type: RegistrationDto, description: 'Объект с данными для регистрации аккаунта' })
     @ApiResponse({ status: 200, schema: {example: {token: 'h123fgh213fh12j31jh23.h12g3h1'}} })
     @Post('/registration')
-    registration(@Body() registrationDto: RegistrationDto): Promise<Profile> {
+    registration(@Body() registrationDto: RegistrationDto): Promise<{ token: string }> {
         log('registration');
         return this.profilesService.registration(registrationDto);
     }

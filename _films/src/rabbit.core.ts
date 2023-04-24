@@ -81,7 +81,7 @@ class Rabbit
         return data.data;
     }
 
-    setCmdConsumer(_this, reqQueueName: string, resQueueName)
+    setCmdConsumer(_this, reqQueueName: string, resQueueName: string)
     {
         log('setCmdConsumer');
 
