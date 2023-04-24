@@ -40,7 +40,7 @@ class Rabbit
         return queue;
     }
 
-    async publishMessage(queueName: string, message: Message)
+    private async publishMessage(queueName: string, message: Message)
     {
         log('publishMessage');
 
@@ -48,6 +48,14 @@ class Rabbit
 
         this.channel.publish( exchangeName, queueName,
             Buffer.from( JSON.stringify( message ) ) );
+    }
+
+    async publishReq(reqQueueName: string, resQueueName: string, message: Message)
+    {
+        log('publishReq');
+
+        await this.publishMessage(reqQueueName, message);
+        return await this.acceptRes(resQueueName, message.id_msg);
     }
 
     async acceptRes( queueName: string, id_msg: string )

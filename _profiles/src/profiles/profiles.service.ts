@@ -5,6 +5,7 @@ const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Profiles :`, 
 import * as uuid from 'uuid';
 import {
     BadRequestException,
+    ConflictException,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
@@ -34,16 +35,12 @@ export class ProfilesService {
             role: roleName
         };
 
-        // ! regData -> Auth
-        const id_msg = uuid.v4();
-        await RMQ.publishMessage(QueueNames.PA_cmd, {
-            id_msg: id_msg,
+        // ! regData -> Auth -> { token: string }
+        const res = await RMQ.publishReq(QueueNames.PA_cmd, QueueNames.PA_data, {
+            id_msg: uuid.v4(),
             cmd: 'registration',
             data: regData,
         });
-
-        // ! { token: string } <- Auth
-        const res = await RMQ.acceptRes(QueueNames.PA_data, id_msg);
 
         const user = this.jwtService.verify(res.token);
         const createProfileData = {
@@ -97,13 +94,14 @@ export class ProfilesService {
             throw new NotFoundException({ message: 'Profile not found' });
         }
 
-        // ! del user -> User
+        // ! idUser -> User -> rows count
         const id_msg = uuid.v4();
-        await RMQ.publishMessage(QueueNames.PU_cmd, {
+        const res = await RMQ.publishReq(QueueNames.PU_cmd, QueueNames.PU_data, {
             id_msg: id_msg,
             cmd: 'deleteUserById',
             data: profile.idUser,
         });
+        if (res !== 1) throw new ConflictException({message: 'Can not delete user'});
 
         return await this.profilesDB.destroy({ where: { id } });
     }

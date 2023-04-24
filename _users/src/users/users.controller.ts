@@ -34,16 +34,4 @@ export class UsersController {
         log('getUserById');
         return this.usersService.getUserById(id);
     }
-
-    @ApiOperation({ summary: 'Установка роли пользователю' })
-    @ApiParam({ required: true, name: 'id', description: 'id пользователя', example: 1 })
-    @ApiBody({ required: true, schema: { description: 'Название роли', example: {roleName: "ADMIN"} }})
-    @ApiResponse({ status: 200, type: User })
-    @Roles('ADMIN')
-    @UseGuards(RolesGuard)
-    @Post('/:id/role')
-    setRole(@Param('id') id: number, @Body() roleName: {roleName: string}): Promise<User> {
-        log('addRole');
-        return this.usersService.setRole(id, roleName);
-    }
 }

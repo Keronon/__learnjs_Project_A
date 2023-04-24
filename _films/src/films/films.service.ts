@@ -3,7 +3,7 @@ import { colors } from '../console.colors';
 const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Films :`, data, colors.reset );
 
 import * as uuid from 'uuid';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { GenresService } from './../genres/genres.service';
 import { CountriesService } from './../countries/countries.service';
@@ -38,13 +38,13 @@ export class FilmsService {
             throw new BadRequestException({ message: 'Country not found' });
         }
 
-        // FIXME : Не выводится ошибка
-        createFilmDto.arrIdGenres.forEach(async (item) => {
-            const genre = await this.genresService.getGenreById(item);
+        for (const idGenre of createFilmDto.arrIdGenres)
+        {
+            const genre = await this.genresService.getGenreById(idGenre);
             if (!genre) {
-                throw new BadRequestException({ message: `Genre with id = ${item} not found` });
+                throw new BadRequestException({ message: `Genre with id = ${idGenre} not found` });
             }
-        });
+        }
 
         const film = await this.filmsDB.create(createFilmDto);
 
@@ -54,15 +54,20 @@ export class FilmsService {
             idFilm: film.id,
         };
 
-        // ! create film info -> FilmInfo
+        // ! filmInfoData -> FilmInfo -> filmInfo
         const id_msg = uuid.v4();
-        await RMQ.publishMessage(QueueNames.FFI_cmd, {
+        const res = await RMQ.publishReq(QueueNames.FFI_cmd, QueueNames.FFI_data, {
             id_msg: id_msg,
             cmd: 'createFilmInfo',
             data: filmInfoData,
         });
+        if (res !== 1)
+        {
+            await this.filmsDB.destroy({ where: { id: film.id } });
+            throw new ConflictException({message: 'Can not create film info'});
+        }
 
-        return film;
+        return res;
     }
 
     async updateFilm(updateFilmDto: UpdateFilmDto): Promise<Film> {
@@ -89,14 +94,15 @@ export class FilmsService {
             throw new BadRequestException({ message: 'Film not found' });
         }
 
-        // ! del film info -> FilmInfo
+        // ! idFilm -> FilmInfo -> rows count
         const id_msg = uuid.v4();
-        await RMQ.publishMessage(QueueNames.FFI_cmd, {
+        const res = await RMQ.publishReq(QueueNames.FFI_cmd, QueueNames.FFI_cmd, {
             id_msg: id_msg,
             cmd: 'deleteFilmInfoByFilmId',
             data: film.id,
         });
+        if (res !== 1) throw new ConflictException({message: 'Can not delete film info'});
 
-        return await this.filmsDB.destroy({ where: { id } });;
+        return await this.filmsDB.destroy({ where: { id } });
     }
 }
