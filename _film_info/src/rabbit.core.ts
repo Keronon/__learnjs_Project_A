@@ -3,7 +3,7 @@ import { colors } from './console.colors';
 const log = ( data: any ) => console.log( colors.fg.gray, `- - > R-Members :`, data, colors.reset );
 
 import * as amqp from 'amqplib';
-import { BadRequestException, ConflictException, RequestTimeoutException } from '@nestjs/common';
+import { HttpException, InternalServerErrorException, RequestTimeoutException } from '@nestjs/common';
 
 export interface Message { id_msg: string, cmd: string, data: any }
 
@@ -31,7 +31,7 @@ class Rabbit
     {
         log('assertQueue');
 
-        if ( !this.channel ) throw new ConflictException({ message: `No connection to rabbit channel` });
+        if ( !this.channel ) throw new InternalServerErrorException({ message: `No connection to rabbit channel` });
 
         // join data queue
         const queue = await RMQ.channel.assertQueue( queueName, queueOptions );
@@ -84,7 +84,7 @@ class Rabbit
 
         if ('name' in data.data && (data.data.name.includes('Exception') ||
                                     data.data.name.includes('Error'    ) ))
-            throw new BadRequestException(data.data.response);
+            throw new HttpException(data.data.response, data.data.status);
 
         return data.data;
     }
