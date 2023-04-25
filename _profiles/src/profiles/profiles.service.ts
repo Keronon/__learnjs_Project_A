@@ -7,6 +7,7 @@ import {
     BadRequestException,
     ConflictException,
     Injectable,
+    InternalServerErrorException,
     NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
@@ -41,6 +42,8 @@ export class ProfilesService {
             cmd: 'registration',
             data: regData,
         });
+        if (Object.keys(res).length === 0)
+            throw new InternalServerErrorException({message: 'Got empty or error response'});
 
         const createProfileData = {
             profileName: registrationDto.profileName,

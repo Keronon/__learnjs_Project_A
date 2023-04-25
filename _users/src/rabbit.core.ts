@@ -83,8 +83,9 @@ class Rabbit
         const data: Message = JSON.parse( ( msg.content.toString() ) );
         if ( data.id_msg === id_msg ) this.channel.ack( msg );
 
-        if ('name' in data.data && (data.data.name.includes('Exception') ||
-                                    data.data.name.includes('Error'    ) ))
+        if (data.data instanceof Object    &&
+            'name'    in         data.data &&
+            data.data.name.includes('Exception'))
             throw new HttpException(data.data.response, data.data.status);
 
         return data.data;
