@@ -6,7 +6,8 @@ import * as bcrypt from 'bcryptjs';
 import { BadRequestException,
          ForbiddenException,
          NotFoundException,
-         Injectable} from '@nestjs/common';
+         Injectable,
+         ConflictException} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/auth.dto';
@@ -47,7 +48,7 @@ export class AuthService {
 
         const candidate = await this.usersService.getUserByEmail(regDto.email);
         if (candidate) {
-            throw new BadRequestException({ message: 'User with this email already exists' });
+            throw new ConflictException({ message: 'User with this email already exists' });
         }
 
         // encryption : data, count of rounds (salt)

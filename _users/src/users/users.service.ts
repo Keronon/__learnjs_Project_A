@@ -61,6 +61,12 @@ export class UsersService {
 
     async deleteUserById(id: number): Promise<number> {
         log('deleteUserById');
+
+        const user = await this.getUserById(id);
+        if (!user) {
+            throw new NotFoundException({ message: 'User not found' });
+        }
+
         return await this.usersDB.destroy({ where: { id } });
     }
 }

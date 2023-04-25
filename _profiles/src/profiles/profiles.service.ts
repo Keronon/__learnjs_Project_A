@@ -3,13 +3,9 @@ import { colors } from '../console.colors';
 const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Profiles :`, data, colors.reset );
 
 import * as uuid from 'uuid';
-import {
-    BadRequestException,
-    ConflictException,
-    Injectable,
-    InternalServerErrorException,
-    NotFoundException,
-} from '@nestjs/common';
+import { Injectable,
+         InternalServerErrorException,
+         NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { JwtService } from '@nestjs/jwt';
 import { Profile } from './profiles.struct';
@@ -57,17 +53,15 @@ export class ProfilesService {
     async getProfileById(id: number): Promise<Profile> {
         log('getProfileById');
 
-        const profile = await this.profilesDB.findByPk(id);
-        return profile;
+        return await this.profilesDB.findByPk(id);
     }
 
-    async getProfileByUserId(id: number): Promise<Profile> {
+    async getProfileByUserId(idUser: number): Promise<Profile> {
         log('getProfileByUserId');
 
-        const profile = await this.profilesDB.findOne({
-            where: { idUser: id },
+        return await this.profilesDB.findOne({
+            where: { idUser },
         });
-        return profile;
     }
 
     async updateProfile(id: number, updateProfileDto: UpdateProfileDto): Promise<Profile> {
@@ -75,7 +69,7 @@ export class ProfilesService {
 
         const profile = await this.getProfileById(id);
         if (!profile) {
-            throw new BadRequestException({ message: 'Profile not found' });
+            throw new NotFoundException({ message: 'Profile not found' });
         }
 
         for (let key in updateProfileDto) {
@@ -103,7 +97,7 @@ export class ProfilesService {
             cmd: 'deleteUserById',
             data: profile.idUser,
         });
-        if (res !== 1) throw new ConflictException({message: 'Can not delete user'});
+        if (res !== 1) throw new InternalServerErrorException({message: 'Can not delete user'});
 
         return await this.profilesDB.destroy({ where: { id } });
     }

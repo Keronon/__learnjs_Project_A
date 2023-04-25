@@ -22,11 +22,11 @@ export class AuthController {
     @ApiBody({ type: AuthDto, description: 'Объект с данными для авторизации' })
     @ApiOkResponse({
         schema: { example: {  idUser: 1, token: 'h123fgh213fh12j31jh23.h12g3h1' } },
-        description: 'Успех. Ответ - токен',
+        description: 'Успех. Ответ - id пользователя и токен',
     })
     @ApiNotFoundResponse({
         schema: { example: { message: 'Incorrect email' } },
-        description: 'Пользователь с данным email не существует. Ответ - Error: Not Found',
+        description: 'Пользователь с данным email не найден. Ответ - Error: Not Found',
     })
     @ApiForbiddenResponse({
         schema: { example: { message: 'Incorrect password' } },

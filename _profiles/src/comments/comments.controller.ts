@@ -2,22 +2,23 @@
 import { colors } from 'src/console.colors';
 const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Comments :`, data, colors.reset );
 
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { Comment } from './comments.struct';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
 
-@ApiTags('Комментарии к фильмама')
-@UseGuards(JwtAuthGuard)
+@ApiTags('Комментарии к фильму')
 @Controller('api/comments')
 export class CommentsController {
     constructor(private commentsService: CommentsService) {}
 
+    @ApiBasicAuth()
     @ApiOperation({ summary: 'Создание нового комментария' })
     @ApiBody({ required: true, type: CreateCommentDto, description: 'Объект с данными для нового комментария' })
     @ApiResponse({ status: 200, type: Comment })
+    @UseGuards(JwtAuthGuard)
     @Post()
     createComment(@Body() createCommentDto: CreateCommentDto): Promise<Comment> {
         log('createComment');
