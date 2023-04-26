@@ -65,8 +65,8 @@ export class ProfilesService {
         return await this.convertProfileToGetProfileDto(profile);
     }
 
-    async updateProfile(accountDto: AccountDto): Promise<AccountDto> {
-        log('updateProfile');
+    async updateAccount(accountDto: AccountDto): Promise<AccountDto> {
+        log('updateAccount');
 
         const profile = await this.getProfileByIdWithoutConversion(accountDto.idProfile);
         if (!profile) {

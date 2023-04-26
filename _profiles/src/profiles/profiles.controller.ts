@@ -12,7 +12,8 @@ import { ApiBody,
          ApiBadRequestResponse,
          ApiConflictResponse,
          ApiForbiddenResponse,
-         ApiNotFoundResponse } from '@nestjs/swagger';
+         ApiNotFoundResponse,
+         ApiUnauthorizedResponse} from '@nestjs/swagger';
 import { Body, Controller, Get, Param, Post, Delete, Put, UseGuards } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { RegistrationDto } from './dto/registration.dto';
@@ -90,9 +91,9 @@ export class ProfilesController {
     @ApiOperation({ summary: 'Получение профиля по id' })
     @ApiParam({ name: 'id', description: 'id профиля', example: 1 })
     @ApiOkResponse({ type: GetProfileDto, description: 'Успех. Ответ - профиль пользователя / ничего(не найден)' })
-    @ApiForbiddenResponse({
-        schema: { example: { message: 'No access' } },
-        description: 'Неавторизованный пользователь. Ответ - Error: Forbidden',
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
     })
     @UseGuards(JwtAuthGuard)
     @Get(':id')
@@ -105,9 +106,9 @@ export class ProfilesController {
     @ApiOperation({ summary: 'Получение профиля по id пользователя, связанного с ним' })
     @ApiParam({ name: 'idUser', description: 'id пользователя', example: 1 })
     @ApiOkResponse({ type: GetProfileDto, description: 'Успех. Ответ - профиль пользователя / ничего(не найден)' })
-    @ApiForbiddenResponse({
-        schema: { example: { message: 'No access' } },
-        description: 'Неавторизованный пользователь. Ответ - Error: Forbidden',
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
     })
     @UseGuards(JwtAuthGuard)
     @Get('/user/:idUser')
@@ -137,15 +138,15 @@ export class ProfilesController {
         },
         description: 'Ошибки валидации. Ответ - Error: Bad Request',
     })
-    @ApiForbiddenResponse({
-        schema: { example: { message: 'No access' } },
-        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
     })
     @UseGuards(JwtAuthGuard)
     @Put()
-    updateProfile(@Body() accountDto: AccountDto): Promise<AccountDto> {
-        log('updateProfile');
-        return this.profilesService.updateProfile(accountDto);
+    updateAccount(@Body() accountDto: AccountDto): Promise<AccountDto> {
+        log('updateAccount');
+        return this.profilesService.updateAccount(accountDto);
     }
 
     @ApiBearerAuth()

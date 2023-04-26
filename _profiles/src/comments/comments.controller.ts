@@ -7,12 +7,12 @@ import { ApiBadRequestResponse,
          ApiBody,
          ApiConflictResponse,
          ApiCreatedResponse,
-         ApiForbiddenResponse,
          ApiNotFoundResponse,
          ApiOkResponse,
          ApiOperation,
          ApiParam,
-         ApiTags } from '@nestjs/swagger';
+         ApiTags,
+         ApiUnauthorizedResponse} from '@nestjs/swagger';
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { Comment } from './comments.struct';
@@ -45,9 +45,9 @@ export class CommentsController {
         schema: { example: { message: 'IdFilm of the comment and the previous comment do not match' } },
         description: 'Комментируемый комментарий и комментарий имеют разные idFilm. Ответ - Error: Conflict',
     })
-    @ApiForbiddenResponse({
-        schema: { example: { message: 'No access' } },
-        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
     })
     @UseGuards(JwtAuthGuard)
     @Post()
@@ -57,7 +57,7 @@ export class CommentsController {
     }
 
     @ApiOperation({ summary: 'Получение массива первичных комментариев к фильму' })
-    @ApiParam({ required: true, name: 'id', description: 'id фильма', example: 1 })
+    @ApiParam({ name: 'id', description: 'id фильма', example: 1 })
     @ApiOkResponse({ type: [Comment], description: 'Успех. Ответ - массив комментариев' })
     @Get('/film/:id')
     getCommentsByFilm(@Param('id') idFilm: number): Promise<Comment[]> {
@@ -66,7 +66,7 @@ export class CommentsController {
     }
 
     @ApiOperation({ summary: 'Получение дерева комментариев к комментарию' })
-    @ApiParam({ required: true, name: 'id', description: 'id первичного комментария', example: 1 })
+    @ApiParam({ name: 'id', description: 'id первичного комментария', example: 1 })
     @ApiOkResponse({ type: [Comment], description: 'Успех. Ответ - массив комментариев' })
     @Get('/comment/:id')
     getCommentsByComment(@Param('id') idComment: number): Promise<Comment[]> {
