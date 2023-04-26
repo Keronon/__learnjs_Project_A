@@ -16,22 +16,22 @@ export class JwtAuthGuard implements CanActivate {
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         log('canActivate');
 
-        try {
-            const user = checkAuth(this.jwtService, context.switchToHttp().getRequest().headers.authorization);
+        const user = checkAuth(this.jwtService, context.switchToHttp().getRequest().headers.authorization);
 
-            if (user) return true;
-            return false;
-        } catch (e) {
-            throw new ValidationException({
-                message: 'Service can not check authorization',
-            });
-        }
+        if (user) return true;
+        return false;
     }
 }
 
 export function checkAuth(jwtService: JwtService, authHeader)
 {
     log('checkAuth');
+
+    if (!authHeader) {
+        throw new UnauthorizedException({
+            message: 'User unauthorized',
+        });
+    }
 
     const [ token_type, token ] = authHeader.split(' ');
 
