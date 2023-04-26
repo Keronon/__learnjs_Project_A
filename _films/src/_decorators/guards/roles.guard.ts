@@ -1,6 +1,6 @@
 
 import { colors } from '../../console.colors';
-const log = ( data: any ) => console.log( colors.fg.magenta, `- - > GR-Profiles :`, data, colors.reset );
+const log = ( data: any ) => console.log( colors.fg.magenta, `- - > GR-Films :`, data, colors.reset );
 
 import {
     CanActivate,

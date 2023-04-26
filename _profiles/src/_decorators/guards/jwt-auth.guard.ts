@@ -5,7 +5,6 @@ const log = ( data: any ) => console.log( colors.fg.magenta, `- - > GJwt-Profile
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { JwtService } from '@nestjs/jwt';
-import { ValidationException } from 'src/_exceptions/validation.exception';
 
 // blocks unauthorized users
 @Injectable()
@@ -26,20 +25,11 @@ export class JwtAuthGuard implements CanActivate {
 export function checkAuth(jwtService: JwtService, authHeader)
 {
     log('checkAuth');
-
-    if (!authHeader) {
-        throw new UnauthorizedException({
-            message: 'User unauthorized',
-        });
+    try {
+        const [ token_type, token ] = authHeader.split(' ');
+        if (token_type !== 'Bearer') throw new Error();
+        return jwtService.verify(token); // check and decode token
+    } catch {
+        throw new UnauthorizedException({ message: 'User unauthorized' });
     }
-
-    const [ token_type, token ] = authHeader.split(' ');
-
-    if (token_type !== 'Bearer' || !token) {
-        throw new UnauthorizedException({
-            message: 'User unauthorized',
-        });
-    }
-
-    return jwtService.verify(token); // check and decode token
 }

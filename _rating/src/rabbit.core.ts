@@ -1,6 +1,6 @@
 
 import { colors } from './console.colors';
-const log = ( data: any ) => console.log( colors.fg.gray, `- - > R-Members :`, data, colors.reset );
+const log = ( data: any ) => console.log( colors.fg.gray, `- - > R-Rating :`, data, colors.reset );
 
 import * as amqp from 'amqplib';
 import { RequestTimeoutException, InternalServerErrorException, HttpException } from '@nestjs/common';
