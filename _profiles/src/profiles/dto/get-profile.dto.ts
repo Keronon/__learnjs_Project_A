@@ -1,4 +1,5 @@
 
+import { StreamableFile } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsString, Length } from 'class-validator';
 
@@ -12,9 +13,9 @@ export class GetProfileDto {
     @Length(4, 64, { message: 'Must be longer then 4 and shorter then 64 symbols' })
     readonly profileName: string;
 
-    @ApiProperty({ example: 'avatar.png', description: 'аватар пользователя' })
-    @IsString({ message: 'Must be a string' })
-    readonly image: string;
+    @ApiProperty({ type: StreamableFile, description: `поток с файлом аватара для пользователя,
+при нарушении подготовки файла возвращает string: '< ! файл не найден ! >'` })
+    readonly image: StreamableFile | string;
 
     @ApiProperty({ example: 1, description: 'id пользователя' })
     @IsNumber({}, { message: 'Must be a number' })

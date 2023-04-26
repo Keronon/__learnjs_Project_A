@@ -33,7 +33,7 @@ export class Member extends Model<Member, MemberCreationAttrs> {
 
     @ApiProperty({ example: './static/ss343f3f2.jpg', description: 'фото работника' })
     @Column({ type: DataType.STRING, unique: true })
-    imagePath: string;
+    imageName: string;
 
     @HasMany(() => FilmMember)
     filmMember: FilmMember[];

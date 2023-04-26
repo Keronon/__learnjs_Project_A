@@ -25,7 +25,7 @@ export class Profile extends Model<Profile, ProfileCreationAttrs> {
 
     @ApiProperty({ example: './static/u12dflf.png', description: 'путь к аватару пользователя' })
     @Column({ type: DataType.STRING, unique: true, allowNull: true })
-    imagePath: string;
+    imageName: string;
 
     @ApiProperty({ example: 1, description: 'id пользователя' })
     @Column({ type: DataType.INTEGER, unique: true, allowNull: false })

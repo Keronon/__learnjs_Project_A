@@ -10,6 +10,7 @@ import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
 import { QueueNames, RMQ } from 'src/rabbit.core';
 import { GetProfileDto } from './dto/get-profile.dto';
+import { addFile, getStreamableFile } from 'src/files.core';
 
 @Injectable()
 export class ProfilesService {
@@ -17,7 +18,7 @@ export class ProfilesService {
         RMQ.connect();
     }
 
-    async registration(registrationDto: RegistrationDto, roleName: string): Promise<{ idUser: number; token: string }> {
+    async registration(registrationDto: RegistrationDto, roleName: string, image: any): Promise<{ idUser: number; token: string }> {
         log('registration');
 
         const regData = {
@@ -40,6 +41,7 @@ export class ProfilesService {
             idUser: res.idUser,
         };
         await this.profilesDB.create(createProfileData);
+        addFile(image);
 
         return res;
     }
@@ -53,7 +55,7 @@ export class ProfilesService {
         log('getProfileById');
 
         const profile = await this.profilesDB.findByPk(id);
-        return await this.convertProfileToGetProfileDto(profile);
+        return this.convertProfileToGetProfileDto(profile);
     }
 
     async getProfileByUserId(idUser: number): Promise<GetProfileDto> {
@@ -62,10 +64,11 @@ export class ProfilesService {
         const profile = await this.profilesDB.findOne({
             where: { idUser },
         });
-        return await this.convertProfileToGetProfileDto(profile);
+
+        return this.convertProfileToGetProfileDto(profile);
     }
 
-    async updateAccount(accountDto: AccountDto): Promise<AccountDto> {
+    async updateAccount(accountDto: AccountDto, image: any): Promise<AccountDto> {
         log('updateAccount');
 
         const profile = await this.getProfileByIdWithoutConversion(accountDto.idProfile);
@@ -109,16 +112,17 @@ export class ProfilesService {
         return await this.profilesDB.destroy({ where: { id } });
     }
 
-    private async convertProfileToGetProfileDto(profile): Promise<GetProfileDto> {
+    private convertProfileToGetProfileDto(profile: Profile): GetProfileDto
+    {
         log('convertProfileToGetProfileDto');
 
-        const getProfileData = {
+        const dto = {
             id: profile.id,
             profileName: profile.profileName,
-            image: 'avatar.png', // TODO : convert image path to image
+            image: getStreamableFile(profile.imageName ?? '_no_avatar.png'),
             idUser: profile.idUser,
         };
 
-        return getProfileData;
+        return dto;
     }
 }

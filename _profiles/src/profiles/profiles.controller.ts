@@ -14,7 +14,8 @@ import { ApiBody,
          ApiForbiddenResponse,
          ApiNotFoundResponse,
          ApiUnauthorizedResponse} from '@nestjs/swagger';
-import { Body, Controller, Get, Param, Post, Delete, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Delete, Put, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ProfilesService } from './profiles.service';
 import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
@@ -49,10 +50,11 @@ export class ProfilesController {
         },
         description: 'Ошибки валидации. Ответ - Error: Bad Request',
     })
+    @UseInterceptors(FileInterceptor( 'image' ))
     @Post('/reg/user')
-    regUser(@Body() registrationDto: RegistrationDto): Promise<{ idUser: number, token: string }> {
+    regUser(@Body() registrationDto: RegistrationDto, @UploadedFile() image): Promise<{ idUser: number, token: string }> {
         log('regUser');
-        return this.profilesService.registration(registrationDto, RoleNames.User);
+        return this.profilesService.registration(registrationDto, RoleNames.User, image);
     }
 
     @ApiBearerAuth()
@@ -81,10 +83,11 @@ export class ProfilesController {
     })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
+    @UseInterceptors(FileInterceptor( 'image' ))
     @Post('/reg/admin')
-    regAdmin(@Body() registrationDto: RegistrationDto): Promise<{ idUser: number, token: string }> {
+    regAdmin(@Body() registrationDto: RegistrationDto, @UploadedFile() image): Promise<{ idUser: number, token: string }> {
         log('regAdmin');
-        return this.profilesService.registration(registrationDto, RoleNames.Admin);
+        return this.profilesService.registration(registrationDto, RoleNames.Admin, image);
     }
 
     @ApiBearerAuth()
@@ -143,10 +146,11 @@ export class ProfilesController {
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
     })
     @UseGuards(JwtAuthGuard)
+    @UseInterceptors(FileInterceptor( 'image' ))
     @Put()
-    updateAccount(@Body() accountDto: AccountDto): Promise<AccountDto> {
+    updateAccount(@Body() accountDto: AccountDto, @UploadedFile() image): Promise<AccountDto> {
         log('updateAccount');
-        return this.profilesService.updateAccount(accountDto);
+        return this.profilesService.updateAccount(accountDto, image);
     }
 
     @ApiBearerAuth()
