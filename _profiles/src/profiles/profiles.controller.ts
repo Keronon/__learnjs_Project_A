@@ -128,6 +128,15 @@ export class ProfilesController {
         schema: { example: { message: 'User with this email already exists' } },
         description: 'Пользователь с данным email уже существует. Ответ - Error: Conflict',
     })
+    @ApiBadRequestResponse({
+        schema: {
+            example: [
+                'profileName - Must be longer then 4 and shorter then 64 symbols',
+                'email - Incorrect email',
+            ],
+        },
+        description: 'Ошибки валидации. Ответ - Error: Bad Request',
+    })
     @ApiForbiddenResponse({
         schema: { example: { message: 'No access' } },
         description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',

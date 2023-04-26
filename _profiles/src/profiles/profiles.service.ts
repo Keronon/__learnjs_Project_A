@@ -44,11 +44,16 @@ export class ProfilesService {
         return res;
     }
 
+    async getProfileByIdWithoutConversion(id: number): Promise<Profile> {
+        log('getProfileByIdWithoutConversion');
+        return await this.profilesDB.findByPk(id);
+    }
+
     async getProfileById(id: number): Promise<GetProfileDto> {
         log('getProfileById');
 
         const profile = await this.profilesDB.findByPk(id);
-        return this.convertProfileToGetProfileDto(profile);
+        return await this.convertProfileToGetProfileDto(profile);
     }
 
     async getProfileByUserId(idUser: number): Promise<GetProfileDto> {
@@ -57,7 +62,7 @@ export class ProfilesService {
         const profile = await this.profilesDB.findOne({
             where: { idUser },
         });
-        return this.convertProfileToGetProfileDto(profile);
+        return await this.convertProfileToGetProfileDto(profile);
     }
 
     async updateProfile(accountDto: AccountDto): Promise<AccountDto> {
@@ -104,12 +109,7 @@ export class ProfilesService {
         return await this.profilesDB.destroy({ where: { id } });
     }
 
-    private async getProfileByIdWithoutConversion(id: number): Promise<Profile> {
-        log('getProfileByIdWithoutConversion');
-        return await this.profilesDB.findByPk(id);
-    }
-
-    private convertProfileToGetProfileDto(profile): GetProfileDto {
+    private async convertProfileToGetProfileDto(profile): Promise<GetProfileDto> {
         log('convertProfileToGetProfileDto');
 
         const getProfileData = {

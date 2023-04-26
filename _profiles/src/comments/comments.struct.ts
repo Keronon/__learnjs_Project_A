@@ -6,7 +6,9 @@ import { Profile } from 'src/profiles/profiles.struct';
 interface CommentCreationAttrs {
     idFilm: number;
     idProfile: number;
+    title: string;
     text: string;
+    prevId: number;
 }
 
 @Table({ tableName: 'comments' })
