@@ -7,12 +7,11 @@ import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/s
 import { RatingUsersService } from './rating-users.service';
 import { RatingUser } from './rating-users.struct';
 import { CreateRatingUserDto } from './dto/create-rating-user.dto';
-import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
 import { RatingUsersSelfGuard } from 'src/_decorators/guards/self.guard';
 
 @ApiTags('Пользовательские оценки фильмов')
 @Controller('api/rating-users')
-export class RatinUsersController {
+export class RatingUsersController {
     constructor(private ratingUsersService: RatingUsersService) {}
 
     @ApiOperation({ summary: 'Получение оценки по id фильма и пользователя' })
