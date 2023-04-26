@@ -41,7 +41,7 @@ export function getFile(fileName: string)
     //const file = fs.createReadStream(fileName);
     //return new StreamableFile(file);
     return {
-        extension: fileName.substring(fileName.lastIndexOf('.') + 1),
+        fileName: fileName,
         base64: fs.readFileSync(fileName).toString('base64')
     };
 }

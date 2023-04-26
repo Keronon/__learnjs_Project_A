@@ -39,7 +39,7 @@ export function getFile(fileName: string)
     if (!fs.existsSync(fileName)) return '< ! файл не найден ! >';
 
     return {
-        extension: fileName.substring(fileName.lastIndexOf('.') + 1),
+        fileName: fileName,
         base64: fs.readFileSync(fileName).toString('base64')
     };
 }
