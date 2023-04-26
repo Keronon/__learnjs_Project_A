@@ -2,11 +2,12 @@
 import { colors } from '../console.colors';
 const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Users :`, data, colors.reset );
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { RolesService } from './../roles/roles.service';
 import { User } from './users.struct';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { QueueNames, RMQ } from 'src/rabbit.core';
 
 @Injectable()
@@ -57,6 +58,25 @@ export class UsersService {
             where: { email },
             include: { all: true },
         });
+    }
+
+    async updateUser(updateUserDto: UpdateUserDto): Promise<User> {
+        log('updateUser');
+
+        const user = await this.getUserById(updateUserDto.id);
+        if (!user) {
+            throw new NotFoundException({ message: 'User not found' });
+        }
+
+        const userWithSameEmail = await this.getUserByEmail(updateUserDto.email);
+        if (userWithSameEmail && userWithSameEmail.id !== user.id) {
+            throw new ConflictException({ message: 'User with this email already exists' });
+        }
+
+        user.email = updateUserDto.email;
+        await user.save();
+
+        return user;
     }
 
     async deleteUserById(id: number): Promise<number> {

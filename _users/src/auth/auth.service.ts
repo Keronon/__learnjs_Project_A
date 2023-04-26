@@ -46,8 +46,8 @@ export class AuthService {
     async registration(regDto: RegistrationUserDto) {
         log('registration');
 
-        const candidate = await this.usersService.getUserByEmail(regDto.email);
-        if (candidate) {
+        const userWithSameEmail = await this.usersService.getUserByEmail(regDto.email);
+        if (userWithSameEmail) {
             throw new ConflictException({ message: 'User with this email already exists' });
         }
 
