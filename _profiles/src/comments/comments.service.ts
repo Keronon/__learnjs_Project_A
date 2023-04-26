@@ -45,7 +45,6 @@ export class CommentsService {
                 cmd: 'checkExistenceFilmById',
                 data: createCommentDto.idFilm,
             });
-            console.log("Res = " + res);
             if (!res) throw new NotFoundException({ message: 'Film not found' });
         }
 
