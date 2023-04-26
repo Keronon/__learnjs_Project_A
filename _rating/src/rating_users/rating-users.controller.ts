@@ -2,7 +2,7 @@
 import { colors } from '../console.colors';
 const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Rating_users :`, data, colors.reset );
 
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RatingUsersService } from './rating-users.service';
 import { RatingUser } from './rating-users.struct';
@@ -26,9 +26,6 @@ export class RatinUsersController {
         return this.ratingUsersService.getRatingUserByFilmIdAndUserId(param.idFilm, param.idUser);
     }
 
-    // FIXME : RatingUsersSelfGuard будет блокировать создание оценок пользователями
-    // - - - - он здесь не подходит
-    // - - - - нужно иначе проверять принадлежность
     @ApiOperation({ summary: 'Создание/обновление пользовательской оценки фильма' })
     @ApiBody({
         required: true,
@@ -36,10 +33,9 @@ export class RatinUsersController {
         description: 'Объект с данными для создания/обновления пользовательской оценки фильма',
     })
     @ApiResponse({ status: 200, type: RatingUser })
-    @UseGuards(JwtAuthGuard)
     @Post()
-    сreateRatingUser(@Body() createRatingUserDto: CreateRatingUserDto): Promise<RatingUser> {
+    сreateRatingUser(@Headers('Authorization') authHeader, @Body() createRatingUserDto: CreateRatingUserDto): Promise<RatingUser> {
         log('createRatingUser');
-        return this.ratingUsersService.сreateRatingUser(createRatingUserDto);
+        return this.ratingUsersService.сreateRatingUser(authHeader, createRatingUserDto);
     }
 }

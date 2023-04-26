@@ -38,7 +38,7 @@ export class RatingFilmsService {
         return await this.ratingFilmsDB.create(ratingFilmData);
     }
 
-    async createRatingUserToRatingFilm(
+    async onCreateRatingUser(
         idFilm: number,
         newRatingUser: number,
         oldRatingUser: number = 0,
