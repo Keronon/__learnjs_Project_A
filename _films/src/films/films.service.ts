@@ -19,7 +19,7 @@ export class FilmsService {
         private countriesService: CountriesService,
         private genresService: GenresService,
     ) {
-        RMQ.connect();
+        RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.CF_cmd, QueueNames.CF_data));
     }
 
     async getFilmById(id: number): Promise<Film> {
@@ -54,7 +54,7 @@ export class FilmsService {
             idFilm: film.id,
         };
 
-        // ! filmInfoData -> FilmInfo -> filmInfo
+        // ! filmInfoData -> micro FilmInfo -> filmInfo
         const id_msg = uuid.v4();
         const res = await RMQ.publishReq(QueueNames.FFI_cmd, QueueNames.FFI_data, {
             id_msg: id_msg,
@@ -94,7 +94,7 @@ export class FilmsService {
             throw new BadRequestException({ message: 'Film not found' });
         }
 
-        // ! idFilm -> FilmInfo -> rows count
+        // ! idFilm -> micro FilmInfo -> rows count
         const id_msg = uuid.v4();
         const res = await RMQ.publishReq(QueueNames.FFI_cmd, QueueNames.FFI_cmd, {
             id_msg: id_msg,
@@ -104,5 +104,10 @@ export class FilmsService {
         if (res !== 1) throw new ConflictException({message: 'Can not delete film info'});
 
         return await this.filmsDB.destroy({ where: { id } });
+    }
+
+    async checkExistenceFilmById(id: number) {
+        log('checkExistenceFilm');
+        return (await this.getFilmById(id)) ? true : false;
     }
 }
