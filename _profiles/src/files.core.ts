@@ -6,7 +6,7 @@ import * as fs   from 'fs';
 import * as uuid from 'uuid';
 
 import { colors } from './console.colors';
-import { InternalServerErrorException, StreamableFile } from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
 
 export function addFile(file: any)
 {
@@ -29,17 +29,21 @@ export function addFile(file: any)
     }
 }
 
-export function getStreamableFile(fileName: string)
+export function getFile(fileName: string)
 {
-    log('getStreamableFile');
+    log('getFile');
 
     const f_path = path.resolve( __dirname, '..', '_images' );
     fileName = path.join(f_path, fileName);
 
     if (!fs.existsSync(fileName)) return '< ! файл не найден ! >';
 
-    const file = fs.createReadStream(fileName);
-    return new StreamableFile(file);
+    //const file = fs.createReadStream(fileName);
+    //return new StreamableFile(file);
+    return {
+        extension: fileName.substring(fileName.lastIndexOf('.') + 1),
+        base64: fs.readFileSync(fileName).toString('base64')
+    };
 }
 
 export function deleteFile(fileName: string)

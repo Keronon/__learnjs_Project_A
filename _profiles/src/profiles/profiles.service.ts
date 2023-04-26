@@ -10,7 +10,7 @@ import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
 import { QueueNames, RMQ } from 'src/rabbit.core';
 import { GetProfileDto } from './dto/get-profile.dto';
-import { addFile, getStreamableFile } from 'src/files.core';
+import { addFile, getFile } from 'src/files.core';
 
 @Injectable()
 export class ProfilesService {
@@ -119,7 +119,7 @@ export class ProfilesService {
         const dto = {
             id: profile.id,
             profileName: profile.profileName,
-            image: getStreamableFile(profile.imageName ?? '_no_avatar.png'),
+            image: getFile(profile.imageName ?? '_no_avatar.png'),
             idUser: profile.idUser,
         };
 
