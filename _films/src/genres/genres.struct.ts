@@ -1,8 +1,7 @@
-
 import { Model, Table, Column, DataType, BelongsToMany } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { Film } from '../films/films.struct';
-import { FilmGenre } from './film-genres.struct';
+import { FilmGenre } from '../film_genres/film-genres.struct';
 
 interface GenreCreationAttrs {
     nameRU: string;

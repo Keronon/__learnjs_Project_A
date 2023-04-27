@@ -2,20 +2,23 @@
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Rating_films :`, data, colors.reset);
 
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { RatingFilm } from './rating-films.struct';
+import { QueueNames, RMQ } from '../rabbit.core';
 
 @Injectable()
 export class RatingFilmsService {
-    constructor(@InjectModel(RatingFilm) private ratingFilmsDB: typeof RatingFilm) {}
+    constructor(@InjectModel(RatingFilm) private ratingFilmsDB: typeof RatingFilm) {
+        RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.FRF_cmd, QueueNames.FRF_data));
+    }
 
     async getRatingFilmCountByFilmId(idFilm: number): Promise<number> {
         log('getRatingFilmCountByFilmId');
 
         const ratingFilm = await this.getRatingFilmByFilmId(idFilm);
         if (!ratingFilm) {
-            throw new BadRequestException({ message: 'Rating film not found' });
+            throw new NotFoundException({ message: 'Rating film not found' });
         }
 
         return ratingFilm.count;
@@ -25,7 +28,7 @@ export class RatingFilmsService {
         log('createRatingFilm');
 
         if (await this.checkExistenceRating(idFilm)) {
-            throw new BadRequestException({ message: 'This rating film already exists' });
+            throw new ConflictException({ message: 'This rating film already exists' });
         }
 
         const ratingFilmData = {
@@ -43,11 +46,11 @@ export class RatingFilmsService {
         newRatingUser: number,
         oldRatingUser: number = 0,
     ): Promise<RatingFilm> {
-        log('createRatingUserToRatingFilm');
+        log('onCreateRatingUser');
 
         const ratingFilm = await this.getRatingFilmByFilmId(idFilm);
         if (!ratingFilm) {
-            throw new BadRequestException({ message: 'Rating film not found' });
+            throw new NotFoundException({ message: 'Rating film not found' });
         }
 
         let sumRatings: number;
@@ -73,7 +76,7 @@ export class RatingFilmsService {
         log('deleteRatingFilmByFilmId');
 
         if (!(await this.checkExistenceRating(idFilm))) {
-            throw new BadRequestException({ message: 'Rating film not found' });
+            throw new NotFoundException({ message: 'Rating film not found' });
         }
 
         return await this.ratingFilmsDB.destroy({ where: { idFilm } });

@@ -1,9 +1,8 @@
-
 import { Model, Table, Column, DataType, BelongsToMany, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { Country } from '../countries/countries.struct';
 import { Genre } from '../genres/genres.struct';
-import { FilmGenre } from '../genres/film-genres.struct';
+import { FilmGenre } from '../film_genres/film-genres.struct';
 
 interface FilmCreationAttrs {
     nameRU: string;
@@ -11,13 +10,12 @@ interface FilmCreationAttrs {
     year: number;
     ageRating: string;
     duration: number;
-    imagePath: string;
     idCountry: number;
 }
 
 @Table({ tableName: 'films' })
 export class Film extends Model<Film, FilmCreationAttrs> {
-    @ApiProperty({ example: '1', description: 'id фильма' })
+    @ApiProperty({ example: 1, description: 'id фильма' })
     @Column({
         type: DataType.INTEGER,
         unique: true,
@@ -54,7 +52,7 @@ export class Film extends Model<Film, FilmCreationAttrs> {
     @Column({ type: DataType.STRING, unique: true, allowNull: true })
     imageName: string;
 
-    @ApiProperty({ example: '1', description: 'id страны' })
+    @ApiProperty({ example: 1, description: 'id страны' })
     @Column({ type: DataType.INTEGER })
     @ForeignKey(() => Country)
     idCountry: number;
@@ -63,5 +61,5 @@ export class Film extends Model<Film, FilmCreationAttrs> {
     country: Country;
 
     @BelongsToMany(() => Genre, () => FilmGenre)
-    films: Film[];
+    genres: Genre[];
 }

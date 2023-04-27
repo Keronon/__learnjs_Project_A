@@ -1,4 +1,3 @@
-
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
@@ -6,10 +5,11 @@ import { JwtGlobalModule } from './jwt.module';
 import { FilmsModule } from './films/films.module';
 import { GenresModule } from './genres/genres.module';
 import { CountriesModule } from './countries/countries.module';
+import { FilmGenresModule } from './film_genres/film-genres.module';
 import { Film } from './films/films.struct';
 import { Genre } from './genres/genres.struct';
 import { Country } from './countries/countries.struct';
-import { FilmGenre } from './genres/film-genres.struct';
+import { FilmGenre } from './film_genres/film-genres.struct';
 
 @Module({
     controllers: [],
@@ -33,6 +33,7 @@ import { FilmGenre } from './genres/film-genres.struct';
         FilmsModule,
         GenresModule,
         CountriesModule,
+        FilmGenresModule,
     ],
 })
 export class AppModule {}
