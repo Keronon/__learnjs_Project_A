@@ -12,7 +12,7 @@ interface FilmMemberCreationAttrs {
 
 @Table({ tableName: 'members' })
 export class FilmMember extends Model<FilmMember, FilmMemberCreationAttrs> {
-    @ApiProperty({ example: '1', description: 'id участвовавшего в фильме' })
+    @ApiProperty({ example: 1, description: 'id участвовавшего в фильме' })
     @Column({
         type: DataType.INTEGER,
         unique: true,
@@ -21,16 +21,16 @@ export class FilmMember extends Model<FilmMember, FilmMemberCreationAttrs> {
     })
     id: number;
 
-    @ApiProperty({ example: '1', description: 'id фильма' })
+    @ApiProperty({ example: 1, description: 'id фильма' })
     @Column({ type: DataType.INTEGER, allowNull: false })
     idFilm: number;
 
-    @ApiProperty({ example: '1', description: 'id работника' })
+    @ApiProperty({ example: 1, description: 'id работника' })
     @Column({ type: DataType.INTEGER })
     @ForeignKey(() => Member)
     idMember: number;
 
-    @ApiProperty({ example: '1', description: 'id профессии' })
+    @ApiProperty({ example: 1, description: 'id профессии' })
     @Column({ type: DataType.INTEGER })
     @ForeignKey(() => Profession)
     idProfession: number;

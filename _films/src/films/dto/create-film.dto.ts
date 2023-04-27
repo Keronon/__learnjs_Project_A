@@ -34,7 +34,7 @@ export class CreateFilmDto {
     @IsString({ message: 'Must be a string' })
     readonly trailerLink: string;
 
-    @ApiProperty({ example: '1', description: 'id страны' })
+    @ApiProperty({ example: 1, description: 'id страны' })
     @IsNumber({}, { message: 'Must be a number' })
     readonly idCountry: number;
 

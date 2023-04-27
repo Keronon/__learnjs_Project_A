@@ -17,7 +17,7 @@ interface FilmCreationAttrs {
 
 @Table({ tableName: 'films' })
 export class Film extends Model<Film, FilmCreationAttrs> {
-    @ApiProperty({ example: '1', description: 'id фильма' })
+    @ApiProperty({ example: 1, description: 'id фильма' })
     @Column({
         type: DataType.INTEGER,
         unique: true,
@@ -54,7 +54,7 @@ export class Film extends Model<Film, FilmCreationAttrs> {
     @Column({ type: DataType.STRING, unique: true, allowNull: true })
     imageName: string;
 
-    @ApiProperty({ example: '1', description: 'id страны' })
+    @ApiProperty({ example: 1, description: 'id страны' })
     @Column({ type: DataType.INTEGER })
     @ForeignKey(() => Country)
     idCountry: number;
