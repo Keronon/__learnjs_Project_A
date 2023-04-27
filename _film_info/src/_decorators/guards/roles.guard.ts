@@ -3,10 +3,10 @@ import { colors } from '../../console.colors';
 const log = ( data: any ) => console.log( colors.fg.magenta, `- - > GR-Film_info :`, data, colors.reset );
 
 import {
+    Injectable,
     CanActivate,
     ExecutionContext,
-    ForbiddenException,
-    Injectable,
+    InternalServerErrorException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
@@ -22,20 +22,16 @@ export class RolesGuard implements CanActivate {
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         log('canActivate');
 
+        const user = checkAuth(this.jwtService, context.switchToHttp().getRequest().headers.authorization);
         try {
             const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
                 context.getHandler(),
                 context.getClass(),
             ]);
-            if (!requiredRoles) {
-                return true;
-            }
-
-            const user = checkAuth(this.jwtService, context.switchToHttp().getRequest().headers.authorization);
-
+            if (!requiredRoles) { return true; }
             return requiredRoles.includes(user.role.name);
         } catch (e) {
-            throw new ForbiddenException({message: 'No access'});
+            throw new InternalServerErrorException({message: 'Can not check access'});
         }
     }
 }
