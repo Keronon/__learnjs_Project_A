@@ -5,11 +5,10 @@ import { ProfessionsController } from './professions.controller';
 import { ProfessionsService } from './professions.service';
 import { Profession } from './professions.struct';
 
-@Module( {
-    controllers: [ ProfessionsController ],
-    providers: [ ProfessionsService ],
-    imports: [
-        SequelizeModule.forFeature( [ Profession ] )
-    ]
-} )
-export class ProfessionsModule { }
+@Module({
+    controllers: [ProfessionsController],
+    providers: [ProfessionsService],
+    imports: [SequelizeModule.forFeature([Profession])],
+    exports: [ProfessionsService],
+})
+export class ProfessionsModule {}

@@ -9,7 +9,7 @@ interface ProfessionCreationAttrs {
 
 @Table({ tableName: 'professions' })
 export class Profession extends Model<Profession, ProfessionCreationAttrs> {
-    @ApiProperty({ example: '1', description: 'id профессии' })
+    @ApiProperty({ example: 1, description: 'id профессии' })
     @Column({
         type: DataType.INTEGER,
         unique: true,

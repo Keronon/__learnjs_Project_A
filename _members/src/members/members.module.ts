@@ -5,11 +5,10 @@ import { MembersController } from './members.controller';
 import { MembersService } from './members.service';
 import { Member } from './members.struct';
 
-@Module( {
-    controllers: [ MembersController ],
-    providers: [ MembersService ],
-    imports: [
-        SequelizeModule.forFeature([Member])
-    ]
-} )
-export class MembersModule { }
+@Module({
+    controllers: [MembersController],
+    providers: [MembersService],
+    imports: [SequelizeModule.forFeature([Member])],
+    exports: [MembersService],
+})
+export class MembersModule {}
