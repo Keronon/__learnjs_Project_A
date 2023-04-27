@@ -23,7 +23,7 @@ export function addFile(file: any)
 
         fs.writeFileSync( path.join( f_path, f_name ), file.buffer );
 
-        return true;
+        return f_name;
     } catch (e) {
         throw new InternalServerErrorException({ message: 'Ошибка записи файла' });
     }
