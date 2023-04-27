@@ -8,9 +8,7 @@ import { FilmInfo } from './film-info.struct';
 @Module({
     controllers: [FilmInfoController],
     providers: [FilmInfoService],
-    imports: [
-        SequelizeModule.forFeature([FilmInfo])
-    ],
+    imports: [SequelizeModule.forFeature([FilmInfo])],
     exports: [FilmInfoService],
 })
 export class FilmInfoModule {}

@@ -10,7 +10,7 @@ interface FilmInfoCreationAttrs {
 
 @Table({ tableName: 'filmInfo' })
 export class FilmInfo extends Model<FilmInfo, FilmInfoCreationAttrs> {
-    @ApiProperty({ example: '1', description: 'id доп информации о фильме' })
+    @ApiProperty({ example: 1, description: 'id доп информации о фильме' })
     @Column({
         type: DataType.INTEGER,
         unique: true,
@@ -24,13 +24,14 @@ export class FilmInfo extends Model<FilmInfo, FilmInfoCreationAttrs> {
     text: string;
 
     @ApiProperty({
+        required: false,
         example: 'https://widgets.kinopoisk.ru/discovery/film/81338/trailer/47737?noAd=0&embedId=&hidden=&muted=&loop=0&autoplay=1&from=&extraTrailers=&onlyPlayer=1',
         description: 'ссылка на трейлер фильма',
     })
     @Column({ type: DataType.STRING, allowNull: true })
     trailerLink: string;
 
-    @ApiProperty({ example: '1', description: 'id фильма' })
+    @ApiProperty({ example: 1, description: 'id фильма' })
     @Column({ type: DataType.INTEGER, unique: true, allowNull: false })
     idFilm: number;
 }

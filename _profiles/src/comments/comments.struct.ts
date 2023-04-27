@@ -31,7 +31,7 @@ export class Comment extends Model<Comment, CommentCreationAttrs> {
     @ForeignKey(() => Profile)
     idProfile: number;
 
-    @ApiProperty({ example: 'Комментарий о фильме', description: 'заголовок комментария' })
+    @ApiProperty({ required: false, example: 'Комментарий о фильме', description: 'заголовок комментария' })
     @Column({ type: DataType.STRING, allowNull: true })
     title: string;
 
@@ -39,7 +39,7 @@ export class Comment extends Model<Comment, CommentCreationAttrs> {
     @Column({ type: DataType.STRING, allowNull: false })
     text: string;
 
-    @ApiProperty({ example: 1, description: 'id комментируемого комментария' })
+    @ApiProperty({ required: false, example: 1, description: 'id комментируемого комментария' })
     @Column({ type: DataType.INTEGER, allowNull: true })
     prevId: number;
 

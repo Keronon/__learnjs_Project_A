@@ -2,7 +2,7 @@
 import { colors } from '../console.colors';
 const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Film_info :`, data, colors.reset );
 
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { FilmInfo } from './film-info.struct';
 import { CreateFilmInfoDto } from './dto/create-film-info.dto';
@@ -17,6 +17,11 @@ export class FilmInfoService {
 
     async createFilmInfo(createFilmInfoDto: CreateFilmInfoDto): Promise<FilmInfo> {
         log('createFilmInfo');
+
+        if (await this.getFilmInfoByFilmId(createFilmInfoDto.idFilm)) {
+            throw new ConflictException({ message: 'This film info already exists' });
+        }
+
         return await this.filmInfoDB.create(createFilmInfoDto);
     }
 
@@ -38,7 +43,7 @@ export class FilmInfoService {
 
         const filmInfo = await this.getFilmInfoById(updateFilmInfoDto.id);
         if (!filmInfo) {
-            throw new BadRequestException({ message: 'Film info not found' });
+            throw new NotFoundException({ message: 'Film info not found' });
         }
 
         for (let key in updateFilmInfoDto) {
@@ -54,7 +59,7 @@ export class FilmInfoService {
 
         const filmInfo = await this.getFilmInfoByFilmId(idFilm);
         if (!filmInfo) {
-            throw new BadRequestException({ message: 'Film info not found' });
+            throw new NotFoundException({ message: 'Film info not found' });
         }
 
         return await this.filmInfoDB.destroy({ where: { id: filmInfo.id } });
