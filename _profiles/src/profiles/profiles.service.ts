@@ -8,9 +8,9 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Profile } from './profiles.struct';
 import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
-import { QueueNames, RMQ } from 'src/rabbit.core';
+import { QueueNames, RMQ } from '../rabbit.core';
 import { GetProfileDto } from './dto/get-profile.dto';
-import { addFile, getFile } from 'src/files.core';
+import { addFile, getFile } from '../files.core';
 
 @Injectable()
 export class ProfilesService {

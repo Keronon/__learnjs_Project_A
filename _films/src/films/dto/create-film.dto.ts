@@ -1,6 +1,6 @@
 
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsNumber, IsString } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateFilmDto {
     @ApiProperty({ example: 'Зеленая миля', description: 'название фильма (русское)' })
@@ -28,9 +28,11 @@ export class CreateFilmDto {
     readonly text: string;
 
     @ApiProperty({
+        required: false,
         example: 'https://widgets.kinopoisk.ru/discovery/film/81338/trailer/47737?noAd=0&embedId=&hidden=&muted=&loop=0&autoplay=1&from=&extraTrailers=&onlyPlayer=1',
         description: 'ссылка на трейлер фильма',
     })
+    @IsOptional()
     @IsString({ message: 'Must be a string' })
     readonly trailerLink: string;
 

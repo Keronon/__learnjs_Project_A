@@ -1,25 +1,30 @@
 
 import { colors } from '../console.colors';
-const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Films :`, data, colors.reset );
+const log = (data: any) => console.log(colors.fg.blue, `- - > S-Films :`, data, colors.reset);
 
-import * as uuid from 'uuid';
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { GenresService } from './../genres/genres.service';
-import { CountriesService } from './../countries/countries.service';
+import { GenresService } from '../genres/genres.service';
+import { CountriesService } from '../countries/countries.service';
+import { FilmGenresService } from '../film_genres/film-genres.service';
 import { Film } from './films.struct';
 import { CreateFilmDto } from './dto/create-film.dto';
 import { UpdateFilmDto } from './dto/update-film.dto';
-import { QueueNames, RMQ } from './../rabbit.core';
+import { QueueNames, RMQ } from '../rabbit.core';
+import { FilmsRMQ } from './filmsRMQ';
 
 @Injectable()
 export class FilmsService {
+    private filmsRMQ: FilmsRMQ;
+
     constructor(
         @InjectModel(Film) private filmsDB: typeof Film,
         private countriesService: CountriesService,
         private genresService: GenresService,
+        private filmGenresService: FilmGenresService,
     ) {
         RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.CF_cmd, QueueNames.CF_data));
+        this.filmsRMQ = new FilmsRMQ(this.filmsDB);
     }
 
     async getFilmById(id: number): Promise<Film> {
@@ -27,47 +32,18 @@ export class FilmsService {
         return await this.filmsDB.findByPk(id);
     }
 
-    // TODO : сделать добавление жанров и фото
-    // TODO : создание записи в rating-films
-
     async createFilm(createFilmDto: CreateFilmDto): Promise<Film> {
         log('createFilm');
 
-        const country = await this.countriesService.getCountryById(createFilmDto.idCountry);
-        if (!country) {
-            throw new BadRequestException({ message: 'Country not found' });
-        }
-
-        for (const idGenre of createFilmDto.arrIdGenres)
-        {
-            const genre = await this.genresService.getGenreById(idGenre);
-            if (!genre) {
-                throw new BadRequestException({ message: `Genre with id = ${idGenre} not found` });
-            }
-        }
+        await this.validateCountryAndGenres(createFilmDto.idCountry, createFilmDto.arrIdGenres);
 
         const film = await this.filmsDB.create(createFilmDto);
 
-        const filmInfoData = {
-            text: createFilmDto.text,
-            trailerLink: createFilmDto.trailerLink,
-            idFilm: film.id,
-        };
+        await this.filmsRMQ.createFilmInfo(film.id, createFilmDto);
+        await this.filmsRMQ.createRatingFilm(film.id);
+        await this.filmGenresService.createFilmGenres(film.id, createFilmDto.arrIdGenres);
 
-        // ! filmInfoData -> micro FilmInfo -> filmInfo
-        const id_msg = uuid.v4();
-        const res = await RMQ.publishReq(QueueNames.FFI_cmd, QueueNames.FFI_data, {
-            id_msg: id_msg,
-            cmd: 'createFilmInfo',
-            data: filmInfoData,
-        });
-        if (res !== 1)
-        {
-            await this.filmsDB.destroy({ where: { id: film.id } });
-            throw new ConflictException({message: 'Can not create film info'});
-        }
-
-        return res;
+        return film;
     }
 
     async updateFilm(updateFilmDto: UpdateFilmDto): Promise<Film> {
@@ -75,16 +51,24 @@ export class FilmsService {
 
         const film = await this.getFilmById(updateFilmDto.id);
         if (!film) {
-            throw new BadRequestException({ message: 'Film not found' });
+            throw new NotFoundException({ message: 'Film not found' });
         }
 
+        await this.validateCountryAndGenres(updateFilmDto.idCountry, updateFilmDto.arrIdGenres);
+
         for (let key in updateFilmDto) {
+            if (key === 'arrIdGenres') break;
             film[key] = updateFilmDto[key];
         }
         await film.save();
 
+        await this.filmGenresService.deleteFilmGenres(film.id);
+        await this.filmGenresService.createFilmGenres(film.id, updateFilmDto.arrIdGenres);
+
         return film;
     }
+
+    // TODO : сделать добавление/изменение фото
 
     async deleteFilmById(id: number): Promise<number> {
         log('deleteFilmById');
@@ -94,14 +78,10 @@ export class FilmsService {
             throw new BadRequestException({ message: 'Film not found' });
         }
 
-        // ! idFilm -> micro FilmInfo -> rows count
-        const id_msg = uuid.v4();
-        const res = await RMQ.publishReq(QueueNames.FFI_cmd, QueueNames.FFI_cmd, {
-            id_msg: id_msg,
-            cmd: 'deleteFilmInfoByFilmId',
-            data: film.id,
-        });
-        if (res !== 1) throw new ConflictException({message: 'Can not delete film info'});
+        await this.filmsRMQ.deleteFilmInfo(id);
+        await this.filmsRMQ.deleteRatingFilm(id);
+
+        // TODO : delete filmUsers, comments
 
         return await this.filmsDB.destroy({ where: { id } });
     }
@@ -109,5 +89,22 @@ export class FilmsService {
     async checkExistenceFilmById(id: number) {
         log('checkExistenceFilm');
         return (await this.getFilmById(id)) ? true : false;
+    }
+
+    private async validateCountryAndGenres(idCountry: number, arrIdGenres: number[]): Promise<void> {
+        log('checkExistenceFilm');
+
+        const country = await this.countriesService.getCountryById(idCountry);
+        if (!country) {
+            throw new NotFoundException({ message: 'Country not found' });
+        }
+
+         // TODO : проверить чтоб не было одинаковых жанров в массиве
+        for (let idGenre of arrIdGenres) {
+            const genre = await this.genresService.getGenreById(idGenre);
+            if (!genre) {
+                throw new NotFoundException({ message: `Genre with id = ${idGenre} not found` });
+            }
+        }
     }
 }

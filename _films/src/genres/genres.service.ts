@@ -1,8 +1,8 @@
 
 import { colors } from '../console.colors';
-const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Genres :`, data, colors.reset );
+const log = (data: any) => console.log(colors.fg.blue, `- - > S-Genres :`, data, colors.reset);
 
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import { Genre } from './genres.struct';

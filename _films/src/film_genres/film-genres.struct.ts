@@ -2,9 +2,9 @@
 import { Model, Table, Column, DataType, ForeignKey } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { Film } from '../films/films.struct';
-import { Genre } from './genres.struct';
+import { Genre } from '../genres/genres.struct';
 
-@Table({ tableName: 'film_genres', createdAt: false, updatedAt: false })
+@Table({ tableName: 'filmGenres', createdAt: false, updatedAt: false })
 export class FilmGenre extends Model<FilmGenre> {
     @ApiProperty({ example: 1, description: 'id связи фильма с жанром' })
     @Column({

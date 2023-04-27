@@ -1,6 +1,6 @@
 
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsNumber, IsString } from 'class-validator';
 
 export class UpdateFilmDto {
     @ApiProperty({ example: 1, description: 'id доп. информации о фильме' })
@@ -26,4 +26,14 @@ export class UpdateFilmDto {
     @ApiProperty({ example: 189, description: 'длительность фильма (в минутах)' })
     @IsNumber({}, { message: 'Must be a number' })
     readonly duration: number;
+
+    @ApiProperty({ example: 1, description: 'id страны' })
+    @IsNumber({}, { message: 'Must be a number' })
+    readonly idCountry: number;
+
+    @ApiProperty({ example: [1, 2], description: 'массив id жанров' })
+    @IsArray()
+    @ArrayMinSize(1, {message: "Must be at least one genre"})
+    @ArrayMaxSize(3, {message: "Must not be more then 3 genres"})
+    readonly arrIdGenres: number[];
 }
