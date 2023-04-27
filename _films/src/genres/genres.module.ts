@@ -9,9 +9,7 @@ import { FilmGenre } from './film-genres.struct';
 @Module({
     controllers: [GenresController],
     providers: [GenresService],
-    imports: [
-        SequelizeModule.forFeature([Genre, FilmGenre])
-    ],
+    imports: [SequelizeModule.forFeature([Genre, FilmGenre])],
     exports: [GenresService],
 })
 export class GenresModule {}

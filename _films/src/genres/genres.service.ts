@@ -2,7 +2,7 @@
 import { colors } from '../console.colors';
 const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Genres :`, data, colors.reset );
 
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import { Genre } from './genres.struct';
@@ -26,7 +26,7 @@ export class GenresService {
         log('createGenre');
 
         if (await this.checkExistenceName(createGenreDto.nameRU, createGenreDto.nameEN)) {
-            throw new BadRequestException({ message: 'This genre name already exists' });
+            throw new ConflictException({ message: 'This genre name already exists' });
         }
 
         return await this.genresDB.create(createGenreDto);
@@ -37,7 +37,7 @@ export class GenresService {
 
         const country = await this.getGenreById(id);
         if (!country) {
-            throw new BadRequestException({ message: 'Genre not found' });
+            throw new NotFoundException({ message: 'Genre not found' });
         }
 
         return await this.genresDB.destroy({ where: { id } });

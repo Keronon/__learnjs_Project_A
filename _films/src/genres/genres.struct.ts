@@ -11,7 +11,7 @@ interface GenreCreationAttrs {
 
 @Table({ tableName: 'genres' })
 export class Genre extends Model<Genre, GenreCreationAttrs> {
-    @ApiProperty({ example: '1', description: 'id жанра фильма' })
+    @ApiProperty({ example: 1, description: 'id жанра фильма' })
     @Column({
         type: DataType.INTEGER,
         unique: true,

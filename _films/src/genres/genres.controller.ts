@@ -1,16 +1,23 @@
 
 import { colors } from '../console.colors';
-const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Genres :`, data, colors.reset );
+const log = (data: any) => console.log(colors.fg.yellow, `- - > C-Genres :`, data, colors.reset);
 
 import { Delete, Param } from '@nestjs/common';
 import { Body, Get, Post, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse,
+         ApiBearerAuth,
+         ApiBody,
+         ApiConflictResponse,
+         ApiCreatedResponse,
+         ApiForbiddenResponse,
+         ApiOkResponse,
+         ApiOperation,
+         ApiNotFoundResponse } from '@nestjs/swagger';
 import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiParam } from '@nestjs/swagger';
 import { Roles } from './../_decorators/roles-auth.decorator';
 import { RolesGuard } from './../_decorators/guards/roles.guard';
-import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
 import { GenresService } from './genres.service';
 import { Genre } from './genres.struct';
 import { CreateGenreDto } from './dto/create-genre.dto';
@@ -20,9 +27,22 @@ import { CreateGenreDto } from './dto/create-genre.dto';
 export class GenresController {
     constructor(private genresService: GenresService) {}
 
-    @ApiOperation({ summary: 'Создание жанра фильма' })
-    @ApiBody({ required: true, type: CreateGenreDto, description: 'Объект с данными для создания жанра фильма' })
-    @ApiResponse({ status: 200, type: Genre })
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Создание жанра фильма (ADMIN)' })
+    @ApiBody({ type: CreateGenreDto, description: 'Объект с данными для нового жанра фильма' })
+    @ApiCreatedResponse({ type: Genre, description: 'Успех. Ответ - созданный жанр фильма' })
+    @ApiBadRequestResponse({
+        schema: { example: ['nameRU - Must be a string', 'nameEN - Must be a string'] },
+        description: 'Ошибки валидации. Ответ - Error: Bad Request',
+    })
+    @ApiConflictResponse({
+        schema: { example: { message: 'This genre name already exists' } },
+        description: 'Жанр с данным названием уже существует. Ответ - Error: Conflict',
+    })
+    @ApiForbiddenResponse({
+        schema: { example: { message: 'No access' } },
+        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+    })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Post()
@@ -32,17 +52,25 @@ export class GenresController {
     }
 
     @ApiOperation({ summary: 'Получение массива всех жанров фильмов' })
-    @ApiResponse({ status: 200, type: [Genre] })
-    @UseGuards(JwtAuthGuard)
+    @ApiOkResponse({ type: [Genre], description: 'Успех. Ответ - массив жанров фильмов' })
     @Get()
     getAllGenres(): Promise<Genre[]> {
         log('getAllGenres');
         return this.genresService.getAllGenres();
     }
 
-    @ApiOperation({ summary: 'Удаление жанра фильма' })
-    @ApiParam({ required: true, name: 'id', description: 'id жанра фильма', example: 1 })
-    @ApiResponse({ status: 200, type: Number, description: "количество удалённых строк" })
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Удаление жанра фильма (ADMIN)' })
+    @ApiParam({ name: 'id', description: 'id жанра фильма', example: 1 })
+    @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
+    @ApiNotFoundResponse({
+        schema: { example: { message: 'Genre not found' } },
+        description: 'Жанр фильма не найден. Ответ - Error: Not Found',
+    })
+    @ApiForbiddenResponse({
+        schema: { example: { message: 'No access' } },
+        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+    })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Delete(':id')
