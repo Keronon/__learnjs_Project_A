@@ -3,13 +3,14 @@ import { colors } from 'src/console.colors';
 const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Members :`, data, colors.reset );
 
 import { ApiResponse, ApiOperation, ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
-import { Controller, Get, Param, Post, Delete, UseGuards, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Delete, UseGuards, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { Roles } from 'src/_decorators/roles-auth.decorator';
 import { RolesGuard } from 'src/_decorators/guards/roles.guard';
 import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
 import { MembersService } from './members.service';
 import { Member } from './members.struct';
 import { CreateMemberDto } from './dto/create-member.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Работники киноиндустрии')
 @Controller('api/members')
@@ -20,10 +21,11 @@ export class MembersController {
     @ApiBody({ required: true, type: CreateMemberDto, description: 'Объект с данными о работнике киноиндустрии' })
     @ApiResponse({ status: 200, type: Member })
     @UseGuards(JwtAuthGuard)
+    @UseInterceptors(FileInterceptor( 'image' ))
     @Post()
-    createMember(@Body() createMemberDto: CreateMemberDto): Promise<Member> {
+    createMember(@Body() createMemberDto: CreateMemberDto, @UploadedFile() image): Promise<Member> {
         log('createMember');
-        return this.membersService.createMember(createMemberDto);
+        return this.membersService.createMember(createMemberDto, image);
     }
 
     @ApiOperation({ summary: 'Получение всех работников киноиндустрии' })

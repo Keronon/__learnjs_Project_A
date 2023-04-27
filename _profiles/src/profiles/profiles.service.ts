@@ -39,9 +39,9 @@ export class ProfilesService {
         const createProfileData = {
             profileName: registrationDto.profileName,
             idUser: res.idUser,
+            imageName: addFile(image)
         };
         await this.profilesDB.create(createProfileData);
-        addFile(image);
 
         return res;
     }
@@ -55,7 +55,7 @@ export class ProfilesService {
         log('getProfileById');
 
         const profile = await this.profilesDB.findByPk(id);
-        return this.convertProfileToGetProfileDto(profile);
+        return this.setImageAsFile(profile);
     }
 
     async getProfileByUserId(idUser: number): Promise<GetProfileDto> {
@@ -65,7 +65,7 @@ export class ProfilesService {
             where: { idUser },
         });
 
-        return this.convertProfileToGetProfileDto(profile);
+        return this.setImageAsFile(profile);
     }
 
     async updateAccount(accountDto: AccountDto, image: any): Promise<AccountDto> {
@@ -112,17 +112,16 @@ export class ProfilesService {
         return await this.profilesDB.destroy({ where: { id } });
     }
 
-    private convertProfileToGetProfileDto(profile: Profile): GetProfileDto
+    private setImageAsFile(profile: Profile): GetProfileDto
     {
-        log('convertProfileToGetProfileDto');
+        log('setImageAsFile');
 
-        const dto = {
-            id: profile.id,
-            profileName: profile.profileName,
-            image: getFile(profile.imageName ?? '_no_avatar.png'),
-            idUser: profile.idUser,
+        const data = {
+            ...profile,
+            image: getFile(profile.imageName ?? '_no_avatar.png')
         };
+        delete data.imageName;
 
-        return dto;
+        return data;
     }
 }
