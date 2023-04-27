@@ -6,9 +6,9 @@ import { Profile } from 'src/profiles/profiles.struct';
 interface CommentCreationAttrs {
     idFilm: number;
     idProfile: number;
-    title: string;
+    title?: string;
     text: string;
-    prevId: number;
+    prevId?: number;
 }
 
 @Table({ tableName: 'comments' })
@@ -32,7 +32,7 @@ export class Comment extends Model<Comment, CommentCreationAttrs> {
     idProfile: number;
 
     @ApiProperty({ required: false, example: 'Комментарий о фильме', description: 'заголовок комментария' })
-    @Column({ type: DataType.STRING, allowNull: true })
+    @Column({ type: DataType.STRING })
     title: string;
 
     @ApiProperty({ example: 'Некоторый комментарий', description: 'комментарий фильма' })
@@ -40,7 +40,7 @@ export class Comment extends Model<Comment, CommentCreationAttrs> {
     text: string;
 
     @ApiProperty({ required: false, example: 1, description: 'id комментируемого комментария' })
-    @Column({ type: DataType.INTEGER, allowNull: true })
+    @Column({ type: DataType.INTEGER })
     prevId: number;
 
     @BelongsTo(() => Profile)

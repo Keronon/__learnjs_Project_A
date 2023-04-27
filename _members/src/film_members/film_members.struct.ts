@@ -26,12 +26,12 @@ export class FilmMember extends Model<FilmMember, FilmMemberCreationAttrs> {
     idFilm: number;
 
     @ApiProperty({ example: 1, description: 'id работника' })
-    @Column({ type: DataType.INTEGER })
+    @Column({ type: DataType.INTEGER, allowNull: false })
     @ForeignKey(() => Member)
     idMember: number;
 
     @ApiProperty({ example: 1, description: 'id профессии' })
-    @Column({ type: DataType.INTEGER })
+    @Column({ type: DataType.INTEGER, allowNull: false })
     @ForeignKey(() => Profession)
     idProfession: number;
 

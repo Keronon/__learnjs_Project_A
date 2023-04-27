@@ -16,12 +16,12 @@ export class FilmGenre extends Model<FilmGenre> {
     id: number;
 
     @ApiProperty({ example: 1, description: 'id фильма' })
-    @Column({ type: DataType.INTEGER })
+    @Column({ type: DataType.INTEGER, allowNull: false })
     @ForeignKey(() => Film)
     idFilm: number;
 
     @ApiProperty({ example: 1, description: 'id жанра' })
-    @Column({ type: DataType.INTEGER })
+    @Column({ type: DataType.INTEGER, allowNull: false })
     @ForeignKey(() => Genre)
     idGenre: number;
 }

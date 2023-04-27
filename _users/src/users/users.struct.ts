@@ -6,6 +6,7 @@ import { ApiProperty } from '@nestjs/swagger';
 interface UserCreationAttrs {
     email: string;
     password: string;
+    idRole?: number;
 }
 
 @Table({ tableName: 'users' })

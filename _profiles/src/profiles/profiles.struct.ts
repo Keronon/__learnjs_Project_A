@@ -5,6 +5,7 @@ import { Comment } from 'src/comments/comments.struct';
 
 interface ProfileCreationAttrs {
     profileName: string;
+    imageName?: string;
     idUser: number;
 }
 
@@ -24,7 +25,7 @@ export class Profile extends Model<Profile, ProfileCreationAttrs> {
     profileName: string;
 
     @ApiProperty({ example: './static/u12dflf.png', description: 'путь к аватару пользователя' })
-    @Column({ type: DataType.STRING, unique: true, allowNull: true })
+    @Column({ type: DataType.STRING, unique: true })
     imageName: string;
 
     @ApiProperty({ example: 1, description: 'id пользователя' })

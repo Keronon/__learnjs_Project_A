@@ -5,7 +5,9 @@ import { FilmMember } from 'src/film_members/film_members.struct';
 
 interface MemberCreationAttrs {
     nameRU: string;
+    nameEN?: string;
     text: string;
+    imageName?: string;
 }
 
 @Table({ tableName: 'members' })

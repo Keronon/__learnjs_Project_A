@@ -5,7 +5,7 @@ import { Film } from 'src/films/films.struct';
 
 interface CountryCreationAttrs {
     nameRU: string;
-    nameEN: string;
+    nameEN?: string;
 }
 
 @Table({ tableName: 'countries' })
@@ -24,7 +24,7 @@ export class Country extends Model<Country, CountryCreationAttrs> {
     nameRU: string;
 
     @ApiProperty({ example: 'USA', description: 'название страны (английское)' })
-    @Column({ type: DataType.STRING, unique: true, allowNull: true })
+    @Column({ type: DataType.STRING, unique: true })
     nameEN: string;
 
     @HasMany(() => Film)

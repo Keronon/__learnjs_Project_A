@@ -4,8 +4,8 @@ import { Model, Table, Column, DataType } from 'sequelize-typescript';
 
 interface FilmInfoCreationAttrs {
     text: string;
-    trailerLink: string;
-    idUser: number;
+    trailerLink?: string;
+    idFilm: number;
 }
 
 @Table({ tableName: 'filmInfo' })
@@ -28,7 +28,7 @@ export class FilmInfo extends Model<FilmInfo, FilmInfoCreationAttrs> {
         example: 'https://widgets.kinopoisk.ru/discovery/film/81338/trailer/47737?noAd=0&embedId=&hidden=&muted=&loop=0&autoplay=1&from=&extraTrailers=&onlyPlayer=1',
         description: 'ссылка на трейлер фильма',
     })
-    @Column({ type: DataType.STRING, allowNull: true })
+    @Column({ type: DataType.STRING })
     trailerLink: string;
 
     @ApiProperty({ example: 1, description: 'id фильма' })

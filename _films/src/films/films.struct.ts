@@ -7,11 +7,12 @@ import { FilmGenre } from '../genres/film-genres.struct';
 
 interface FilmCreationAttrs {
     nameRU: string;
-    nameEN: string;
+    nameEN?: string;
     year: number;
     ageRating: string;
+    rating?: number;
     duration: number;
-    imagePath: string;
+    imageName: string;
     idCountry: number;
 }
 
@@ -31,7 +32,7 @@ export class Film extends Model<Film, FilmCreationAttrs> {
     nameRU: string;
 
     @ApiProperty({ example: 'The Green Mile', description: 'название фильма (английское)' })
-    @Column({ type: DataType.STRING, allowNull: true })
+    @Column({ type: DataType.STRING })
     nameEN: string;
 
     @ApiProperty({ example: 1999, description: 'год выпуска фильма' })
@@ -43,7 +44,7 @@ export class Film extends Model<Film, FilmCreationAttrs> {
     ageRating: string;
 
     @ApiProperty({ example: 9.1, description: 'рейтинг фильма' })
-    @Column({ type: DataType.INTEGER, allowNull: true })
+    @Column({ type: DataType.INTEGER })
     rating: number;
 
     @ApiProperty({ example: 189, description: 'длительность фильма (в минутах)' })
@@ -51,11 +52,11 @@ export class Film extends Model<Film, FilmCreationAttrs> {
     duration: number;
 
     @ApiProperty({ example: './static/u12dflf.png', description: 'путь к изображению фильма' })
-    @Column({ type: DataType.STRING, unique: true, allowNull: true })
+    @Column({ type: DataType.STRING, unique: true })
     imageName: string;
 
     @ApiProperty({ example: 1, description: 'id страны' })
-    @Column({ type: DataType.INTEGER })
+    @Column({ type: DataType.INTEGER, allowNull: false })
     @ForeignKey(() => Country)
     idCountry: number;
 
