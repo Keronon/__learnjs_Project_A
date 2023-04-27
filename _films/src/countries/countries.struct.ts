@@ -10,7 +10,7 @@ interface CountryCreationAttrs {
 
 @Table({ tableName: 'countries' })
 export class Country extends Model<Country, CountryCreationAttrs> {
-    @ApiProperty({ example: '1', description: 'id страны' })
+    @ApiProperty({ example: 1, description: 'id страны' })
     @Column({
         type: DataType.INTEGER,
         unique: true,

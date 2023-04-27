@@ -13,9 +13,8 @@ async function bootstrap ()
     // Documentation
     const config = new DocumentBuilder()
         .setTitle('Microservice Films (RU)')
-        .setDescription(
-            'REST API документация для микросервиса фильмов',
-        )
+        .setDescription('REST API документация для микросервиса фильмов')
+        .addBearerAuth()
         .setVersion('1.0.0')
         .build();
     const document = SwaggerModule.createDocument(app, config);

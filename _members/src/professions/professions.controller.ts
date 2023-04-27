@@ -59,7 +59,7 @@ export class ProfessionsController {
 
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Удаление профессии (ADMIN)' })
-    @ApiParam({ name: 'id', description: 'id страны', example: 1 })
+    @ApiParam({ name: 'id', description: 'id профессии', example: 1 })
     @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
     @ApiNotFoundResponse({
         schema: { example: { message: 'Profession not found' } },

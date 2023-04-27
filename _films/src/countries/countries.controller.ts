@@ -1,24 +1,48 @@
 
 import { colors } from '../console.colors';
-const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Counties :`, data, colors.reset );
+const log = (data: any) => console.log(colors.fg.yellow, `- - > C-Counties :`, data, colors.reset);
 
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+    ApiBadRequestResponse,
+    ApiBearerAuth,
+    ApiBody,
+    ApiConflictResponse,
+    ApiCreatedResponse,
+    ApiForbiddenResponse,
+    ApiNotFoundResponse,
+    ApiOkResponse,
+    ApiOperation,
+    ApiParam,
+    ApiTags,
+} from '@nestjs/swagger';
 import { CountriesService } from './countries.service';
 import { Roles } from './../_decorators/roles-auth.decorator';
 import { RolesGuard } from './../_decorators/guards/roles.guard';
 import { Country } from './countries.struct';
 import { CreateCountryDto } from './dto/create-country.dto';
-import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
 
 @ApiTags('Страны')
 @Controller('api/countries')
 export class CountriesController {
     constructor(private countriesService: CountriesService) {}
 
-    @ApiOperation({ summary: 'Создание страны' })
-    @ApiBody({ required: true, type: CreateCountryDto, description: 'Объект с данными для создания страны' })
-    @ApiResponse({ status: 200, type: Country })
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Создание страны (ADMIN)' })
+    @ApiBody({ type: CreateCountryDto, description: 'Объект с данными для новой страны' })
+    @ApiCreatedResponse({ type: Country, description: 'Успех. Ответ - созданная страна' })
+    @ApiBadRequestResponse({
+        schema: { example: ['nameRU - Must be a string', 'nameEN - Must be a string'] },
+        description: 'Ошибки валидации. Ответ - Error: Bad Request',
+    })
+    @ApiConflictResponse({
+        schema: { example: { message: 'This country name already exists' } },
+        description: 'Страна с данным названием уже существует. Ответ - Error: Conflict',
+    })
+    @ApiForbiddenResponse({
+        schema: { example: { message: 'No access' } },
+        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+    })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Post()
@@ -28,17 +52,25 @@ export class CountriesController {
     }
 
     @ApiOperation({ summary: 'Получение массива всех стран' })
-    @ApiResponse({ status: 200, type: [Country] })
-    @UseGuards(JwtAuthGuard)
+    @ApiOkResponse({ type: [Country], description: 'Успех. Ответ - массив стран' })
     @Get()
     getAllCountries(): Promise<Country[]> {
         log('getAllCountries');
         return this.countriesService.getAllCountries();
     }
 
-    @ApiOperation({ summary: 'Удаление страны' })
-    @ApiParam({ required: true, name: 'id', description: 'id страны', example: 1 })
-    @ApiResponse({ status: 200, type: Number, description: "количество удалённых строк" })
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Удаление страны (ADMIN)' })
+    @ApiParam({ name: 'id', description: 'id страны', example: 1 })
+    @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
+    @ApiNotFoundResponse({
+        schema: { example: { message: 'Country not found' } },
+        description: 'Страна не найдена. Ответ - Error: Not Found',
+    })
+    @ApiForbiddenResponse({
+        schema: { example: { message: 'No access' } },
+        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+    })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Delete(':id')

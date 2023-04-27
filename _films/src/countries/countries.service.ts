@@ -1,8 +1,8 @@
 
 import { colors } from '../console.colors';
-const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Countries :`, data, colors.reset );
+const log = (data: any) => console.log(colors.fg.blue, `- - > S-Countries :`, data, colors.reset);
 
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Country } from './countries.struct';
 import { CreateCountryDto } from './dto/create-country.dto';
@@ -26,7 +26,7 @@ export class CountriesService {
         log('createCountry');
 
         if (await this.checkExistenceName(createCountryDto.nameRU, createCountryDto.nameEN)) {
-            throw new BadRequestException({ message: 'This country name already exists' });
+            throw new ConflictException({ message: 'This country name already exists' });
         }
 
         return await this.countriesDB.create(createCountryDto);
@@ -38,7 +38,7 @@ export class CountriesService {
 
         const country = await this.getCountryById(id);
         if (!country) {
-            throw new BadRequestException({ message: 'Country not found' });
+            throw new NotFoundException({ message: 'Country not found' });
         }
 
         return await this.countriesDB.destroy({ where: { id } });
