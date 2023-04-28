@@ -5,7 +5,7 @@ import { FilmGenre } from '../film_genres/film-genres.struct';
 
 interface GenreCreationAttrs {
     nameRU: string;
-    nameEN?: string;
+    nameEN: string;
 }
 
 @Table({ tableName: 'genres' })
@@ -24,7 +24,7 @@ export class Genre extends Model<Genre, GenreCreationAttrs> {
     nameRU: string;
 
     @ApiProperty({ example: 'drama', description: 'название жанра фильма (английское)' })
-    @Column({ type: DataType.STRING })
+    @Column({ type: DataType.STRING, allowNull: false })
     nameEN: string;
 
     @BelongsToMany(() => Film, () => FilmGenre)
