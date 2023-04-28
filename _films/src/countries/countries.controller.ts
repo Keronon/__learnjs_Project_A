@@ -3,19 +3,18 @@ import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.yellow, `- - > C-Counties :`, data, colors.reset);
 
 import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
-import {
-    ApiBadRequestResponse,
-    ApiBearerAuth,
-    ApiBody,
-    ApiConflictResponse,
-    ApiCreatedResponse,
-    ApiForbiddenResponse,
-    ApiNotFoundResponse,
-    ApiOkResponse,
-    ApiOperation,
-    ApiParam,
-    ApiTags,
-} from '@nestjs/swagger';
+import { ApiBadRequestResponse,
+         ApiBearerAuth,
+         ApiBody,
+         ApiConflictResponse,
+         ApiCreatedResponse,
+         ApiForbiddenResponse,
+         ApiNotFoundResponse,
+         ApiOkResponse,
+         ApiOperation,
+         ApiParam,
+         ApiTags,
+         ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { CountriesService } from './countries.service';
 import { Roles } from './../_decorators/roles-auth.decorator';
 import { RolesGuard } from './../_decorators/guards/roles.guard';
@@ -39,9 +38,19 @@ export class CountriesController {
         schema: { example: { message: 'This country name already exists' } },
         description: 'Страна с данным названием уже существует. Ответ - Error: Conflict',
     })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
     @ApiForbiddenResponse({
-        schema: { example: { message: 'No access' } },
-        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
     })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
@@ -67,9 +76,19 @@ export class CountriesController {
         schema: { example: { message: 'Country not found' } },
         description: 'Страна не найдена. Ответ - Error: Not Found',
     })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
     @ApiForbiddenResponse({
-        schema: { example: { message: 'No access' } },
-        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
     })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)

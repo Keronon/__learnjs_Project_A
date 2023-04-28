@@ -12,7 +12,8 @@ import { ApiBadRequestResponse,
          ApiForbiddenResponse,
          ApiOkResponse,
          ApiOperation,
-         ApiNotFoundResponse } from '@nestjs/swagger';
+         ApiNotFoundResponse,
+         ApiUnauthorizedResponse} from '@nestjs/swagger';
 import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiParam } from '@nestjs/swagger';
@@ -39,9 +40,19 @@ export class GenresController {
         schema: { example: { message: 'This genre name already exists' } },
         description: 'Жанр с данным названием уже существует. Ответ - Error: Conflict',
     })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
     @ApiForbiddenResponse({
-        schema: { example: { message: 'No access' } },
-        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
     })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
@@ -67,9 +78,19 @@ export class GenresController {
         schema: { example: { message: 'Genre not found' } },
         description: 'Жанр фильма не найден. Ответ - Error: Not Found',
     })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
     @ApiForbiddenResponse({
-        schema: { example: { message: 'No access' } },
-        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
     })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)

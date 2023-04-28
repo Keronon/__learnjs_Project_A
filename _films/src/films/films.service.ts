@@ -2,7 +2,7 @@
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Films :`, data, colors.reset);
 
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { GenresService } from '../genres/genres.service';
 import { CountriesService } from '../countries/countries.service';
@@ -11,7 +11,7 @@ import { Film } from './films.struct';
 import { CreateFilmDto } from './dto/create-film.dto';
 import { UpdateFilmDto } from './dto/update-film.dto';
 import { QueueNames, RMQ } from '../rabbit.core';
-import { FilmsRMQ } from './filmsRMQ';
+import { FilmsRMQ } from './films-rmq';
 
 @Injectable()
 export class FilmsService {
@@ -75,7 +75,7 @@ export class FilmsService {
 
         const film = await this.getFilmById(id);
         if (!film) {
-            throw new BadRequestException({ message: 'Film not found' });
+            throw new NotFoundException({ message: 'Film not found' });
         }
 
         await this.filmsRMQ.deleteFilmInfo(id);
@@ -92,19 +92,22 @@ export class FilmsService {
     }
 
     private async validateCountryAndGenres(idCountry: number, arrIdGenres: number[]): Promise<void> {
-        log('checkExistenceFilm');
+        log('validateCountryAndGenres');
 
         const country = await this.countriesService.getCountryById(idCountry);
         if (!country) {
             throw new NotFoundException({ message: 'Country not found' });
         }
 
-         // TODO : проверить чтоб не было одинаковых жанров в массиве
-        for (let idGenre of arrIdGenres) {
+        for (let [index, idGenre] of arrIdGenres.entries()) {
             const genre = await this.genresService.getGenreById(idGenre);
             if (!genre) {
                 throw new NotFoundException({ message: `Genre with id = ${idGenre} not found` });
             }
+
+            if(arrIdGenres.indexOf(idGenre) !== index){
+                throw new ConflictException({ message: `Genre with id = ${idGenre} is repeated several times` });
+            };
         }
     }
 }
