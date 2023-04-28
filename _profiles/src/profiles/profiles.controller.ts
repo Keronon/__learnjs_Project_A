@@ -13,7 +13,7 @@ import { ApiBody,
          ApiConflictResponse,
          ApiForbiddenResponse,
          ApiNotFoundResponse,
-         ApiUnauthorizedResponse} from '@nestjs/swagger';
+         ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Body, Controller, Get, Param, Post, Delete, Put, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProfilesService } from './profiles.service';
@@ -77,9 +77,19 @@ export class ProfilesController {
         },
         description: 'Ошибки валидации. Ответ - Error: Bad Request',
     })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
     @ApiForbiddenResponse({
-        schema: { example: { message: 'No access' } },
-        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
     })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
@@ -161,9 +171,19 @@ export class ProfilesController {
         schema: { example: { message: 'Profile not found' } },
         description: 'Профиль / пользователь не найден. Ответ - Error: Not Found',
     })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
     @ApiForbiddenResponse({
-        schema: { example: { message: 'No access' } },
-        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
     })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)

@@ -7,7 +7,8 @@ import { ApiBody,
          ApiNotFoundResponse,
          ApiBearerAuth,
          ApiBadRequestResponse,
-         ApiForbiddenResponse } from '@nestjs/swagger';
+         ApiForbiddenResponse,
+         ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import { FilmInfoService } from './film-info.service';
 import { RolesGuard } from 'src/_decorators/guards/roles.guard';
@@ -40,9 +41,19 @@ export class FilmInfoController {
         schema: { example: ['text - Must be a string', 'trailerLink - Must be a string'] },
         description: 'Ошибки валидации. Ответ - Error: Bad Request',
     })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
     @ApiForbiddenResponse({
-        schema: { example: { message: 'No access' } },
-        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
     })
     @Roles("ADMIN")
     @UseGuards(RolesGuard)

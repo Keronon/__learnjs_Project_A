@@ -7,7 +7,8 @@ import { ApiBearerAuth,
          ApiOkResponse,
          ApiOperation,
          ApiParam,
-         ApiTags } from '@nestjs/swagger';
+         ApiTags,
+         ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './users.struct';
@@ -23,9 +24,19 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Получение массива всех пользователей (ADMIN)' })
     @ApiOkResponse({ type: [User], description: 'Успех. Ответ - массив пользователей' })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
     @ApiForbiddenResponse({
-        schema: { example: { message: 'No access' } },
-        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
     })
     @Roles('ADMIN')
     @Get()
@@ -37,9 +48,19 @@ export class UsersController {
     @ApiOperation({ summary: 'Получение пользователя по его id (ADMIN)' })
     @ApiParam({ name: 'id', description: 'id пользователя', example: 1 })
     @ApiOkResponse({ type: User, description: 'Успех. Ответ - пользователь / ничего(не найден)' })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
     @ApiForbiddenResponse({
-        schema: { example: { message: 'No access' } },
-        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
     })
     @Roles('ADMIN')
     @Get(':id')
