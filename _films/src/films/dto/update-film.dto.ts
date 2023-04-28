@@ -1,6 +1,6 @@
 
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsNumber, IsString } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateFilmDto {
     @ApiProperty({ example: 1, description: 'id доп. информации о фильме' })
@@ -11,7 +11,8 @@ export class UpdateFilmDto {
     @IsString({ message: 'Must be a string' })
     readonly nameRU: string;
 
-    @ApiProperty({ example: 'The Green Mile', description: 'название фильма (английское)' })
+    @ApiProperty({ required: false, example: 'The Green Mile', description: 'название фильма (английское)' })
+    @IsOptional()
     @IsString({ message: 'Must be a string' })
     readonly nameEN: string;
 

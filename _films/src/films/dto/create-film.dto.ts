@@ -7,7 +7,8 @@ export class CreateFilmDto {
     @IsString({ message: 'Must be a string' })
     readonly nameRU: string;
 
-    @ApiProperty({ example: 'The Green Mile', description: 'название фильма (английское)' })
+    @ApiProperty({ required: false, example: 'The Green Mile', description: 'название фильма (английское)' })
+    @IsOptional()
     @IsString({ message: 'Must be a string' })
     readonly nameEN: string;
 
