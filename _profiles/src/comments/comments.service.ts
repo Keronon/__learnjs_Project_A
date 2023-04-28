@@ -62,26 +62,22 @@ export class CommentsService {
         });
     }
 
-    async getCommentsByComment(idComment: number): Promise<Comment[]> {
+    async getCommentsByComment(idComment: number): Promise<any> {
         log('getCommentsByComment');
 
-        let comments: Comment[] = [];
-        let found: Comment[] | number[] = [idComment];
+        let comments: any = {id: idComment};
 
-        while (found.length > 0) {
-            found = await this.commentsDB.findAll({
-                where: { prevId: found as number[] },
-                include: { all: true },
+        const placeChildren = async (comment: any) =>
+        {
+            const found: any = await this.commentsDB.findAll({
+                where: { prevId: comment.id }
             });
+            for (let i = 0; i < found.length; i++)
+                found[i] = await placeChildren(found[i]);
 
-            if (found.length > 0) {
-                comments.push(...found);
-
-                found = found.map((v) => v.id);
-            }
+            return {id: comment.id, children: found};
         }
-
-        return comments;
+        return await placeChildren(comments);
     }
 
     // TODO : добавить удаление
