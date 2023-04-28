@@ -10,7 +10,7 @@ import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
 import { QueueNames, RMQ } from '../rabbit.core';
 import { GetProfileDto } from './dto/get-profile.dto';
-import { addFile, getFile } from '../files.core';
+import { addFile, deleteFile, getFile } from '../files.core';
 
 @Injectable()
 export class ProfilesService {
@@ -85,6 +85,11 @@ export class ProfilesService {
         if (Object.keys(res).length === 0)
             throw new InternalServerErrorException({ message: 'Got empty or error response' });
 
+        if (image)
+        {
+            deleteFile(profile.imageName);
+            profile.imageName = addFile(image);
+        }
         profile.profileName = accountDto.profileName;
         await profile.save();
 

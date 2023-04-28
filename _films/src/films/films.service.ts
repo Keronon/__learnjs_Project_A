@@ -12,6 +12,7 @@ import { CreateFilmDto } from './dto/create-film.dto';
 import { UpdateFilmDto } from './dto/update-film.dto';
 import { QueueNames, RMQ } from '../rabbit.core';
 import { FilmsRMQ } from './films-rmq';
+import { addFile, deleteFile, getFile } from 'src/files.core';
 
 @Injectable()
 export class FilmsService {
@@ -27,17 +28,17 @@ export class FilmsService {
         this.filmsRMQ = new FilmsRMQ(this.filmsDB);
     }
 
-    async getFilmById(id: number): Promise<Film> {
+    async getFilmById(id: number): Promise<any> {
         log('getFilmById');
-        return await this.filmsDB.findByPk(id);
+        return this.setImageAsFile(await this.filmsDB.findByPk(id));
     }
 
-    async createFilm(createFilmDto: CreateFilmDto): Promise<Film> {
+    async createFilm(createFilmDto: CreateFilmDto, image: any): Promise<Film> {
         log('createFilm');
 
         await this.validateCountryAndGenres(createFilmDto.idCountry, createFilmDto.arrIdGenres);
 
-        const film = await this.filmsDB.create(createFilmDto);
+        const film = await this.filmsDB.create({...createFilmDto, imageName: addFile(image)});
 
         await this.filmsRMQ.createFilmInfo(film.id, createFilmDto);
         await this.filmsRMQ.createRatingFilm(film.id);
@@ -46,7 +47,7 @@ export class FilmsService {
         return film;
     }
 
-    async updateFilm(updateFilmDto: UpdateFilmDto): Promise<Film> {
+    async updateFilm(updateFilmDto: UpdateFilmDto, image: any): Promise<Film> {
         log('updateFilm');
 
         const film = await this.getFilmById(updateFilmDto.id);
@@ -60,6 +61,11 @@ export class FilmsService {
             if (key === 'arrIdGenres') break;
             film[key] = updateFilmDto[key];
         }
+        if (image)
+        {
+            deleteFile(film.imageName);
+            film.imageName = addFile(image);
+        }
         await film.save();
 
         await this.filmGenresService.deleteFilmGenres(film.id);
@@ -67,8 +73,6 @@ export class FilmsService {
 
         return film;
     }
-
-    // TODO : сделать добавление/изменение фото
 
     async deleteFilmById(id: number): Promise<number> {
         log('deleteFilmById');
@@ -84,6 +88,19 @@ export class FilmsService {
         // TODO : delete filmUsers, comments
 
         return await this.filmsDB.destroy({ where: { id } });
+    }
+
+    private setImageAsFile(film: Film)
+    {
+        log('setImageAsFile');
+
+        const data = {
+            ...film,
+            image: getFile(film.imageName ?? '_no_image.png')
+        };
+        delete data.imageName;
+
+        return data;
     }
 
     async checkExistenceFilmById(id: number) {

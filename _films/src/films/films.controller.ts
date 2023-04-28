@@ -2,7 +2,7 @@
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.yellow, `- - > C-Films :`, data, colors.reset);
 
-import { Delete, Param, Body, Controller, Post, Put, UseGuards } from '@nestjs/common';
+import { Delete, Param, Body, Controller, Post, Put, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { ApiParam,
          ApiBody,
          ApiOperation,
@@ -21,6 +21,7 @@ import { Film } from './films.struct';
 import { Roles } from './../_decorators/roles-auth.decorator';
 import { RolesGuard } from './../_decorators/guards/roles.guard';
 import { CreateFilmDto } from './dto/create-film.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Фильмы')
 @Controller('api/films')
@@ -65,10 +66,11 @@ export class FilmsController {
     })
     @UseGuards(RolesGuard)
     @Roles('ADMIN')
+    @UseInterceptors(FileInterceptor( 'image' ))
     @Post()
-    createFilm(@Body() createFilmDto: CreateFilmDto): Promise<Film> {
+    createFilm(@Body() createFilmDto: CreateFilmDto, @UploadedFile() image): Promise<Film> {
         log('createFilm');
-        return this.filmsService.createFilm(createFilmDto);
+        return this.filmsService.createFilm(createFilmDto, image);
     }
 
     @ApiBearerAuth()
@@ -109,10 +111,11 @@ export class FilmsController {
     })
     @UseGuards(RolesGuard)
     @Roles('ADMIN')
+    @UseInterceptors(FileInterceptor( 'image' ))
     @Put()
-    updateFilm(@Body() updateFilmDto: UpdateFilmDto): Promise<Film> {
+    updateFilm(@Body() updateFilmDto: UpdateFilmDto, @UploadedFile() image): Promise<Film> {
         log('updateFilm');
-        return this.filmsService.updateFilm(updateFilmDto);
+        return this.filmsService.updateFilm(updateFilmDto, image);
     }
 
     @ApiBearerAuth()
