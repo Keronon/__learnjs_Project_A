@@ -11,7 +11,7 @@ interface CommentCreationAttrs {
     prevId?: number;
 }
 
-@Table({ tableName: 'comments' })
+@Table({ tableName: 'comments', paranoid: true })
 export class Comment extends Model<Comment, CommentCreationAttrs> {
     @ApiProperty({ example: 1, description: 'id комментария' })
     @Column({

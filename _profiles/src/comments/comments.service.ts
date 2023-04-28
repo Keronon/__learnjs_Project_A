@@ -55,6 +55,7 @@ export class CommentsService {
         log('getCommentsByFilm');
 
         return await this.commentsDB.findAll({
+            paranoid: false,
             where: {
                 [Op.and]: [{ idFilm }, { prevId: null }],
             },
@@ -70,7 +71,9 @@ export class CommentsService {
         const placeChildren = async (comment: any) =>
         {
             const found: any = await this.commentsDB.findAll({
-                where: { prevId: comment.id }
+                paranoid: false,
+                where: { prevId: comment.id },
+                include: { all: true }
             });
             for (let i = 0; i < found.length; i++)
                 found[i] = await placeChildren(found[i]);
@@ -80,11 +83,17 @@ export class CommentsService {
         return await placeChildren(comments);
     }
 
-    // TODO : добавить удаление
-
     private async getCommentById(id: number): Promise<Comment> {
         log('getCommentById');
 
         return await this.commentsDB.findByPk(id);
+    }
+
+    async deleteCommentById(id: number): Promise<number> {
+        log('deleteCommentById');
+
+        return await this.commentsDB.destroy({
+            where: {id}
+        });
     }
 }
