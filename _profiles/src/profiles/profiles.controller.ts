@@ -25,7 +25,7 @@ import { GetProfileDto } from './dto/get-profile.dto';
 import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
 import { Roles } from '../_decorators/roles-auth.decorator';
 import { RolesGuard } from '../_decorators/guards/roles.guard';
-import { FileUploadDto } from '../_files/file-upload.dto';
+import { FileUploadDto } from './dto/file-upload.dto';
 
 enum RoleNames { Admin = 'ADMIN', User = 'USER' }
 
