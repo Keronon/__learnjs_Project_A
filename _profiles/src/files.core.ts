@@ -36,7 +36,7 @@ export function getFile(fileName: string)
     const f_path = path.resolve( __dirname, '..', '_images' );
     const f_name = path.join(f_path, fileName);
 
-    if (!fs.existsSync(fileName)) return '< ! файл не найден ! >';
+    if (!fs.existsSync(f_name)) return '< ! файл не найден ! >';
 
     //const file = fs.createReadStream(fileName);
     //return new StreamableFile(file);
