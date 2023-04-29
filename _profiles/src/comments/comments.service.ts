@@ -51,16 +51,23 @@ export class CommentsService {
         return await this.commentsDB.create(createCommentDto);
     }
 
-    async getCommentsByFilm(idFilm: number): Promise<Comment[]> {
+    async getCommentsByFilm(idFilm: number): Promise<any[]> {
         log('getCommentsByFilm');
 
-        return await this.commentsDB.findAll({
+        const found: any[] = await this.commentsDB.findAll({
             paranoid: false,
             where: {
                 [Op.and]: [{ idFilm }, { prevId: null }],
             },
             include: { all: true },
         });
+        for (let i = 0; i < found.length; i++)
+            found[i].childrenCount = await this.commentsDB.count({
+                paranoid: false,
+                where: { prevId: found[i].id }
+            });
+
+        return found;
     }
 
     async getCommentsByComment(idComment: number): Promise<any> {

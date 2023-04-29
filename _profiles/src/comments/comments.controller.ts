@@ -58,18 +58,18 @@ export class CommentsController {
 
     @ApiOperation({ summary: 'Получение массива первичных комментариев к фильму' })
     @ApiParam({ name: 'id', description: 'id фильма', example: 1 })
-    @ApiOkResponse({ type: [Comment], description: 'Успех. Ответ - массив комментариев' })
+    @ApiOkResponse({ description: 'Успех. Ответ - массив комментариев с количеством дочерних комментариев' })
     @Get('/film/:id')
-    getCommentsByFilm(@Param('id') idFilm: number): Promise<Comment[]> {
+    getCommentsByFilm(@Param('id') idFilm: number): Promise<any[]> {
         log('getCommentsByFilm');
         return this.commentsService.getCommentsByFilm(idFilm);
     }
 
     @ApiOperation({ summary: 'Получение дерева комментариев к комментарию' })
     @ApiParam({ name: 'id', description: 'id первичного комментария', example: 1 })
-    @ApiOkResponse({ type: [Comment], description: 'Успех. Ответ - массив комментариев' })
+    @ApiOkResponse({ type: [Comment], description: 'Успех. Ответ - объект комментария с древовидно вложенными дочерними комментариями' })
     @Get('/comment/:id')
-    getCommentsByComment(@Param('id') idComment: number): Promise<Comment[]> {
+    getCommentsByComment(@Param('id') idComment: number): Promise<any[]> {
         log('getCommentsByComment');
         return this.commentsService.getCommentsByComment(idComment);
     }
