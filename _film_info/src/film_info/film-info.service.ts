@@ -33,15 +33,10 @@ export class FilmInfoService {
         });
     }
 
-    private async getFilmInfoById(id: number): Promise<FilmInfo> {
-        log('getFilmInfoById');
-        return await this.filmInfoDB.findByPk(id);
-    }
-
     async updateFilmInfo(updateFilmInfoDto: UpdateFilmInfoDto): Promise<FilmInfo> {
         log('updateFilmInfo');
 
-        const filmInfo = await this.getFilmInfoById(updateFilmInfoDto.id);
+        const filmInfo = await this.getFilmInfoByFilmId(updateFilmInfoDto.idFilm);
         if (!filmInfo) {
             throw new NotFoundException({ message: 'Film info not found' });
         }
