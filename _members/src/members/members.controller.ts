@@ -20,7 +20,6 @@ import { Roles } from '../_decorators/roles-auth.decorator';
 import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
 import { MembersService } from './members.service';
-import { Member } from './members.struct';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { GetMemberDto } from './dto/get-member.dto';
 
