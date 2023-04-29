@@ -34,7 +34,7 @@ export function getFile(fileName: string)
     log('getFile');
 
     const f_path = path.resolve( __dirname, '..', '_images' );
-    fileName = path.join(f_path, fileName);
+    const f_name = path.join(f_path, fileName);
 
     if (!fs.existsSync(fileName)) return '< ! файл не найден ! >';
 
@@ -42,7 +42,7 @@ export function getFile(fileName: string)
     //return new StreamableFile(file);
     return {
         fileName: fileName,
-        base64: fs.readFileSync(fileName).toString('base64')
+        base64: fs.readFileSync(f_name).toString('base64')
     };
 }
 
