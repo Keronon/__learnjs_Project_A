@@ -85,7 +85,7 @@ export class FilmsService {
         await this.filmsRMQ.deleteFilmInfo(id);
         await this.filmsRMQ.deleteRatingFilm(id);
 
-        // TODO : delete filmUsers, comments
+        // TODO : delete filmUsers, comments, film-members
 
         return await this.filmsDB.destroy({ where: { id } });
     }

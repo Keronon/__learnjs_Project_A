@@ -1,8 +1,8 @@
 
 import { Model, Table, Column, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
-import { Member } from 'src/members/members.struct';
-import { Profession } from 'src/professions/professions.struct';
+import { Member } from '../members/members.struct';
+import { Profession } from '../professions/professions.struct';
 
 interface FilmMemberCreationAttrs {
     idFilm: number;
@@ -10,7 +10,7 @@ interface FilmMemberCreationAttrs {
     idProfession: number;
 }
 
-@Table({ tableName: 'members' })
+@Table({ tableName: 'filmMembers' })
 export class FilmMember extends Model<FilmMember, FilmMemberCreationAttrs> {
     @ApiProperty({ example: 1, description: 'id участвовавшего в фильме' })
     @Column({

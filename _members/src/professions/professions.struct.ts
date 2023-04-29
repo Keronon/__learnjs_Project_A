@@ -1,7 +1,7 @@
 
 import { Model, Table, Column, DataType, HasMany } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
-import { FilmMember } from 'src/film_members/film_members.struct';
+import { FilmMember } from '../film_members/film_members.struct';
 
 interface ProfessionCreationAttrs {
     name: string;
