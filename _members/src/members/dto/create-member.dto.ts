@@ -8,7 +8,7 @@ export class CreateMemberDto {
     @Length(2, 32, { message: 'Must be longer then 2 and shorter then 32 symbols' })
     readonly nameRU: string;
 
-    @ApiProperty({ example: 'Keanu Reeves', description: 'имя работника на английском' })
+    @ApiProperty({ required: false, example: 'Keanu Reeves', description: 'имя работника на английском' })
     @IsOptional()
     @IsString({ message: 'Must be a string' })
     @Length(2, 32, { message: 'Must be longer then 2 and shorter then 32 symbols' })

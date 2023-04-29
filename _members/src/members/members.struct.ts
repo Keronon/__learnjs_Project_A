@@ -25,7 +25,7 @@ export class Member extends Model<Member, MemberCreationAttrs> {
     @Column({ type: DataType.STRING, allowNull: false })
     nameRU: string;
 
-    @ApiProperty({ example: 'Keanu Reeves', description: 'имя работника на английском' })
+    @ApiProperty({ required: false, example: 'Keanu Reeves', description: 'имя работника на английском' })
     @Column({ type: DataType.STRING })
     nameEN: string;
 
@@ -36,7 +36,7 @@ export class Member extends Model<Member, MemberCreationAttrs> {
     @Column({ type: DataType.STRING, allowNull: false })
     text: string;
 
-    @ApiProperty({ example: 'ss343f3f2.jpg', description: 'фото работника' })
+    @ApiProperty({ required: false, example: 'ss343f3f2.jpg', description: 'фото работника' })
     @Column({ type: DataType.STRING, unique: true })
     imageName: string;
 
