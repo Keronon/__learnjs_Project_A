@@ -1,13 +1,13 @@
 
-import { colors } from 'src/console.colors';
+import { colors } from '../console.colors';
 const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Film_members :`, data, colors.reset );
 
 import { ApiResponse, ApiOperation, ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
-import { Controller, Get, Param, Post, Delete, UseGuards, Body } from '@nestjs/common';
+import { Controller, Param, Post, Delete, UseGuards, Body } from '@nestjs/common';
 import { FilmMembersService } from './film_members.service';
-import { Roles } from 'src/_decorators/roles-auth.decorator';
-import { RolesGuard } from 'src/_decorators/guards/roles.guard';
-import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
+import { Roles } from '../_decorators/roles-auth.decorator';
+import { RolesGuard } from '../_decorators/guards/roles.guard';
+import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
 import { CreateFilmMemberDto } from './dto/create-film-member.dto';
 import { FilmMember } from './film_members.struct';
 

@@ -1,7 +1,7 @@
 
 import { Model, Table, Column, DataType, HasMany } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
-import { FilmMember } from 'src/film_members/film_members.struct';
+import { FilmMember } from '../film_members/film_members.struct';
 
 interface MemberCreationAttrs {
     nameRU: string;
@@ -12,7 +12,7 @@ interface MemberCreationAttrs {
 
 @Table({ tableName: 'members' })
 export class Member extends Model<Member, MemberCreationAttrs> {
-    @ApiProperty({ example: '1', description: 'id работника' })
+    @ApiProperty({ example: 1, description: 'id работника' })
     @Column({
         type: DataType.INTEGER,
         unique: true,
@@ -29,11 +29,14 @@ export class Member extends Model<Member, MemberCreationAttrs> {
     @Column({ type: DataType.STRING })
     nameEN: string;
 
-    @ApiProperty({ example: 'По-гавайски имя Keanu означает «прохладный ветер над горами».', description: 'описание работника' })
+    @ApiProperty({
+        example: 'По-гавайски имя Keanu означает «прохладный ветер над горами».',
+        description: 'описание работника',
+    })
     @Column({ type: DataType.STRING, allowNull: false })
     text: string;
 
-    @ApiProperty({ example: './static/ss343f3f2.jpg', description: 'фото работника' })
+    @ApiProperty({ example: 'ss343f3f2.jpg', description: 'фото работника' })
     @Column({ type: DataType.STRING, unique: true })
     imageName: string;
 

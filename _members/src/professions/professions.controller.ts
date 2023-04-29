@@ -1,5 +1,5 @@
 
-import { colors } from 'src/console.colors';
+import { colors } from '../console.colors';
 const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Professions :`, data, colors.reset );
 
 import { ApiOperation,
@@ -12,11 +12,12 @@ import { ApiOperation,
          ApiCreatedResponse,
          ApiBadRequestResponse,
          ApiConflictResponse,
-         ApiBearerAuth} from '@nestjs/swagger';
+         ApiBearerAuth,
+         ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Controller, Get, Param, Post, Delete, UseGuards, Body } from '@nestjs/common';
 import { ProfessionsService } from './professions.service';
-import { Roles } from 'src/_decorators/roles-auth.decorator';
-import { RolesGuard } from 'src/_decorators/guards/roles.guard';
+import { Roles } from '../_decorators/roles-auth.decorator';
+import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { Profession } from './professions.struct';
 import { CreateProfessionDto } from './dto/create-profession.dto';
 
@@ -37,9 +38,19 @@ export class ProfessionsController {
         schema: { example: { message: 'This profession already exists' } },
         description: 'Профессия с данным названием уже существует. Ответ - Error: Conflict',
     })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
     @ApiForbiddenResponse({
-        schema: { example: { message: 'No access' } },
-        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
     })
     @UseGuards(RolesGuard)
     @Roles('ADMIN')
@@ -65,9 +76,19 @@ export class ProfessionsController {
         schema: { example: { message: 'Profession not found' } },
         description: 'Профессия не найдена. Ответ - Error: Not Found',
     })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
     @ApiForbiddenResponse({
-        schema: { example: { message: 'No access' } },
-        description: 'Неавторизованный пользователь / доступ запрещён. Ответ - Error: Forbidden',
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
     })
     @UseGuards(RolesGuard)
     @Roles('ADMIN')
