@@ -12,10 +12,8 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class RatingUsersService {
-    constructor(
-        private jwtService: JwtService,
-        @InjectModel(RatingUser) private ratingUsersDB: typeof RatingUser,
-        private ratingFilmsService: RatingFilmsService,
+    constructor(@InjectModel(RatingUser) private ratingUsersDB: typeof RatingUser,
+                private ratingFilmsService: RatingFilmsService,
     ) {}
 
     async getRatingUserByFilmIdAndUserId(idFilm: number, idUser: number): Promise<RatingUser> {
@@ -28,27 +26,14 @@ export class RatingUsersService {
         });
     }
 
-    async сreateRatingUser(authHeader: string, createRatingUserDto: CreateRatingUserDto): Promise<RatingUser> {
+    async setRatingUser(createRatingUserDto: CreateRatingUserDto): Promise<RatingUser> {
         log('createRatingUser');
-
-        const curUser = (() => { log('jwtVerify');
-            const [ token_type, token ] = authHeader.split(' ');
-            if (token_type !== 'Bearer' || !token) {
-                throw new UnauthorizedException({message: 'User unauthorized'});
-            }
-            return this.jwtService.verify(token);
-        })();
 
         const idFilm = createRatingUserDto.idFilm;
         const idUser = createRatingUserDto.idUser;
 
         const ratingUser = await this.getRatingUserByFilmIdAndUserId(idFilm, idUser);
         if (ratingUser) {
-            (() => { log('selfGuard');
-                if ( curUser.id !== +idUser )
-                    throw new ForbiddenException({message: 'No access'});
-            })();
-
             await this.ratingFilmsService.onCreateRatingUser(
                 idFilm,
                 createRatingUserDto.rating,

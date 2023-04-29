@@ -4,20 +4,25 @@ const log = (data: any) => console.log(colors.fg.blue, `- - > S-Profiles :`, dat
 
 import * as uuid from 'uuid';
 import { BadRequestException,
+         ForbiddenException,
          Injectable,
          InternalServerErrorException,
-         NotFoundException } from '@nestjs/common';
+         NotFoundException, 
+         UnauthorizedException} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { JwtService } from '@nestjs/jwt';
+import { QueueNames, RMQ } from '../rabbit.core';
+import { addFile, deleteFile, getFile } from '../files.core';
 import { Profile } from './profiles.struct';
 import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
-import { QueueNames, RMQ } from '../rabbit.core';
 import { GetProfileDto } from './dto/get-profile.dto';
-import { addFile, deleteFile, getFile } from '../files.core';
 
 @Injectable()
 export class ProfilesService {
-    constructor(@InjectModel(Profile) private profilesDB: typeof Profile) {
+    constructor(private jwtService: JwtService,
+                @InjectModel(Profile) private profilesDB: typeof Profile)
+    {
         RMQ.connect();
     }
 
@@ -53,13 +58,6 @@ export class ProfilesService {
         return await this.profilesDB.findByPk(id);
     }
 
-    async getProfileById(id: number): Promise<GetProfileDto> {
-        log('getProfileById');
-
-        const profile = await this.profilesDB.findByPk(id);
-        return this.setImageAsFile(profile);
-    }
-
     async getProfileByUserId(idUser: number): Promise<GetProfileDto> {
         log('getProfileByUserId');
 
@@ -70,13 +68,33 @@ export class ProfilesService {
         return this.setImageAsFile(profile);
     }
 
-    async updateAccount(accountDto: AccountDto): Promise<AccountDto> {
+    private async selfGuard(authHeader: string, id: number)
+    {
+        log('selfGuard');
+
+        const user = (() => { log('jwtVerify');
+            const [ token_type, token ] = authHeader.split(' ');
+            if (token_type !== 'Bearer' || !token) {
+                throw new UnauthorizedException({message: 'User unauthorized'});
+            }
+            return this.jwtService.verify(token);
+        })();
+
+        const profile = await this.getProfileByIdWithoutConversion(id);
+        if (!profile) throw new NotFoundException({ message: 'Profile not found' });
+
+        if (user.role.name !== 'ADMIN')
+        {
+            if (user.id !== profile.idUser) throw new ForbiddenException({message: 'No access'});
+        }
+
+        return profile;
+    }
+
+    async updateAccount(authHeader: string, accountDto: AccountDto): Promise<AccountDto> {
         log('updateAccount');
 
-        const profile = await this.getProfileByIdWithoutConversion(accountDto.idProfile);
-        if (!profile) {
-            throw new NotFoundException({ message: 'Profile not found' });
-        }
+        const profile = await this.selfGuard(authHeader, accountDto.idProfile);
 
         // ! updateUserData -> micro User -> User
         const res = await RMQ.publishReq(QueueNames.PU_cmd, QueueNames.PU_data, {
@@ -93,20 +111,14 @@ export class ProfilesService {
         return accountDto;
     }
 
-    async updateImage(id: number, image: any): Promise<GetProfileDto> {
+    async updateImage(authHeader: string, id: number, image: any): Promise<GetProfileDto> {
         log('updateImage');
 
-        const profile = await this.getProfileByIdWithoutConversion(id);
-        if (!profile) {
-            throw new NotFoundException({ message: 'Profile not found' });
-        }
+        const profile = await this.selfGuard(authHeader, id);
 
-        if (!image) {
-            throw new BadRequestException({ message: 'Image is empty' });
-        }
-        if (profile.imageName) {
-            deleteFile(profile.imageName);
-        }
+        if (!image) throw new BadRequestException({ message: 'No image to set' });
+
+        if (profile.imageName) deleteFile(profile.imageName);
 
         profile.imageName = addFile(image);
         await profile.save();
