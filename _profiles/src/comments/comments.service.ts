@@ -103,4 +103,13 @@ export class CommentsService {
             where: {id}
         });
     }
+
+    async deleteCommentsByIdFilm(idFilm: number): Promise<number> {
+        log('deleteCommentsByIdFilm');
+
+        return await this.commentsDB.destroy({
+            force: true,
+            where: {idFilm}
+        });
+    }
 }

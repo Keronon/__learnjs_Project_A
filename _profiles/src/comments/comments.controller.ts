@@ -7,17 +7,20 @@ import { ApiBadRequestResponse,
          ApiBody,
          ApiConflictResponse,
          ApiCreatedResponse,
+         ApiForbiddenResponse,
          ApiNotFoundResponse,
          ApiOkResponse,
          ApiOperation,
          ApiParam,
          ApiTags,
          ApiUnauthorizedResponse} from '@nestjs/swagger';
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Delete, Param, Post, UseGuards } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { Comment } from './comments.struct';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/_decorators/guards/roles.guard';
+import { Roles } from '../_decorators/roles-auth.decorator';
 
 @ApiTags('Комментарии к фильму')
 @Controller('api/comments')
@@ -72,5 +75,26 @@ export class CommentsController {
     getCommentsByComment(@Param('id') idComment: number): Promise<any[]> {
         log('getCommentsByComment');
         return this.commentsService.getCommentsByComment(idComment);
+    }
+
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Удаление комментария по id' })
+    @ApiParam({ name: 'id', description: 'id комментария', example: 1 })
+    @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
+    @ApiForbiddenResponse({
+        schema: { example: { message: 'No access' } },
+        description: 'Недостаточно прав для доступа к функции. Ответ - Error: Forbidden',
+    })
+    @UseGuards(RolesGuard)
+    // FIXME : set SelfGuard
+    @Roles('ADMIN')
+    @Delete(':id')
+    deleteCommentById(@Param('id') id: number): Promise<number> {
+        log('deleteCommentById');
+        return this.commentsService.deleteCommentById(id);
     }
 }
