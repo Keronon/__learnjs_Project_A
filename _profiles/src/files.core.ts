@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as fs   from 'fs';
 import * as uuid from 'uuid';
 
-import { colors } from '../console.colors';
+import { colors } from './console.colors';
 import { InternalServerErrorException } from '@nestjs/common';
 
 export function addFile(file: any)

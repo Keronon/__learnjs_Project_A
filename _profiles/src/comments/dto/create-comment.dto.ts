@@ -7,6 +7,10 @@ export class CreateCommentDto {
     @IsNumber({}, { message: 'Must be a number' })
     idFilm: number;
 
+    @ApiProperty({ example: 1, description: 'id пользователя-комментатора' })
+    @IsNumber({}, { message: 'Must be a number' })
+    idUser: number;
+
     @ApiProperty({ example: 1, description: 'id профиля пользователя-комментатора' })
     @IsNumber({}, { message: 'Must be a number' })
     idProfile: number;

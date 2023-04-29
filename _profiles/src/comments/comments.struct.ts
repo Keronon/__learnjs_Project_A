@@ -26,6 +26,10 @@ export class Comment extends Model<Comment, CommentCreationAttrs> {
     @Column({ type: DataType.INTEGER, allowNull: false })
     idFilm: number;
 
+    @ApiProperty({ example: 1, description: 'id пользователя-комментатора' })
+    @Column({ type: DataType.INTEGER, allowNull: false })
+    idUser: number;
+
     @ApiProperty({ example: 1, description: 'id профиля пользователя-комментатора' })
     @Column({ type: DataType.INTEGER, allowNull: false })
     @ForeignKey(() => Profile)

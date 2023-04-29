@@ -2,19 +2,20 @@ import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Comments :`, data, colors.reset);
 
 import * as uuid from 'uuid';
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
+import { QueueNames, RMQ } from './../rabbit.core';
+import { ProfilesService } from '../profiles/profiles.service';
+import { JwtService } from '@nestjs/jwt';
 import { Comment } from './comments.struct';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { ProfilesService } from '../profiles/profiles.service';
-import { QueueNames, RMQ } from './../rabbit.core';
 
 @Injectable()
 export class CommentsService {
-    constructor(
-        @InjectModel(Comment) private commentsDB: typeof Comment,
-        private profilesService: ProfilesService,
+    constructor(private jwtService: JwtService,
+                @InjectModel(Comment) private commentsDB: typeof Comment,
+                private profilesService: ProfilesService,
     ) {
         RMQ.connect();
     }
@@ -51,16 +52,23 @@ export class CommentsService {
         return await this.commentsDB.create(createCommentDto);
     }
 
-    async getCommentsByFilm(idFilm: number): Promise<Comment[]> {
+    async getCommentsByFilm(idFilm: number): Promise<any[]> {
         log('getCommentsByFilm');
 
-        return await this.commentsDB.findAll({
+        const found: any[] = await this.commentsDB.findAll({
             paranoid: false,
             where: {
                 [Op.and]: [{ idFilm }, { prevId: null }],
             },
             include: { all: true },
         });
+        for (let i = 0; i < found.length; i++)
+            found[i].childrenCount = await this.commentsDB.count({
+                paranoid: false,
+                where: { prevId: found[i].id }
+            });
+
+        return found;
     }
 
     async getCommentsByComment(idComment: number): Promise<any> {
@@ -89,11 +97,35 @@ export class CommentsService {
         return await this.commentsDB.findByPk(id);
     }
 
-    async deleteCommentById(id: number): Promise<number> {
+    async deleteCommentById(authHeader: string, id: number): Promise<number> {
         log('deleteCommentById');
+
+        const user = (() => { log('jwtVerify');
+            const [ token_type, token ] = authHeader.split(' ');
+            if (token_type !== 'Bearer' || !token) {
+                throw new UnauthorizedException({message: 'User unauthorized'});
+            }
+            return this.jwtService.verify(token);
+        })();
+
+        if (user.role.name !== 'ADMIN')
+        {
+            const comment = await this.commentsDB.findByPk(id);
+            if (!comment) throw new NotFoundException({ message: 'Comment not found' });
+            if (user.id !== comment.idUser) throw new ForbiddenException({message: 'No access'});
+        }
 
         return await this.commentsDB.destroy({
             where: {id}
+        });
+    }
+
+    async deleteCommentsByIdFilm(idFilm: number): Promise<number> {
+        log('deleteCommentsByIdFilm');
+
+        return await this.commentsDB.destroy({
+            force: true,
+            where: {idFilm}
         });
     }
 }

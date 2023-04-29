@@ -4,15 +4,15 @@ const log = ( data: any ) => console.log( colors.fg.magenta, `- - > GS-Rating :`
 
 import {
     ExecutionContext,
-    ForbiddenException,
     Injectable,
+    InternalServerErrorException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { checkAuth } from './jwt-auth.guard';
 import { RolesGuard } from './roles.guard';
 
 @Injectable()
-export class RatingUsersSelfGuard extends RolesGuard {
+export class UidGuard extends RolesGuard {
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         log('canActivate');
 
@@ -25,7 +25,7 @@ export class RatingUsersSelfGuard extends RolesGuard {
             if ( idUser && user.id === +idUser ) return true;
             else return super.canActivate(context);
         } catch (e) {
-            throw new ForbiddenException({message: 'No access'});
+            throw new InternalServerErrorException({message: 'Can not check self-access'});
         }
     }
 }

@@ -51,7 +51,7 @@ export class Film extends Model<Film, FilmCreationAttrs> {
     @Column({ type: DataType.INTEGER, allowNull: false })
     duration: number;
 
-    @ApiProperty({ required: false, example: './static/u12dflf.png', description: 'путь к изображению фильма' })
+    @ApiProperty({ required: false, example: './u12dflf.png', description: 'путь к изображению фильма' })
     @Column({ type: DataType.STRING, unique: true })
     imageName: string;
 

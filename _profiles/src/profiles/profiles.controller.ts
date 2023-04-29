@@ -15,17 +15,18 @@ import { ApiBody,
          ApiNotFoundResponse,
          ApiUnauthorizedResponse,
          ApiConsumes } from '@nestjs/swagger';
-import { Body, Controller, Get, Param, Post, Delete,
+import { Body, Controller, Get, Param, Post, Delete, Headers,
          Put, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProfilesService } from './profiles.service';
+import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
+import { RolesGuard } from '../_decorators/guards/roles.guard';
+import { UidGuard } from 'src/_decorators/guards/uid.guard';
+import { Roles } from '../_decorators/roles-auth.decorator';
 import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
 import { GetProfileDto } from './dto/get-profile.dto';
-import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
-import { Roles } from '../_decorators/roles-auth.decorator';
-import { RolesGuard } from '../_decorators/guards/roles.guard';
-import { FileUploadDto } from '../_files/file-upload.dto';
+import { FileUploadDto } from './dto/file-upload.dto';
 
 enum RoleNames { Admin = 'ADMIN', User = 'USER' }
 
@@ -102,21 +103,6 @@ export class ProfilesController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Получение профиля по id' })
-    @ApiParam({ name: 'id', description: 'id профиля', example: 1 })
-    @ApiOkResponse({ type: GetProfileDto, description: 'Успех. Ответ - профиль пользователя / ничего(не найден)' })
-    @ApiUnauthorizedResponse({
-        schema: { example: { message: 'User unauthorized' } },
-        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
-    })
-    @UseGuards(JwtAuthGuard)
-    @Get(':id')
-    getProfileById(@Param('id') id: number): Promise<GetProfileDto> {
-        log('getProfileById');
-        return this.profilesService.getProfileById(id);
-    }
-
-    @ApiBearerAuth()
     @ApiOperation({ summary: 'Получение профиля по id пользователя, связанного с ним' })
     @ApiParam({ name: 'idUser', description: 'id пользователя', example: 1 })
     @ApiOkResponse({
@@ -128,6 +114,8 @@ export class ProfilesController {
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
     })
     @UseGuards(JwtAuthGuard)
+    @Roles('ME', 'ADMIN')
+    @UseGuards(UidGuard)
     @Get('/user/:idUser')
     getProfileByUserId(@Param('idUser') idUser: number): Promise<GetProfileDto> {
         log('getProfileByUserId');
@@ -159,11 +147,10 @@ export class ProfilesController {
         schema: { example: { message: 'User unauthorized' } },
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
     })
-    @UseGuards(JwtAuthGuard)
     @Put()
-    updateAccount(@Body() accountDto: AccountDto): Promise<AccountDto> {
+    updateAccount(@Headers('Authorization') authHeader, @Body() accountDto: AccountDto): Promise<AccountDto> {
         log('updateAccount');
-        return this.profilesService.updateAccount(accountDto);
+        return this.profilesService.updateAccount(authHeader, accountDto);
     }
 
     @ApiBearerAuth()
@@ -180,12 +167,11 @@ export class ProfilesController {
         schema: { example: { message: 'Image is empty' } },
         description: 'Файл с фото профиля не прикреплён. Ответ - Error: Bad Request',
     })
-    @UseGuards(JwtAuthGuard)
     @UseInterceptors(FileInterceptor('image'))
     @Put(':id')
-    updateImage(@Param('id') id: number, @UploadedFile() image): Promise<GetProfileDto> {
+    updateImage(@Headers('Authorization') authHeader, @Param('id') id: number, @UploadedFile() image): Promise<GetProfileDto> {
         log('updateImage');
-        return this.profilesService.updateImage(id, image);
+        return this.profilesService.updateImage(authHeader, id, image);
     }
 
     @ApiBearerAuth()
