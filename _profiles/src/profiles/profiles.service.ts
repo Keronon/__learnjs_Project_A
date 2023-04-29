@@ -1,16 +1,19 @@
 
 import { colors } from '../console.colors';
-const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Profiles :`, data, colors.reset );
+const log = (data: any) => console.log(colors.fg.blue, `- - > S-Profiles :`, data, colors.reset);
 
 import * as uuid from 'uuid';
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException,
+         Injectable,
+         InternalServerErrorException,
+         NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Profile } from './profiles.struct';
 import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
 import { QueueNames, RMQ } from '../rabbit.core';
 import { GetProfileDto } from './dto/get-profile.dto';
-import { addFile, deleteFile, getFile } from '../files.core';
+import { addFile, deleteFile, getFile } from '../_files/files.core';
 
 @Injectable()
 export class ProfilesService {
@@ -18,13 +21,13 @@ export class ProfilesService {
         RMQ.connect();
     }
 
-    async registration(registrationDto: RegistrationDto, roleName: string, image: any): Promise<{ idUser: number; token: string }> {
+    async registration(registrationDto: RegistrationDto, roleName: string): Promise<{ idUser: number; token: string }> {
         log('registration');
 
         const regData = {
             email: registrationDto.email,
             password: registrationDto.password,
-            role: roleName
+            role: roleName,
         };
 
         // ! regData -> micro Auth -> { idUser: number, token: string }
@@ -39,7 +42,6 @@ export class ProfilesService {
         const createProfileData = {
             profileName: registrationDto.profileName,
             idUser: res.idUser,
-            imageName: addFile(image)
         };
         await this.profilesDB.create(createProfileData);
 
@@ -68,7 +70,7 @@ export class ProfilesService {
         return this.setImageAsFile(profile);
     }
 
-    async updateAccount(accountDto: AccountDto, image: any): Promise<AccountDto> {
+    async updateAccount(accountDto: AccountDto): Promise<AccountDto> {
         log('updateAccount');
 
         const profile = await this.getProfileByIdWithoutConversion(accountDto.idProfile);
@@ -85,18 +87,32 @@ export class ProfilesService {
         if (Object.keys(res).length === 0)
             throw new InternalServerErrorException({ message: 'Got empty or error response' });
 
-        if (image)
-        {
-            deleteFile(profile.imageName);
-            profile.imageName = addFile(image);
-        }
         profile.profileName = accountDto.profileName;
         await profile.save();
 
         return accountDto;
     }
 
-    // TODO : создать метод для изменения фото профиля
+    async updateImage(id: number, image: any): Promise<GetProfileDto> {
+        log('updateImage');
+
+        const profile = await this.getProfileByIdWithoutConversion(id);
+        if (!profile) {
+            throw new NotFoundException({ message: 'Profile not found' });
+        }
+
+        if (!image) {
+            throw new BadRequestException({ message: 'Image is empty' });
+        }
+        if (profile.imageName) {
+            deleteFile(profile.imageName);
+        }
+
+        profile.imageName = addFile(image);
+        await profile.save();
+
+        return this.setImageAsFile(profile);
+    }
 
     async deleteAccountByProfileId(id: number): Promise<number> {
         log('deleteAccountByProfileId');
@@ -114,16 +130,18 @@ export class ProfilesService {
         });
         if (res !== 1) throw new InternalServerErrorException({ message: 'Can not delete user' });
 
+        if (profile.imageName) {
+            deleteFile(profile.imageName);
+        }
         return await this.profilesDB.destroy({ where: { id } });
     }
 
-    private setImageAsFile(profile: Profile): GetProfileDto
-    {
+    private setImageAsFile(profile: Profile): GetProfileDto {
         log('setImageAsFile');
 
         const data = {
-            ...profile,
-            image: getFile(profile.imageName ?? '_no_avatar.png')
+            ...profile.dataValues,
+            image: getFile(profile.imageName ?? '_no_avatar.png'),
         };
         delete data.imageName;
 

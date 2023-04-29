@@ -1,6 +1,6 @@
 
 import { colors } from 'src/console.colors';
-const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Profiles :`, data, colors.reset );
+const log = (data: any) => console.log(colors.fg.yellow, `- - > C-Profiles :`, data, colors.reset);
 
 import { ApiBody,
          ApiOperation,
@@ -13,18 +13,21 @@ import { ApiBody,
          ApiConflictResponse,
          ApiForbiddenResponse,
          ApiNotFoundResponse,
-         ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { Body, Controller, Get, Param, Post, Delete, Put, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+         ApiUnauthorizedResponse,
+         ApiConsumes } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, Delete,
+         Put, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProfilesService } from './profiles.service';
 import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
 import { GetProfileDto } from './dto/get-profile.dto';
-import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
-import { Roles } from 'src/_decorators/roles-auth.decorator';
-import { RolesGuard } from 'src/_decorators/guards/roles.guard';
+import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
+import { Roles } from '../_decorators/roles-auth.decorator';
+import { RolesGuard } from '../_decorators/guards/roles.guard';
+import { FileUploadDto } from '../_files/file-upload.dto';
 
-enum RoleNames { Admin = 'ADMIN', User = 'USER' };
+enum RoleNames { Admin = 'ADMIN', User = 'USER' }
 
 @ApiTags('Профили пользователей')
 @Controller('api/profiles')
@@ -50,11 +53,10 @@ export class ProfilesController {
         },
         description: 'Ошибки валидации. Ответ - Error: Bad Request',
     })
-    @UseInterceptors(FileInterceptor( 'image' ))
     @Post('/reg/user')
-    regUser(@Body() registrationDto: RegistrationDto, @UploadedFile() image): Promise<{ idUser: number, token: string }> {
+    regUser(@Body() registrationDto: RegistrationDto): Promise<{ idUser: number; token: string }> {
         log('regUser');
-        return this.profilesService.registration(registrationDto, RoleNames.User, image);
+        return this.profilesService.registration(registrationDto, RoleNames.User);
     }
 
     @ApiBearerAuth()
@@ -93,11 +95,10 @@ export class ProfilesController {
     })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
-    @UseInterceptors(FileInterceptor( 'image' ))
     @Post('/reg/admin')
-    regAdmin(@Body() registrationDto: RegistrationDto, @UploadedFile() image): Promise<{ idUser: number, token: string }> {
+    regAdmin(@Body() registrationDto: RegistrationDto): Promise<{ idUser: number; token: string }> {
         log('regAdmin');
-        return this.profilesService.registration(registrationDto, RoleNames.Admin, image);
+        return this.profilesService.registration(registrationDto, RoleNames.Admin);
     }
 
     @ApiBearerAuth()
@@ -118,7 +119,10 @@ export class ProfilesController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Получение профиля по id пользователя, связанного с ним' })
     @ApiParam({ name: 'idUser', description: 'id пользователя', example: 1 })
-    @ApiOkResponse({ type: GetProfileDto, description: 'Успех. Ответ - профиль пользователя / ничего(не найден)' })
+    @ApiOkResponse({
+        type: GetProfileDto,
+        description: 'Успех. Ответ - профиль пользователя / ничего(не найден)',
+    })
     @ApiUnauthorizedResponse({
         schema: { example: { message: 'User unauthorized' } },
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
@@ -156,11 +160,32 @@ export class ProfilesController {
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
     })
     @UseGuards(JwtAuthGuard)
-    @UseInterceptors(FileInterceptor( 'image' ))
     @Put()
-    updateAccount(@Body() accountDto: AccountDto, @UploadedFile() image): Promise<AccountDto> {
+    updateAccount(@Body() accountDto: AccountDto): Promise<AccountDto> {
         log('updateAccount');
-        return this.profilesService.updateAccount(accountDto, image);
+        return this.profilesService.updateAccount(accountDto);
+    }
+
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Изменение фото профиля' })
+    @ApiParam({ name: 'id', description: 'id профиля', example: 1 })
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({ type: FileUploadDto, description: 'Новое фото профиля' })
+    @ApiOkResponse({ type: GetProfileDto, description: 'Успех. Ответ - изменённый профиль' })
+    @ApiNotFoundResponse({
+        schema: { example: { message: 'Profile not found' } },
+        description: 'Профиль не найден. Ответ - Error: Not Found',
+    })
+    @ApiBadRequestResponse({
+        schema: { example: { message: 'Image is empty' } },
+        description: 'Файл с фото профиля не прикреплён. Ответ - Error: Bad Request',
+    })
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(FileInterceptor('image'))
+    @Put(':id')
+    updateImage(@Param('id') id: number, @UploadedFile() image): Promise<GetProfileDto> {
+        log('updateImage');
+        return this.profilesService.updateImage(id, image);
     }
 
     @ApiBearerAuth()
@@ -169,7 +194,7 @@ export class ProfilesController {
     @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
     @ApiNotFoundResponse({
         schema: { example: { message: 'Profile not found' } },
-        description: 'Профиль / пользователь не найден. Ответ - Error: Not Found',
+        description: 'Профиль не найден. Ответ - Error: Not Found',
     })
     @ApiUnauthorizedResponse({
         schema: { example: { message: 'User unauthorized' } },

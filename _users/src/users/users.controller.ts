@@ -1,5 +1,5 @@
 
-import { colors } from './../console.colors';
+import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.yellow, `- - > C-Users :`, data, colors.reset);
 
 import { ApiBearerAuth,
@@ -15,8 +15,8 @@ import { User } from './users.struct';
 import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { Roles } from '../_decorators/roles-auth.decorator';
 
-@ApiTags('Пользователи')
 @ApiBearerAuth()
+@ApiTags('Пользователи')
 @UseGuards(RolesGuard)
 @Controller('api/users')
 export class UsersController {

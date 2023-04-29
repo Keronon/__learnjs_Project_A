@@ -5,7 +5,6 @@ import { Comment } from 'src/comments/comments.struct';
 
 interface ProfileCreationAttrs {
     profileName: string;
-    imageName?: string;
     idUser: number;
 }
 

@@ -8,7 +8,7 @@ import { RolesService } from './../roles/roles.service';
 import { User } from './users.struct';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { QueueNames, RMQ } from 'src/rabbit.core';
+import { QueueNames, RMQ } from '../rabbit.core';
 
 @Injectable()
 export class UsersService {

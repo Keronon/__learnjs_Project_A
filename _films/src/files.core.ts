@@ -49,7 +49,7 @@ export function deleteFile(fileName: string)
     log('delete file');
 
     try {
-        const f_path = path.resolve( __dirname, '..', 'loads' );
+        const f_path = path.resolve( __dirname, '..', '_images' );
         fs.rmSync( path.join( f_path, fileName ) );
 
         return true;

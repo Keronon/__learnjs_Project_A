@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as fs   from 'fs';
 import * as uuid from 'uuid';
 
-import { colors } from './console.colors';
+import { colors } from '../console.colors';
 import { InternalServerErrorException } from '@nestjs/common';
 
 export function addFile(file: any)
@@ -51,7 +51,7 @@ export function deleteFile(fileName: string)
     log('delete file');
 
     try {
-        const f_path = path.resolve( __dirname, '..', 'loads' );
+        const f_path = path.resolve( __dirname, '..', '_images' );
         fs.rmSync( path.join( f_path, fileName ) );
 
         return true;

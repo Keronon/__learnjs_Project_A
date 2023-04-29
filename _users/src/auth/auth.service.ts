@@ -1,10 +1,9 @@
 
-import { colors } from './../console.colors';
+import { colors } from '../console.colors';
 const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Auth :`, data, colors.reset );
 
 import * as bcrypt from 'bcryptjs';
-import { BadRequestException,
-         ForbiddenException,
+import { ForbiddenException,
          NotFoundException,
          Injectable,
          ConflictException} from '@nestjs/common';
