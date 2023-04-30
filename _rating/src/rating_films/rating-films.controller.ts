@@ -19,8 +19,8 @@ export class RatingFilmsController {
         description: 'Рейтинг по фильму не найден. Ответ - Error: Not Found',
     })
     @Get(':idFilm')
-    getRatingFilmCountByFilmId(@Param() param: { idFilm: number }): Promise<number> {
+    getRatingFilmCountByFilmId(@Param('idFilm') idFilm: number ): Promise<number> {
         log('getRatingFilmCountByFilmId');
-        return this.ratingFilmsService.getRatingFilmCountByFilmId(param.idFilm);
+        return this.ratingFilmsService.getRatingFilmCountByFilmId(idFilm);
     }
 }

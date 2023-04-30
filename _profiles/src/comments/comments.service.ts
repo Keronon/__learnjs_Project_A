@@ -2,7 +2,11 @@ import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Comments :`, data, colors.reset);
 
 import * as uuid from 'uuid';
-import { ConflictException, Injectable, NotFoundException, ForbiddenException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException,
+         Injectable,
+         NotFoundException,
+         ForbiddenException,
+         UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import { QueueNames, RMQ } from './../rabbit.core';

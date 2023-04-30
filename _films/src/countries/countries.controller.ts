@@ -16,7 +16,7 @@ import { ApiBadRequestResponse,
          ApiTags,
          ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { CountriesService } from './countries.service';
-import { Roles } from './../_decorators/roles-auth.decorator';
+import { Roles } from '../_decorators/roles-auth.decorator';
 import { RolesGuard } from './../_decorators/guards/roles.guard';
 import { Country } from './countries.struct';
 import { CreateCountryDto } from './dto/create-country.dto';

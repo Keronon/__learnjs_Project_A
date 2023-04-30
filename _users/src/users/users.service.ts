@@ -4,7 +4,7 @@ const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Users :`, dat
 
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { RolesService } from './../roles/roles.service';
+import { RolesService } from '../roles/roles.service';
 import { User } from './users.struct';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';

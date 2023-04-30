@@ -18,8 +18,8 @@ import { ApiParam,
 import { FilmsService } from './films.service';
 import { UpdateFilmDto } from './dto/update-film.dto';
 import { Film } from './films.struct';
-import { Roles } from './../_decorators/roles-auth.decorator';
-import { RolesGuard } from './../_decorators/guards/roles.guard';
+import { Roles } from '../_decorators/roles-auth.decorator';
+import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { CreateFilmDto } from './dto/create-film.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 

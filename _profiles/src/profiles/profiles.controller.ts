@@ -1,5 +1,5 @@
 
-import { colors } from 'src/console.colors';
+import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.yellow, `- - > C-Profiles :`, data, colors.reset);
 
 import { ApiBody,
@@ -21,7 +21,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ProfilesService } from './profiles.service';
 import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
 import { RolesGuard } from '../_decorators/guards/roles.guard';
-import { UidGuard } from 'src/_decorators/guards/uid.guard';
+import { UidGuard } from '../_decorators/guards/uid.guard';
 import { Roles } from '../_decorators/roles-auth.decorator';
 import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
@@ -104,7 +104,7 @@ export class ProfilesController {
 
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Получение профиля по id пользователя, связанного с ним' })
-    @ApiParam({ name: 'idUser', description: 'id пользователя', example: 1 })
+    @ApiParam({ name: 'id', description: 'id пользователя', example: 1 })
     @ApiOkResponse({
         type: GetProfileDto,
         description: 'Успех. Ответ - профиль пользователя / ничего(не найден)',
@@ -116,8 +116,8 @@ export class ProfilesController {
     @UseGuards(UidGuard)
     @Roles('ME', 'ADMIN')
     @UseGuards(JwtAuthGuard)
-    @Get('/user/:idUser')
-    getProfileByUserId(@Param('idUser') idUser: number): Promise<GetProfileDto> {
+    @Get('/user/:id')
+    getProfileByUserId(@Param('id') idUser: number): Promise<GetProfileDto> {
         log('getProfileByUserId');
         return this.profilesService.getProfileByUserId(idUser);
     }

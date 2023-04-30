@@ -11,7 +11,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/auth.dto';
 import { User } from '../users/users.struct';
-import { QueueNames, RMQ } from './../rabbit.core';
+import { QueueNames, RMQ } from '../rabbit.core';
 import { RegistrationUserDto } from './dto/registration-user.dto';
 
 @Injectable()

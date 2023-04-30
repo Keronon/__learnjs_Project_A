@@ -17,8 +17,8 @@ import { ApiBadRequestResponse,
 import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiParam } from '@nestjs/swagger';
-import { Roles } from './../_decorators/roles-auth.decorator';
-import { RolesGuard } from './../_decorators/guards/roles.guard';
+import { Roles } from '../_decorators/roles-auth.decorator';
+import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { GenresService } from './genres.service';
 import { Genre } from './genres.struct';
 import { CreateGenreDto } from './dto/create-genre.dto';

@@ -1,5 +1,5 @@
 
-import { colors } from 'src/console.colors';
+import { colors } from '../console.colors';
 const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Comments :`, data, colors.reset );
 
 import { ApiBadRequestResponse,
@@ -87,7 +87,7 @@ export class CommentsController {
         schema: { example: { message: 'No access' } },
         description: 'Недостаточно прав для доступа к функции. Ответ - Error: Forbidden',
     })
-    @Delete('/:id')
+    @Delete(':id')
     deleteCommentById(@Headers('Authorization') authHeader, @Param('id') id: number): Promise<number> {
         log('deleteCommentById');
         return this.commentsService.deleteCommentById(authHeader, id);

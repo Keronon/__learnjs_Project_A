@@ -7,7 +7,7 @@ import { BadRequestException,
          ForbiddenException,
          Injectable,
          InternalServerErrorException,
-         NotFoundException, 
+         NotFoundException,
          UnauthorizedException} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { JwtService } from '@nestjs/jwt';
@@ -66,29 +66,6 @@ export class ProfilesService {
         });
 
         return this.setImageAsFile(profile);
-    }
-
-    private async selfGuard(authHeader: string, id: number)
-    {
-        log('selfGuard');
-
-        const user = (() => { log('jwtVerify');
-            const [ token_type, token ] = authHeader.split(' ');
-            if (token_type !== 'Bearer' || !token) {
-                throw new UnauthorizedException({message: 'User unauthorized'});
-            }
-            return this.jwtService.verify(token);
-        })();
-
-        const profile = await this.getProfileByIdWithoutConversion(id);
-        if (!profile) throw new NotFoundException({ message: 'Profile not found' });
-
-        if (user.role.name !== 'ADMIN')
-        {
-            if (user.id !== profile.idUser) throw new ForbiddenException({message: 'No access'});
-        }
-
-        return profile;
     }
 
     async updateAccount(authHeader: string, accountDto: AccountDto): Promise<AccountDto> {
@@ -158,5 +135,28 @@ export class ProfilesService {
         delete data.imageName;
 
         return data;
+    }
+
+    private async selfGuard(authHeader: string, id: number)
+    {
+        log('selfGuard');
+
+        const user = (() => { log('jwtVerify');
+            const [ token_type, token ] = authHeader.split(' ');
+            if (token_type !== 'Bearer' || !token) {
+                throw new UnauthorizedException({message: 'User unauthorized'});
+            }
+            return this.jwtService.verify(token);
+        })();
+
+        const profile = await this.getProfileByIdWithoutConversion(id);
+        if (!profile) throw new NotFoundException({ message: 'Profile not found' });
+
+        if (user.role.name !== 'ADMIN')
+        {
+            if (user.id !== profile.idUser) throw new ForbiddenException({message: 'No access'});
+        }
+
+        return profile;
     }
 }

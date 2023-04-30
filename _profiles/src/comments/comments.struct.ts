@@ -1,7 +1,7 @@
 
 import { ApiProperty } from '@nestjs/swagger';
 import { Model, Table, Column, DataType, BelongsTo, ForeignKey } from 'sequelize-typescript';
-import { Profile } from 'src/profiles/profiles.struct';
+import { Profile } from '../profiles/profiles.struct';
 
 interface CommentCreationAttrs {
     idFilm: number;

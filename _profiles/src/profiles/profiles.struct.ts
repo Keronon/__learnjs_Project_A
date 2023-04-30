@@ -1,7 +1,7 @@
 
 import { ApiProperty } from '@nestjs/swagger';
 import { Model, Table, Column, DataType, HasMany } from 'sequelize-typescript';
-import { Comment } from 'src/comments/comments.struct';
+import { Comment } from '../comments/comments.struct';
 
 interface ProfileCreationAttrs {
     profileName: string;
