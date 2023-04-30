@@ -25,11 +25,11 @@ export class RatingFilm extends Model<RatingFilm, RatingFilmCreationAttrs> {
     count: number;
 
     @ApiProperty({ example: 9.1, description: 'рейтинг фильма' })
-    @Column({ type: DataType.INTEGER })
+    @Column({ type: DataType.DOUBLE })
     ratingFilm: number;
 
     @ApiProperty({ example: 9.0687, description: 'текущей рейтинг фильма' })
-    @Column({ type: DataType.INTEGER })
+    @Column({ type: DataType.DOUBLE })
     ratingCurrent: number;
 
     @ApiProperty({ example: 1, description: 'id фильма' })

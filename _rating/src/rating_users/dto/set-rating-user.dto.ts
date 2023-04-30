@@ -2,7 +2,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber } from 'class-validator';
 
-export class CreateRatingUserDto {
+export class SetRatingUserDto {
     @ApiProperty({ example: 7, description: 'пользовательская оценка фильма' })
     @IsNumber({}, { message: 'Must be a number' })
     readonly rating: number;

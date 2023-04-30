@@ -16,6 +16,7 @@ async function bootstrap ()
         .setDescription(
             'REST API документация для микросервиса оценивания фильмов',
         )
+        .addBearerAuth()
         .setVersion('1.0.0')
         .build();
     const document = SwaggerModule.createDocument(app, config);

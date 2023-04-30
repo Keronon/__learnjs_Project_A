@@ -2,7 +2,11 @@
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Rating_films :`, data, colors.reset);
 
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import * as uuid from 'uuid';
+import { ConflictException,
+         Injectable,
+         InternalServerErrorException,
+         NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { RatingFilm } from './rating-films.struct';
 import { QueueNames, RMQ } from '../rabbit.core';
@@ -10,7 +14,7 @@ import { QueueNames, RMQ } from '../rabbit.core';
 @Injectable()
 export class RatingFilmsService {
     constructor(@InjectModel(RatingFilm) private ratingFilmsDB: typeof RatingFilm) {
-        RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.FRF_cmd, QueueNames.FRF_data));
+        RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.FR_cmd, QueueNames.FR_data));
     }
 
     async getRatingFilmCountByFilmId(idFilm: number): Promise<number> {
@@ -41,11 +45,7 @@ export class RatingFilmsService {
         return await this.ratingFilmsDB.create(ratingFilmData);
     }
 
-    async onCreateRatingUser(
-        idFilm: number,
-        newRatingUser: number,
-        oldRatingUser: number = 0,
-    ): Promise<RatingFilm> {
+    async onCreateRatingUser(idFilm: number, newRatingUser: number, oldRatingUser: number = 0): Promise<RatingFilm> {
         log('onCreateRatingUser');
 
         const ratingFilm = await this.getRatingFilmByFilmId(idFilm);
@@ -62,13 +62,22 @@ export class RatingFilmsService {
         }
 
         ratingFilm.ratingCurrent = sumRatings / ratingFilm.count;
-        await ratingFilm.save();
 
-        if (ratingFilm.ratingFilm !== Math.round(ratingFilm.ratingCurrent)) {
-            ratingFilm.ratingFilm = Math.round(ratingFilm.ratingCurrent);
-            // TODO: отправка в микро Films нового рейтинга
+        const ratingCurrent = Math.round(ratingFilm.ratingCurrent * 10) / 10;
+        if (ratingFilm.ratingFilm !== ratingCurrent) {
+            ratingFilm.ratingFilm = ratingCurrent;
+
+            // ! { id, newRating } -> micro Film -> true
+            const res = await RMQ.publishReq(QueueNames.RF_cmd, QueueNames.RF_data, {
+                id_msg: uuid.v4(),
+                cmd: 'updateFilmRating',
+                data: { id: idFilm, newRating: ratingFilm.ratingFilm },
+            });
+            if (res !== true)
+                throw new InternalServerErrorException({ message: 'Can not update film rating' });
         }
 
+        await ratingFilm.save();
         return ratingFilm;
     }
 

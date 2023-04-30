@@ -34,7 +34,7 @@ export class FilmsRMQ {
         log('createRatingFilm');
 
         // ! idFilm -> micro Rating -> RatingFilm
-        const res = await RMQ.publishReq(QueueNames.FRF_cmd, QueueNames.FRF_data, {
+        const res = await RMQ.publishReq(QueueNames.FR_cmd, QueueNames.FR_data, {
             id_msg: uuid.v4(),
             cmd: 'createRatingFilm',
             data: idFilm,
@@ -61,7 +61,7 @@ export class FilmsRMQ {
         log('deleteRatingFilm');
 
         // ! idFilm -> micro Rating -> rows count
-        const res = await RMQ.publishReq(QueueNames.FRF_cmd, QueueNames.FRF_data, {
+        const res = await RMQ.publishReq(QueueNames.FR_cmd, QueueNames.FR_cmd, {
             id_msg: uuid.v4(),
             cmd: 'deleteRatingFilmByFilmId',
             data: idFilm,

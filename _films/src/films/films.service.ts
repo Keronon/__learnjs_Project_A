@@ -12,7 +12,8 @@ import { CreateFilmDto } from './dto/create-film.dto';
 import { UpdateFilmDto } from './dto/update-film.dto';
 import { QueueNames, RMQ } from '../rabbit.core';
 import { FilmsRMQ } from './films-rmq';
-import { addFile, deleteFile, getFile } from 'src/files.core';
+import { addFile, deleteFile, getFile } from '../files.core';
+import { UpdateFilmRatingDto } from './dto/update-film-rating.dto';
 
 @Injectable()
 export class FilmsService {
@@ -24,8 +25,15 @@ export class FilmsService {
         private genresService: GenresService,
         private filmGenresService: FilmGenresService,
     ) {
-        RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.CF_cmd, QueueNames.CF_data));
+        RMQ.connect()
+            .then(RMQ.setCmdConsumer(this, QueueNames.CF_cmd, QueueNames.CF_data))
+            .then(RMQ.setCmdConsumer(this, QueueNames.RF_cmd, QueueNames.RF_data));
         this.filmsRMQ = new FilmsRMQ(this.filmsDB);
+    }
+
+    async getFilmByIdWithoutConversion(id: number): Promise<Film> {
+        log('getFilmByIdWithoutConversion');
+        return await this.filmsDB.findByPk(id);
     }
 
     async getFilmById(id: number): Promise<any> {
@@ -38,7 +46,8 @@ export class FilmsService {
 
         await this.validateCountryAndGenres(createFilmDto.idCountry, createFilmDto.arrIdGenres);
 
-        const film = await this.filmsDB.create({...createFilmDto, imageName: addFile(image)});
+        const imageName = image ? addFile(image) : null;
+        const film = await this.filmsDB.create({ ...createFilmDto, imageName });
 
         await this.filmsRMQ.createFilmInfo(film.id, createFilmDto);
         await this.filmsRMQ.createRatingFilm(film.id);
@@ -50,7 +59,7 @@ export class FilmsService {
     async updateFilm(updateFilmDto: UpdateFilmDto, image: any): Promise<Film> {
         log('updateFilm');
 
-        const film = await this.getFilmById(updateFilmDto.id);
+        const film = await this.getFilmByIdWithoutConversion(updateFilmDto.id);
         if (!film) {
             throw new NotFoundException({ message: 'Film not found' });
         }
@@ -61,8 +70,7 @@ export class FilmsService {
             if (key === 'arrIdGenres') break;
             film[key] = updateFilmDto[key];
         }
-        if (image)
-        {
+        if (image) {
             deleteFile(film.imageName);
             film.imageName = addFile(image);
         }
@@ -74,10 +82,24 @@ export class FilmsService {
         return film;
     }
 
+    async updateFilmRating(updateFilmRatingDto: UpdateFilmRatingDto): Promise<Boolean> {
+        log('updateFilmRating');
+
+        const film = await this.getFilmByIdWithoutConversion(updateFilmRatingDto.id);
+        if (!film) {
+            throw new NotFoundException({ message: 'Film not found' });
+        }
+
+        film.rating = updateFilmRatingDto.newRating;
+        await film.save();
+
+        return true;
+    }
+
     async deleteFilmById(id: number): Promise<number> {
         log('deleteFilmById');
 
-        const film = await this.getFilmById(id);
+        const film = await this.getFilmByIdWithoutConversion(id);
         if (!film) {
             throw new NotFoundException({ message: 'Film not found' });
         }
@@ -85,13 +107,12 @@ export class FilmsService {
         await this.filmsRMQ.deleteFilmInfo(id);
         await this.filmsRMQ.deleteRatingFilm(id);
 
-        // TODO : delete filmUsers, comments, film-members
+        // TODO : delete comments, film-members
 
         return await this.filmsDB.destroy({ where: { id } });
     }
 
-    private setImageAsFile(film: Film)
-    {
+    private setImageAsFile(film: Film) {
         log('setImageAsFile');
 
         const data = {
@@ -122,9 +143,9 @@ export class FilmsService {
                 throw new NotFoundException({ message: `Genre with id = ${idGenre} not found` });
             }
 
-            if(arrIdGenres.indexOf(idGenre) !== index){
+            if (arrIdGenres.indexOf(idGenre) !== index) {
                 throw new ConflictException({ message: `Genre with id = ${idGenre} is repeated several times` });
-            };
+            }
         }
     }
 }

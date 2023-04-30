@@ -44,7 +44,7 @@ export class Film extends Model<Film, FilmCreationAttrs> {
     ageRating: string;
 
     @ApiProperty({ required: false, example: 9.1, description: 'рейтинг фильма' })
-    @Column({ type: DataType.INTEGER })
+    @Column({ type: DataType.DOUBLE })
     rating: number;
 
     @ApiProperty({ example: 189, description: 'длительность фильма (в минутах)' })

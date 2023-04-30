@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ArrayMaxSize, ArrayMinSize, IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateFilmDto {
-    @ApiProperty({ example: 1, description: 'id доп. информации о фильме' })
+    @ApiProperty({ example: 1, description: 'id фильма' })
     @IsNumber({}, { message: 'Must be a number' })
     readonly id: number;
 
