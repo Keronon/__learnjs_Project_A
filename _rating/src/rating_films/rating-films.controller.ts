@@ -17,7 +17,7 @@ export class RatingFilmsController {
     @ApiResponse({ status: 200, type: Number })
     @UseGuards(JwtAuthGuard)
     @Get(':idFilm')
-    getRatingFilmCountByFilmId(@Param() idFilm: number): Promise<number> {
+    getRatingFilmCountByFilmId(@Param('idFilm') idFilm: number): Promise<number> {
         log('getRatingFilmCountByFilmId');
         return this.ratingFilmsService.getRatingFilmCountByFilmId(idFilm);
     }
