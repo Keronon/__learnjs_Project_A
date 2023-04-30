@@ -1,8 +1,7 @@
 
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString, Length } from 'class-validator';
-import { Profile } from '../../profiles/profiles.struct';
-import { GetProfileDto } from 'src/profiles/dto/get-profile.dto';
+import { GetProfileDto } from '../../profiles/dto/get-profile.dto';
 
 export class GetPrimaryCommentDto {
     @ApiProperty({ example: 1, description: 'id комментария' })

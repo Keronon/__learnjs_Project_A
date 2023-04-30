@@ -99,14 +99,27 @@ export class CommentsService {
             const found: any = await this.commentsDB.findAll({
                 paranoid: false,
                 where: { prevId: comment.id },
-                include: { all: true }
+                include: { all: true },
             });
             for (let i = 0; i < found.length; i++)
                 found[i] = await placeChildren(found[i]);
 
-            return {id: comment.id, children: found};
+            if (!comment.dataValues) {
+                return { id: +comment.id, children: found };
+            }
+
+            if (comment.dataValues.deletedAt) {
+                comment.dataValues = {
+                    id: comment.dataValues.id,
+                    deletedAt: comment.dataValues.deletedAt,
+                };
+            } else {
+                comment.dataValues.profile = this.profilesService.setImageAsFile(comment.dataValues.profile);
+            }
+            return { ...comment.dataValues, children: found };
         }
-        return await placeChildren(comments);
+
+        return await placeChildren(comments);;
     }
 
     async deleteCommentById(authHeader: string, id: number): Promise<number> {
