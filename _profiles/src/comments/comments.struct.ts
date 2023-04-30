@@ -5,6 +5,7 @@ import { Profile } from '../profiles/profiles.struct';
 
 interface CommentCreationAttrs {
     idFilm: number;
+    idUser: number;
     idProfile: number;
     title?: string;
     text: string;

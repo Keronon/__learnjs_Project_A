@@ -53,18 +53,15 @@ export class ProfilesService {
         return res;
     }
 
-    async getProfileByIdWithoutConversion(id: number): Promise<Profile> {
-        log('getProfileByIdWithoutConversion');
-        return await this.profilesDB.findByPk(id);
+    async getSimpleProfileByIdUser(idUser: number): Promise<Profile> {
+        log('getSimpleProfileByIdUser');
+        return await this.profilesDB.findOne({ where: { idUser } });
     }
 
     async getProfileByUserId(idUser: number): Promise<GetProfileDto> {
         log('getProfileByUserId');
 
-        const profile = await this.profilesDB.findOne({
-            where: { idUser },
-        });
-
+        const profile = await this.getSimpleProfileByIdUser(idUser);
         return this.setImageAsFile(profile);
     }
 
@@ -106,7 +103,7 @@ export class ProfilesService {
     async deleteAccountByProfileId(id: number): Promise<number> {
         log('deleteAccountByProfileId');
 
-        const profile = await this.getProfileByIdWithoutConversion(id);
+        const profile = await this.getSimpleProfileById(id);
         if (!profile) {
             throw new NotFoundException({ message: 'Profile not found' });
         }
@@ -125,7 +122,7 @@ export class ProfilesService {
         return await this.profilesDB.destroy({ where: { id } });
     }
 
-    private setImageAsFile(profile: Profile): GetProfileDto {
+    setImageAsFile(profile: Profile): GetProfileDto {
         log('setImageAsFile');
 
         const data = {
@@ -149,14 +146,20 @@ export class ProfilesService {
             return this.jwtService.verify(token);
         })();
 
-        const profile = await this.getProfileByIdWithoutConversion(id);
-        if (!profile) throw new NotFoundException({ message: 'Profile not found' });
+        const profile = await this.getSimpleProfileById(id);
+        if (!profile) {
+            throw new NotFoundException({ message: 'Profile not found' });
+        }
 
-        if (user.role.name !== 'ADMIN')
-        {
-            if (user.id !== profile.idUser) throw new ForbiddenException({message: 'No access'});
+        if (user.role.name !== 'ADMIN' && user.id !== profile.idUser){
+            throw new ForbiddenException({message: 'No access'});
         }
 
         return profile;
+    }
+
+    private async getSimpleProfileById(id: number): Promise<Profile> {
+        log('getSimpleProfileById');
+        return await this.profilesDB.findByPk(id);
     }
 }

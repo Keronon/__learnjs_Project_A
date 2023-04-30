@@ -1,3 +1,4 @@
+
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Comments :`, data, colors.reset);
 
@@ -9,11 +10,12 @@ import { ConflictException,
          UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
-import { QueueNames, RMQ } from './../rabbit.core';
+import { QueueNames, RMQ } from '../rabbit.core';
 import { ProfilesService } from '../profiles/profiles.service';
 import { JwtService } from '@nestjs/jwt';
 import { Comment } from './comments.struct';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { GetPrimaryCommentDto } from './dto/get-primary-comment.dto';
 
 @Injectable()
 export class CommentsService {
@@ -27,7 +29,7 @@ export class CommentsService {
     async createComment(createCommentDto: CreateCommentDto): Promise<Comment> {
         log('createComment');
 
-        const profile = await this.profilesService.getProfileByIdWithoutConversion(createCommentDto.idProfile);
+        const profile = await this.profilesService.getSimpleProfileByIdUser(createCommentDto.idUser);
         if (!profile) {
             throw new NotFoundException({ message: 'Profile not found' });
         }
@@ -53,10 +55,10 @@ export class CommentsService {
             if (!res) throw new NotFoundException({ message: 'Film not found' });
         }
 
-        return await this.commentsDB.create(createCommentDto);
+        return await this.commentsDB.create({...createCommentDto, idProfile: profile.id});
     }
 
-    async getCommentsByFilm(idFilm: number): Promise<any[]> {
+    async getCommentsByFilm(idFilm: number): Promise<GetPrimaryCommentDto[]> {
         log('getCommentsByFilm');
 
         const found: any[] = await this.commentsDB.findAll({
@@ -66,12 +68,24 @@ export class CommentsService {
             },
             include: { all: true },
         });
-        for (let i = 0; i < found.length; i++)
-            found[i].childrenCount = await this.commentsDB.count({
+
+        for (let i = 0; i < found.length; i++) {
+            const childrenCount = await this.commentsDB.count({
                 paranoid: false,
-                where: { prevId: found[i].id }
+                where: { prevId: found[i].id },
             });
 
+            if (found[i].dataValues.deletedAt) {
+                found[i].dataValues = {
+                    id: found[i].dataValues.id,
+                    deletedAt: found[i].dataValues.deletedAt,
+                };
+            } else {
+                found[i].dataValues.profile = this.profilesService.setImageAsFile(found[i].dataValues.profile);
+            }
+
+            found[i].dataValues.childrenCount = childrenCount;
+        }
         return found;
     }
 
@@ -95,33 +109,27 @@ export class CommentsService {
         return await placeChildren(comments);
     }
 
-    private async getCommentById(id: number): Promise<Comment> {
-        log('getCommentById');
-
-        return await this.commentsDB.findByPk(id);
-    }
-
     async deleteCommentById(authHeader: string, id: number): Promise<number> {
         log('deleteCommentById');
 
         const user = (() => { log('jwtVerify');
             const [ token_type, token ] = authHeader.split(' ');
             if (token_type !== 'Bearer' || !token) {
-                throw new UnauthorizedException({message: 'User unauthorized'});
+                throw new UnauthorizedException({ message: 'User unauthorized' });
             }
             return this.jwtService.verify(token);
         })();
 
-        if (user.role.name !== 'ADMIN')
-        {
-            const comment = await this.commentsDB.findByPk(id);
-            if (!comment) throw new NotFoundException({ message: 'Comment not found' });
-            if (user.id !== comment.idUser) throw new ForbiddenException({message: 'No access'});
+        const comment = await this.commentsDB.findByPk(id);
+        if (!comment) {
+            throw new NotFoundException({ message: 'Comment not found' });
         }
 
-        return await this.commentsDB.destroy({
-            where: {id}
-        });
+        if (user.role.name !== 'ADMIN' && user.id !== comment.idUser) {
+            throw new ForbiddenException({ message: 'No access' });
+        }
+
+        return await this.commentsDB.destroy({ where: { id } });
     }
 
     async deleteCommentsByIdFilm(idFilm: number): Promise<number> {
@@ -131,5 +139,10 @@ export class CommentsService {
             force: true,
             where: {idFilm}
         });
+    }
+
+    private async getCommentById(id: number): Promise<Comment> {
+        log('getCommentById');
+        return await this.commentsDB.findByPk(id);
     }
 }

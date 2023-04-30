@@ -1,14 +1,25 @@
+
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString, Length } from 'class-validator';
+import { Profile } from '../../profiles/profiles.struct';
+import { GetProfileDto } from 'src/profiles/dto/get-profile.dto';
 
-export class CreateCommentDto {
+export class GetPrimaryCommentDto {
+    @ApiProperty({ example: 1, description: 'id комментария' })
+    @IsNumber({}, { message: 'Must be a number' })
+    id: number;
+
     @ApiProperty({ example: 1, description: 'id комментируемого фильма' })
     @IsNumber({}, { message: 'Must be a number' })
     idFilm: number;
 
-    @ApiProperty({ example: 1, description: 'id пользователя-комментатора' })
+    @ApiProperty({ example: 1, description: 'id пользователя' })
     @IsNumber({}, { message: 'Must be a number' })
     idUser: number;
+
+    @ApiProperty({ example: 1, description: 'id профиля пользователя' })
+    @IsNumber({}, { message: 'Must be a number' })
+    idProfile: number;
 
     @ApiProperty({ required: false, example: 'Комментарий о фильме', description: 'заголовок комментария' })
     @IsOptional()
@@ -21,8 +32,15 @@ export class CreateCommentDto {
     @Length(10, 512, { message: 'Must be longer then 10 and shorter then 512 symbols' })
     text: string;
 
-    @ApiProperty({ required: false, example: 1, description: 'id комментируемого комментария' })
+    @ApiProperty({ required: false, example: null, description: 'id комментируемого комментария' })
     @IsOptional()
     @IsNumber({}, { message: 'Must be a number' })
     prevId: number;
+
+    @ApiProperty({ type: GetProfileDto, description: 'профиль пользователя' })
+    profile: GetProfileDto;
+
+    @ApiProperty({ example: 3, description: 'количество дочерних комментариев' })
+    @IsNumber({}, { message: 'Must be a number' })
+    childrenCount: number;
 }

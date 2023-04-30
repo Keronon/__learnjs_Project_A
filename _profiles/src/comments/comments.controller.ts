@@ -13,12 +13,15 @@ import { ApiBadRequestResponse,
          ApiOperation,
          ApiParam,
          ApiTags,
-         ApiUnauthorizedResponse} from '@nestjs/swagger';
+         ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Body, Controller, Get, Delete, Headers, Param, Post, UseGuards } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { Comment } from './comments.struct';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
+import { Roles } from '../_decorators/roles-auth.decorator';
+import { UidGuard } from '../_decorators/guards/uid.guard';
+import { GetPrimaryCommentDto } from './dto/get-primary-comment.dto';
 
 @ApiTags('Комментарии к фильму')
 @Controller('api/comments')
@@ -32,7 +35,7 @@ export class CommentsController {
     @ApiBadRequestResponse({
         schema: {
             example: [
-                'title - Must be longer then 10 and shorter then 128 symbols',
+                'title - Must be longer then 4 and shorter then 128 symbols',
                 'text - Must be longer then 10 and shorter then 512 symbols, Must be a string',
             ],
         },
@@ -50,6 +53,18 @@ export class CommentsController {
         schema: { example: { message: 'User unauthorized' } },
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
     })
+    @ApiForbiddenResponse({
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
+    })
+    @UseGuards(UidGuard)
+    @Roles('ME')
     @UseGuards(JwtAuthGuard)
     @Post()
     createComment(@Body() createCommentDto: CreateCommentDto): Promise<Comment> {
@@ -59,9 +74,12 @@ export class CommentsController {
 
     @ApiOperation({ summary: 'Получение массива первичных комментариев к фильму' })
     @ApiParam({ name: 'id', description: 'id фильма', example: 1 })
-    @ApiOkResponse({ description: 'Успех. Ответ - массив комментариев с количеством дочерних комментариев' })
+    @ApiOkResponse({
+        type: GetPrimaryCommentDto,
+        description: 'Успех. Ответ - массив комментариев с количеством дочерних комментариев',
+    })
     @Get('/film/:id')
-    getCommentsByFilm(@Param('id') idFilm: number): Promise<any[]> {
+    getCommentsByFilm(@Param('id') idFilm: number): Promise<GetPrimaryCommentDto[]> {
         log('getCommentsByFilm');
         return this.commentsService.getCommentsByFilm(idFilm);
     }
@@ -79,13 +97,17 @@ export class CommentsController {
     @ApiOperation({ summary: 'Удаление комментария по id' })
     @ApiParam({ name: 'id', description: 'id комментария', example: 1 })
     @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
+    @ApiNotFoundResponse({
+        schema: { example: { message: 'Comment not found' } },
+        description: 'Комментарий не найден. Ответ - Error: Not Found',
+    })
     @ApiUnauthorizedResponse({
         schema: { example: { message: 'User unauthorized' } },
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
     })
     @ApiForbiddenResponse({
         schema: { example: { message: 'No access' } },
-        description: 'Недостаточно прав для доступа к функции. Ответ - Error: Forbidden',
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
     })
     @Delete(':id')
     deleteCommentById(@Headers('Authorization') authHeader, @Param('id') id: number): Promise<number> {
