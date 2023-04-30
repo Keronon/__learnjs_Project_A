@@ -113,9 +113,9 @@ export class ProfilesController {
         schema: { example: { message: 'User unauthorized' } },
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
     })
-    @UseGuards(JwtAuthGuard)
-    @Roles('ME', 'ADMIN')
     @UseGuards(UidGuard)
+    @Roles('ME', 'ADMIN')
+    @UseGuards(JwtAuthGuard)
     @Get('/user/:idUser')
     getProfileByUserId(@Param('idUser') idUser: number): Promise<GetProfileDto> {
         log('getProfileByUserId');
