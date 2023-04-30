@@ -20,6 +20,7 @@ import { Roles } from '../_decorators/roles-auth.decorator';
 import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { Profession } from './professions.struct';
 import { CreateProfessionDto } from './dto/create-profession.dto';
+import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
 
 @ApiTags('Профессии работников киноиндустрии')
 @Controller('api/professions')
@@ -62,8 +63,7 @@ export class ProfessionsController {
 
     @ApiOperation({ summary: 'Получение массива всех профессий' })
     @ApiOkResponse({ type: [Profession], description: 'Успех. Ответ - массив профессий' })
-    @Roles('ADMIN')
-    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     @Get()
     getAllProfessions(): Promise<Profession[]> {
         log('getAllProfessions');

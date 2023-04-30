@@ -22,6 +22,7 @@ import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { GenresService } from './genres.service';
 import { Genre } from './genres.struct';
 import { CreateGenreDto } from './dto/create-genre.dto';
+import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
 
 @ApiTags('Жанры фильмов')
 @Controller('api/genres')
@@ -64,6 +65,7 @@ export class GenresController {
 
     @ApiOperation({ summary: 'Получение массива всех жанров фильмов' })
     @ApiOkResponse({ type: [Genre], description: 'Успех. Ответ - массив жанров фильмов' })
+    @UseGuards(JwtAuthGuard)
     @Get()
     getAllGenres(): Promise<Genre[]> {
         log('getAllGenres');
