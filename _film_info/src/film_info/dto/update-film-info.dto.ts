@@ -3,10 +3,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateFilmInfoDto {
-    @ApiProperty({ example: 1, description: 'id доп. информации о фильме' })
-    @IsNumber({}, { message: 'Must be a number' })
-    readonly idFilm: number;
-
     @ApiProperty({ example: 'Этот фильм о...', description: 'опиание фильма' })
     @IsString({ message: 'Must be a string' })
     readonly text: string;
@@ -19,4 +15,8 @@ export class UpdateFilmInfoDto {
     @IsOptional()
     @IsString({ message: 'Must be a string' })
     readonly trailerLink: string;
+
+    @ApiProperty({ example: 1, description: 'id фильма' })
+    @IsNumber({}, { message: 'Must be a number' })
+    readonly idFilm: number;
 }

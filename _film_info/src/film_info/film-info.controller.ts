@@ -1,4 +1,7 @@
 
+import { colors } from '../console.colors';
+const log = (data: any) => console.log(colors.fg.yellow, `- - > C-Film_info :`, data, colors.reset);
+
 import { ApiBody,
          ApiParam,
          ApiOperation,
@@ -11,8 +14,8 @@ import { ApiBody,
          ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import { FilmInfoService } from './film-info.service';
-import { RolesGuard } from 'src/_decorators/guards/roles.guard';
-import { Roles } from 'src/_decorators/roles-auth.decorator';
+import { RolesGuard } from '../_decorators/guards/roles.guard';
+import { Roles } from '../_decorators/roles-auth.decorator';
 import { FilmInfo } from './film-info.struct';
 import { UpdateFilmInfoDto } from './dto/update-film-info.dto';
 
@@ -26,6 +29,7 @@ export class FilmInfoController {
     @ApiOkResponse({ type: FilmInfo, description: 'Успех. Ответ - доп. информации о фильме / ничего(не найдена)' })
     @Get('film/:id')
     getFilmInfoByFilmId(@Param('id') idFilm: number): Promise<FilmInfo> {
+        log("getFilmInfoByFilmId");
         return this.filmInfoService.getFilmInfoByFilmId(idFilm);
     }
 
@@ -59,6 +63,7 @@ export class FilmInfoController {
     @UseGuards(RolesGuard)
     @Put()
     updateFilmInfo(@Body() updateFilmInfoDto: UpdateFilmInfoDto): Promise<FilmInfo> {
+        log("updateFilmInfo");
         return this.filmInfoService.updateFilmInfo(updateFilmInfoDto);
     }
 }
