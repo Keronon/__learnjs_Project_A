@@ -53,15 +53,15 @@ export class ProfilesService {
         return res;
     }
 
-    async getSimpleProfileByIdUser(idUser: number): Promise<Profile> {
-        log('getSimpleProfileByIdUser');
+    async getSimpleProfileByUserId(idUser: number): Promise<Profile> {
+        log('getSimpleProfileByUserId');
         return await this.profilesDB.findOne({ where: { idUser } });
     }
 
     async getProfileByUserId(idUser: number): Promise<GetProfileDto> {
         log('getProfileByUserId');
 
-        const profile = await this.getSimpleProfileByIdUser(idUser);
+        const profile = await this.getSimpleProfileByUserId(idUser);
         return this.setImageAsFile(profile);
     }
 

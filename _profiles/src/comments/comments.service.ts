@@ -29,7 +29,7 @@ export class CommentsService {
     async createComment(createCommentDto: CreateCommentDto): Promise<Comment> {
         log('createComment');
 
-        const profile = await this.profilesService.getSimpleProfileByIdUser(createCommentDto.idUser);
+        const profile = await this.profilesService.getSimpleProfileByUserId(createCommentDto.idUser);
         if (!profile) {
             throw new NotFoundException({ message: 'Profile not found' });
         }
