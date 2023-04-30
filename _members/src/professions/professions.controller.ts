@@ -62,6 +62,8 @@ export class ProfessionsController {
 
     @ApiOperation({ summary: 'Получение массива всех профессий' })
     @ApiOkResponse({ type: [Profession], description: 'Успех. Ответ - массив профессий' })
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
     @Get()
     getAllProfessions(): Promise<Profession[]> {
         log('getAllProfessions');

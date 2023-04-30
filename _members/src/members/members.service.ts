@@ -28,6 +28,13 @@ export class MembersService {
         return res.map((v) => this.setImageAsFile(v));
     }
 
+    async getMembersByIds(ids: number[]) {
+        log('getMembersByIds');
+
+        const res = await this.membersDB.findAll({where: {id: ids}});
+        return res.map((v) => this.setImageAsFile(v));
+    }
+
     async getMemberByIdWithoutConversion(id: number): Promise<Member> {
         log('getMemberByIdWithoutConversion');
         return await this.membersDB.findByPk(id);

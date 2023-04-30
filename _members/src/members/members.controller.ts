@@ -18,7 +18,6 @@ import { Controller, Get, Param, Post, Delete, UseGuards,
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles } from '../_decorators/roles-auth.decorator';
 import { RolesGuard } from '../_decorators/guards/roles.guard';
-import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
 import { MembersService } from './members.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { GetMemberDto } from './dto/get-member.dto';
@@ -47,7 +46,8 @@ export class MembersController {
         },
         description: 'Доступ запрещён. Ответ - Error: Forbidden',
     })
-    @UseGuards(JwtAuthGuard)
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
     @UseInterceptors(FileInterceptor( 'image' ))
     @Post()
     createMember(@Body() createMemberDto: CreateMemberDto, @UploadedFile() image): Promise<GetMemberDto> {
@@ -57,6 +57,8 @@ export class MembersController {
 
     @ApiOperation({ summary: 'Получение всех работников киноиндустрии' })
     @ApiOkResponse({ type: [GetMemberDto], description: 'Успех. Ответ - массив профессий' })
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
     @Get()
     getAllMembers(): Promise<GetMemberDto[]> {
         log('getAllMembers');
