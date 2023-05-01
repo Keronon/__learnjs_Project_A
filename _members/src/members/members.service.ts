@@ -35,15 +35,10 @@ export class MembersService {
         return res.map((v) => this.setImageAsFile(v));
     }
 
-    async getMemberByIdWithoutConversion(id: number): Promise<Member> {
-        log('getMemberByIdWithoutConversion');
-        return await this.membersDB.findByPk(id);
-    }
-
     async deleteMember(id: number): Promise<number> {
         log('deleteMember');
 
-        const member = await this.getMemberByIdWithoutConversion(id);
+        const member = await this.getSimpleMemberById(id);
         if (!member) {
             throw new NotFoundException({ message: 'Member not found' });
         }
@@ -64,5 +59,10 @@ export class MembersService {
         delete data.imageName;
 
         return data;
+    }
+
+    private async getSimpleMemberById(id: number): Promise<Member> {
+        log('getSimpleMemberById');
+        return await this.membersDB.findByPk(id);
     }
 }

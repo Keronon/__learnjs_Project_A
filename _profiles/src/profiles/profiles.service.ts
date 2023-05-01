@@ -88,14 +88,14 @@ export class ProfilesService {
     async updateImage(authHeader: string, id: number, image: any): Promise<GetProfileDto> {
         log('updateImage');
 
-        const profile = await this.selfGuard(authHeader, id);
+        let profile = await this.selfGuard(authHeader, id);
 
         if (!image) throw new BadRequestException({ message: 'No image to set' });
 
         if (profile.imageName) deleteFile(profile.imageName);
 
         profile.imageName = addFile(image);
-        await profile.save();
+        profile = await profile.save();
 
         return this.setImageAsFile(profile);
     }

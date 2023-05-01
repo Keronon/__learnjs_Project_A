@@ -48,7 +48,7 @@ export class RatingFilmsService {
     async onCreateRatingUser(idFilm: number, newRatingUser: number, oldRatingUser: number = 0): Promise<RatingFilm> {
         log('onCreateRatingUser');
 
-        const ratingFilm = await this.getRatingFilmByFilmId(idFilm);
+        let ratingFilm = await this.getRatingFilmByFilmId(idFilm);
         if (!ratingFilm) {
             throw new NotFoundException({ message: 'Rating film not found' });
         }
@@ -77,7 +77,7 @@ export class RatingFilmsService {
                 throw new InternalServerErrorException({ message: 'Can not update film rating' });
         }
 
-        await ratingFilm.save();
+        ratingFilm = await ratingFilm.save();
         return ratingFilm;
     }
 
@@ -94,18 +94,12 @@ export class RatingFilmsService {
     private async checkExistenceRating(idFilm: number): Promise<boolean> {
         log('checkExistenceRating');
 
-        const count = await this.ratingFilmsDB.count({
-            where: { idFilm },
-        });
-
+        const count = await this.ratingFilmsDB.count({ where: { idFilm } });
         return count > 0 ? true : false;
     }
 
     private async getRatingFilmByFilmId(idFilm: number): Promise<RatingFilm> {
         log('getRatingFilmByFilmId');
-
-        return await this.ratingFilmsDB.findOne({
-            where: { idFilm },
-        });
+        return await this.ratingFilmsDB.findOne({ where: { idFilm } });
     }
 }

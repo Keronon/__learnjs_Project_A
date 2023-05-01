@@ -1,6 +1,6 @@
 
 import { colors } from '../console.colors';
-const log = ( data: any ) => console.log( colors.fg.blue, `- - > S-Film_members :`, data, colors.reset );
+const log = (data: any) => console.log(colors.fg.blue, `- - > S-Film_members :`, data, colors.reset);
 
 import { Injectable } from '@nestjs/common';
 import { CreateFilmMemberDto } from './dto/create-film-member.dto';
@@ -18,7 +18,7 @@ export class FilmMembersService {
         RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.FFM_cmd, QueueNames.FFM_data))
     }
 
-    async createFilmMember ( dto: CreateFilmMemberDto ): Promise<FilmMember> {
+    async createFilmMember(dto: CreateFilmMemberDto): Promise<FilmMember> {
         log('createFilmMember');
         return await this.filmMembersDB.create(dto);
     }
@@ -26,13 +26,13 @@ export class FilmMembersService {
     async getMembersByIdFilm(idFilm: number): Promise<GetMembersByIdFilmDto[]> {
         log('getMembersByidFilm');
 
-        let found: any[] = await this.filmMembersDB.findAll({where: {idFilm}});
+        let found: any[] = await this.filmMembersDB.findAll({ where: { idFilm } });
         found = found.map((v) => v.idMember);
 
         return await this.membersService.getMembersByIds(found);
     }
 
-    async deleteFilmMember ( id: number ): Promise<number> {
+    async deleteFilmMember(id: number): Promise<number> {
         log('deleteFilmMember');
         return await this.filmMembersDB.destroy({ where: { id } });
     }

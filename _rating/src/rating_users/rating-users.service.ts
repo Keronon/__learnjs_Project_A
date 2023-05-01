@@ -35,7 +35,7 @@ export class RatingUsersService {
         const idFilm = setRatingUserDto.idFilm;
         const idUser = setRatingUserDto.idUser;
 
-        const ratingUser = await this.getRatingUserByFilmIdAndUserId(idFilm, idUser);
+        let ratingUser = await this.getRatingUserByFilmIdAndUserId(idFilm, idUser);
         if (ratingUser) {
             await this.ratingFilmsService.onCreateRatingUser(
                 idFilm,
@@ -44,7 +44,7 @@ export class RatingUsersService {
             );
 
             ratingUser.rating = setRatingUserDto.rating;
-            await ratingUser.save();
+            ratingUser = await ratingUser.save();
 
             return ratingUser;
         }

@@ -36,7 +36,7 @@ export class FilmInfoService {
     async updateFilmInfo(updateFilmInfoDto: UpdateFilmInfoDto): Promise<FilmInfo> {
         log('updateFilmInfo');
 
-        const filmInfo = await this.getFilmInfoByFilmId(updateFilmInfoDto.idFilm);
+        let filmInfo = await this.getFilmInfoByFilmId(updateFilmInfoDto.idFilm);
         if (!filmInfo) {
             throw new NotFoundException({ message: 'Film info not found' });
         }
@@ -44,7 +44,7 @@ export class FilmInfoService {
         for (let key in updateFilmInfoDto) {
             filmInfo[key] = updateFilmInfoDto[key];
         }
-        await filmInfo.save();
+        filmInfo = await filmInfo.save();
 
         return filmInfo;
     }
