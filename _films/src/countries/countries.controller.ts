@@ -76,6 +76,10 @@ export class CountriesController {
         schema: { example: { message: 'Country not found' } },
         description: 'Страна не найдена. Ответ - Error: Not Found',
     })
+    @ApiConflictResponse({
+        schema: { example: { message: 'Can not delete country (films refer to it)' } },
+        description: 'Фильмы ссылаются на страну. Ответ - Error: Conflict',
+    })
     @ApiUnauthorizedResponse({
         schema: { example: { message: 'User unauthorized' } },
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',

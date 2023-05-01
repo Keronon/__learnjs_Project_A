@@ -7,10 +7,14 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import { Genre } from './genres.struct';
 import { CreateGenreDto } from './dto/create-genre.dto';
+import { FilmGenresService } from '../film_genres/film-genres.service';
 
 @Injectable()
 export class GenresService {
-    constructor(@InjectModel(Genre) private genresDB: typeof Genre) {}
+    constructor(
+        @InjectModel(Genre) private genresDB: typeof Genre,
+        private filmGenresService: FilmGenresService,
+    ) {}
 
     async getAllGenres(): Promise<Genre[]> {
         log('getAllGenres');
@@ -35,9 +39,13 @@ export class GenresService {
     async deleteGenreById(id: number): Promise<number> {
         log('deleteGenreById');
 
-        const country = await this.getGenreById(id);
-        if (!country) {
+        const genre = await this.getGenreById(id);
+        if (!genre) {
             throw new NotFoundException({ message: 'Genre not found' });
+        }
+
+        if (await this.filmGenresService.checkExistenceFilmGenreByGenreId(id)) {
+            throw new ConflictException({ message: 'Can not delete genre (films refer to it)' });
         }
 
         return await this.genresDB.destroy({ where: { id } });

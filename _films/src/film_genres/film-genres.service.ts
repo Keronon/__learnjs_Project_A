@@ -24,4 +24,11 @@ export class FilmGenresService {
         log('deleteFilmGenres');
         return await this.filmGenresDB.destroy({ where: { idFilm } });
     }
+
+    async checkExistenceFilmGenreByGenreId(idGenre: number): Promise<Boolean> {
+        log('checkExistenceFilmGenreByGenreId');
+
+        const count = await this.filmGenresDB.count({ where: { idGenre } });
+        return count > 0 ? true : false;
+    }
 }

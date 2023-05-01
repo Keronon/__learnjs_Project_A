@@ -78,6 +78,10 @@ export class GenresController {
         schema: { example: { message: 'Genre not found' } },
         description: 'Жанр фильма не найден. Ответ - Error: Not Found',
     })
+    @ApiConflictResponse({
+        schema: { example: { message: 'Can not delete genre (films refer to it)' } },
+        description: 'Фильмы ссылаются на жанр. Ответ - Error: Conflict',
+    })
     @ApiUnauthorizedResponse({
         schema: { example: { message: 'User unauthorized' } },
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',

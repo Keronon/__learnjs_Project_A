@@ -4,13 +4,17 @@ const log = (data: any) => console.log(colors.fg.blue, `- - > S-Countries :`, da
 
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { FilmsService } from '../films/films.service';
 import { Country } from './countries.struct';
 import { CreateCountryDto } from './dto/create-country.dto';
 import { Op } from 'sequelize';
 
 @Injectable()
 export class CountriesService {
-    constructor(@InjectModel(Country) private countriesDB: typeof Country) {}
+    constructor(
+        @InjectModel(Country) private countriesDB: typeof Country,
+        private filmsService: FilmsService,
+    ) {}
 
     async getAllCountries(): Promise<Country[]> {
         log('getAllCountries');
@@ -32,13 +36,16 @@ export class CountriesService {
         return await this.countriesDB.create(createCountryDto);
     }
 
-    // TODO : контролировать каскадное удаление фильмов по стране
     async deleteCountryById(id: number): Promise<number> {
         log('deleteCountryById');
 
         const country = await this.getCountryById(id);
         if (!country) {
             throw new NotFoundException({ message: 'Country not found' });
+        }
+
+        if (await this.filmsService.checkExistenceFilmByCountryId(id)) {
+            throw new ConflictException({ message: 'Can not delete country (films refer to it)' });
         }
 
         return await this.countriesDB.destroy({ where: { id } });

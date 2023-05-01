@@ -2,7 +2,7 @@
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Films :`, data, colors.reset);
 
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { GenresService } from '../genres/genres.service';
 import { CountriesService } from '../countries/countries.service';
@@ -21,7 +21,10 @@ export class FilmsService {
 
     constructor(
         @InjectModel(Film) private filmsDB: typeof Film,
+
+        @Inject(forwardRef(() => CountriesService))
         private countriesService: CountriesService,
+
         private genresService: GenresService,
         private filmGenresService: FilmGenresService,
     ) {
@@ -39,7 +42,7 @@ export class FilmsService {
 
     async getFilmById(id: number): Promise<any> {
         log('getFilmById');
-        return this.setImageAsFile(await this.filmsDB.findByPk(id));
+        return this.setImageAsFile(await this.getSimpleFilmById(id));
     }
 
     async createFilm(createFilmDto: CreateFilmDto, image: any): Promise<Film> {
@@ -129,6 +132,13 @@ export class FilmsService {
     async checkExistenceFilmById(id: number): Promise<Boolean> {
         log('checkExistenceFilm');
         return (await this.getFilmById(id)) ? true : false;
+    }
+
+    async checkExistenceFilmByCountryId(idCountry: number): Promise<Boolean> {
+        log('checkExistenceFilmByCountryId');
+
+        const count = await this.filmsDB.count({ where: { idCountry } });
+        return count > 0 ? true : false;
     }
 
     private async validateCountryAndGenres(idCountry: number, arrIdGenres: number[]): Promise<void> {
