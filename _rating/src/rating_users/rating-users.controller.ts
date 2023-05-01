@@ -3,7 +3,8 @@ import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.yellow, `- - > C-Rating_users :`, data, colors.reset);
 
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth,
+import { ApiBadRequestResponse,
+         ApiBearerAuth,
          ApiBody,
          ApiCreatedResponse,
          ApiForbiddenResponse,
@@ -62,6 +63,10 @@ export class RatingUsersController {
         description: 'Объект с данными для создания/обновления пользовательской оценки фильма',
     })
     @ApiCreatedResponse({ type: RatingUser, description: 'Успех. Ответ - оценка пользователя' })
+    @ApiBadRequestResponse({
+        schema: { example: ['rating - Must be less than 10', 'idFilm - Must be a number'] },
+        description: 'Ошибки валидации. Ответ - Error: Bad Request',
+    })
     @ApiNotFoundResponse({
         schema: { example: { message: 'Rating film not found' } },
         description: 'Рейтинг фильма не найден (некорректный idFilm). Ответ - Error: Not Found',

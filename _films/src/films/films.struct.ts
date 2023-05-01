@@ -27,11 +27,11 @@ export class Film extends Model<Film, FilmCreationAttrs> {
     })
     id: number;
 
-    @ApiProperty({ example: 'Зеленая миля', description: 'название фильма (русское)' })
+    @ApiProperty({ example: 'Зеленая миля', description: 'название фильма на русском' })
     @Column({ type: DataType.STRING, allowNull: false })
     nameRU: string;
 
-    @ApiProperty({ required: false, example: 'The Green Mile', description: 'название фильма (английское)' })
+    @ApiProperty({ required: false, example: 'The Green Mile', description: 'название фильма на английском' })
     @Column({ type: DataType.STRING })
     nameEN: string;
 

@@ -1,15 +1,21 @@
 
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsNumber, IsOptional, IsString, Length } from 'class-validator';
 
 export class CreateFilmDto {
-    @ApiProperty({ example: 'Зеленая миля', description: 'название фильма (русское)' })
+    @ApiProperty({ example: 'Зеленая миля', description: 'название фильма на русском', minimum: 1, maximum: 128 })
     @IsString({ message: 'Must be a string' })
+    @Length(1, 128, { message: 'Must be longer then 1 and shorter then 128 symbols' })
     readonly nameRU: string;
 
-    @ApiProperty({ required: false, example: 'The Green Mile', description: 'название фильма (английское)' })
+    @ApiProperty({
+        required: false, example: 'The Green Mile',
+        description: 'название фильма на английском',
+        minimum: 1, maximum: 128
+    })
     @IsOptional()
     @IsString({ message: 'Must be a string' })
+    @Length(1, 128, { message: 'Must be longer then 1 and shorter then 128 symbols' })
     readonly nameEN: string;
 
     @ApiProperty({ example: 1999, description: 'год выпуска фильма' })
@@ -24,8 +30,9 @@ export class CreateFilmDto {
     @IsNumber({}, { message: 'Must be a number' })
     readonly duration: number;
 
-    @ApiProperty({ example: 'Этот фильм о...', description: 'опиание фильма' })
+    @ApiProperty({ example: 'Этот фильм о...', description: 'опиание фильма', minimum: 4, maximum: 1024 })
     @IsString({ message: 'Must be a string' })
+    @Length(4, 1024, { message: 'Must be longer then 4 and shorter then 1024 symbols' })
     readonly text: string;
 
     @ApiProperty({
@@ -41,7 +48,7 @@ export class CreateFilmDto {
     @IsNumber({}, { message: 'Must be a number' })
     readonly idCountry: number;
 
-    @ApiProperty({ example: [1, 2], description: 'массив id жанров' })
+    @ApiProperty({ example: [1, 2], description: 'массив id жанров', minimum: 1, maximum: 3 })
     @IsArray()
     @ArrayMinSize(1, {message: "Must be at least one genre"})
     @ArrayMaxSize(3, {message: "Must not be more then 3 genres"})

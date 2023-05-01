@@ -8,12 +8,12 @@ export class RegistrationDto {
     @IsEmail({}, { message: 'Incorrect email' })
     readonly email: string;
 
-    @ApiProperty({ example: '12cdEF_*', description: 'пароль' })
+    @ApiProperty({ example: '12cdEF_*', description: 'пароль', minimum: 4, maximum: 32 })
     @IsString({ message: 'Must be a string' })
     @Length(4, 32, { message: 'Must be longer then 4 and shorter then 32 symbols' })
     readonly password: string;
 
-    @ApiProperty({ example: 'Marina', description: 'имя пользователя' })
+    @ApiProperty({ example: 'Marina', description: 'имя пользователя', minimum: 4, maximum: 64 })
     @IsString({ message: 'Must be a string' })
     @Length(4, 64, { message: 'Must be longer then 4 and shorter then 64 symbols' })
     readonly profileName: string;

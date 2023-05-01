@@ -4,8 +4,8 @@ import { IsString, Length } from 'class-validator';
 
 export class CreateProfessionDto
 {
-    @ApiProperty({ example: 'Актёр', description: 'название профессии' })
+    @ApiProperty({ example: 'Актёр', description: 'название профессии', minimum: 2, maximum: 64 })
     @IsString({ message: 'Must be a string' })
-    @Length(4, 64, { message: 'Must be longer then 4 and shorter then 64 symbols' })
+    @Length(2, 64, { message: 'Must be longer then 2 and shorter then 64 symbols' })
     readonly name: string;
 }

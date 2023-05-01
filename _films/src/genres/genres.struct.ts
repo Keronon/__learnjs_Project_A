@@ -19,11 +19,11 @@ export class Genre extends Model<Genre, GenreCreationAttrs> {
     })
     id: number;
 
-    @ApiProperty({ example: 'драма', description: 'название жанра фильма (русское)' })
+    @ApiProperty({ example: 'драма', description: 'название жанра фильма на русском' })
     @Column({ type: DataType.STRING, allowNull: false })
     nameRU: string;
 
-    @ApiProperty({ example: 'drama', description: 'название жанра фильма (английское)' })
+    @ApiProperty({ example: 'drama', description: 'название жанра фильма на английском' })
     @Column({ type: DataType.STRING, allowNull: false })
     nameEN: string;
 

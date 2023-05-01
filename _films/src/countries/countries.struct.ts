@@ -19,11 +19,11 @@ export class Country extends Model<Country, CountryCreationAttrs> {
     })
     id: number;
 
-    @ApiProperty({ example: 'США', description: 'название страны (русское)' })
+    @ApiProperty({ example: 'США', description: 'название страны на русском' })
     @Column({ type: DataType.STRING, unique: true, allowNull: false })
     nameRU: string;
 
-    @ApiProperty({ example: 'USA', description: 'название страны (английское)' })
+    @ApiProperty({ example: 'USA', description: 'название страны на английском' })
     @Column({ type: DataType.STRING, unique: true, allowNull: false })
     nameEN: string;
 
