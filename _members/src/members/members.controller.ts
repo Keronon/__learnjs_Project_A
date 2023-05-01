@@ -12,7 +12,7 @@ import { ApiOperation,
          ApiForbiddenResponse,
          ApiBearerAuth,
          ApiCreatedResponse,
-         ApiConsumes} from '@nestjs/swagger';
+         ApiBadRequestResponse} from '@nestjs/swagger';
 import { Controller, Get, Param, Post, Delete, UseGuards,
          Body, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -31,6 +31,15 @@ export class MembersController {
     @ApiOperation({ summary: 'Добавление нового работника (ADMIN)' })
     @ApiBody({ type: CreateMemberDto, description: 'Объект с данными о работнике киноиндустрии' })
     @ApiCreatedResponse({ type: GetMemberDto, description: 'Успех. Ответ - созданный работнике' })
+    @ApiBadRequestResponse({
+        schema: {
+            example: [
+                'nameRU - Must be longer then 2 and shorter then 32 symbols',
+                'text - Must be longer then 4 and shorter then 512 symbols',
+            ],
+        },
+        description: 'Ошибки валидации. Ответ - Error: Bad Request',
+    })
     @ApiUnauthorizedResponse({
         schema: { example: { message: 'User unauthorized' } },
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
@@ -55,7 +64,21 @@ export class MembersController {
     }
 
     @ApiOperation({ summary: 'Получение всех работников киноиндустрии' })
-    @ApiOkResponse({ type: [GetMemberDto], description: 'Успех. Ответ - массив профессий' })
+    @ApiOkResponse({ type: [GetMemberDto], description: 'Успех. Ответ - массив работников' })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
+    @ApiForbiddenResponse({
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
+    })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Get()
