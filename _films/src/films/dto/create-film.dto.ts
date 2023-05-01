@@ -48,7 +48,7 @@ export class CreateFilmDto {
     @IsNumber({}, { message: 'Must be a number' })
     readonly idCountry: number;
 
-    @ApiProperty({ example: [1, 2], description: 'массив id жанров', minimum: 1, maximum: 3 })
+    @ApiProperty({ type: [Number], example: [1, 2], description: 'массив id жанров', minimum: 1, maximum: 3 })
     @IsArray()
     @ArrayMinSize(1, {message: "Must be at least one genre"})
     @ArrayMaxSize(3, {message: "Must not be more then 3 genres"})
