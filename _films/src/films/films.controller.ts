@@ -30,7 +30,9 @@ export class FilmsController {
 
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Создание фильма (ADMIN)' })
-    @ApiBody({ type: CreateFilmDto, description: 'Объект с данными для нового фильма' })
+    @ApiBody({ type: CreateFilmDto,
+                        schema: { example: {createFilmDto: `{"nameRU": ...}`} },
+                        description: 'Объект с JSON-строкой объекта данных нового фильма' })
     @ApiCreatedResponse({ type: Film, description: 'Успех. Ответ - созданный фильм' })
     @ApiBadRequestResponse({
         schema: {
@@ -68,9 +70,9 @@ export class FilmsController {
     @Roles('ADMIN')
     @UseInterceptors(FileInterceptor( 'image' ))
     @Post()
-    createFilm(@Body() createFilmDto: CreateFilmDto, @UploadedFile() image): Promise<Film> {
+    createFilm(@Body() body: any, @UploadedFile() image): Promise<Film> {
         log('createFilm');
-        return this.filmsService.createFilm(createFilmDto, image);
+        return this.filmsService.createFilm(JSON.parse(body.createFilmDto), image);
     }
 
     @ApiBearerAuth()
