@@ -18,7 +18,6 @@ import { Body, Controller, Get, Delete, Headers, Param, Post, UseGuards } from '
 import { CommentsService } from './comments.service';
 import { Comment } from './comments.struct';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
 import { Roles } from '../_decorators/roles-auth.decorator';
 import { UidGuard } from '../_decorators/guards/uid.guard';
 import { GetPrimaryCommentDto } from './dto/get-primary-comment.dto';

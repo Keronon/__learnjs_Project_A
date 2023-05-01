@@ -4,11 +4,9 @@ const log = (data: any) => console.log(colors.fg.blue, `- - > S-Profiles :`, dat
 
 import * as uuid from 'uuid';
 import { BadRequestException,
-         ForbiddenException,
          Injectable,
          InternalServerErrorException,
-         NotFoundException,
-         UnauthorizedException} from '@nestjs/common';
+         NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { JwtService } from '@nestjs/jwt';
 import { QueueNames, RMQ } from '../rabbit.core';
@@ -64,8 +62,8 @@ export class ProfilesService {
     async getProfileByUserId(idUser: number): Promise<GetProfileDto> {
         log('getProfileByUserId');
 
-        const profile = await this.getSimpleProfileByUserId(idUser);
-        return this.setImageAsFile(profile);
+        const profile = await this.profilesDB.findOne({ where: { idUser } });
+        return profile ? this.setImageAsFile(profile) : null;
     }
 
     async getSimpleProfileByUserId(idUser: number): Promise<Profile> {
@@ -110,10 +108,10 @@ export class ProfilesService {
         return this.setImageAsFile(profile);
     }
 
-    async deleteAccountByProfileId(id: number): Promise<number> {
-        log('deleteAccountByProfileId');
+    async deleteAccountByUserId(idUser: number): Promise<number> {
+        log('deleteAccountByUserId');
 
-        const profile = await this.getSimpleProfileById(id);
+        const profile = await this.getSimpleProfileByUserId(idUser);
 
         // ! idUser -> micro User -> rows count
         const res = await RMQ.publishReq(QueueNames.PU_cmd, QueueNames.PU_data, {
@@ -126,7 +124,7 @@ export class ProfilesService {
         if (profile.imageName) {
             deleteFile(profile.imageName);
         }
-        return await this.profilesDB.destroy({ where: { id } });
+        return await this.profilesDB.destroy({ where: { idUser } });
     }
 
     setImageAsFile(profile: Profile): GetProfileDto {

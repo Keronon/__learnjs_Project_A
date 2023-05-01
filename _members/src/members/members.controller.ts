@@ -29,7 +29,6 @@ export class MembersController {
 
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Добавление нового работника (ADMIN)' })
-    @ApiConsumes('multipart/form-data')
     @ApiBody({ type: CreateMemberDto, description: 'Объект с данными о работнике киноиндустрии' })
     @ApiCreatedResponse({ type: GetMemberDto, description: 'Успех. Ответ - созданный работнике' })
     @ApiUnauthorizedResponse({

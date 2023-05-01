@@ -19,7 +19,6 @@ import { Body, Controller, Get, Param, Post, Delete, Headers,
          Put, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProfilesService } from './profiles.service';
-import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
 import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { UidGuard } from '../_decorators/guards/uid.guard';
 import { Roles } from '../_decorators/roles-auth.decorator';
@@ -199,11 +198,11 @@ export class ProfilesController {
         },
         description: 'Доступ запрещён. Ответ - Error: Forbidden',
     })
-    @Roles('ADMIN')
-    @UseGuards(RolesGuard)
-    @Delete(':id')
-    deleteAccountByProfileId(@Param('id') id: number): Promise<number> {
-        log('deleteAccountByProfileId');
-        return this.profilesService.deleteAccountByProfileId(id);
+    @UseGuards(UidGuard)
+    @Roles('ME', 'ADMIN')
+    @Delete(':idUser')
+    deleteAccountByUserId(@Param('idUser') idUser: number): Promise<number> {
+        log('deleteAccountByUserId');
+        return this.profilesService.deleteAccountByUserId(idUser);
     }
 }

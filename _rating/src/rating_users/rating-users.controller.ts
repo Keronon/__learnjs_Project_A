@@ -19,7 +19,6 @@ import { RatingUser } from './rating-users.struct';
 import { SetRatingUserDto } from './dto/set-rating-user.dto';
 import { UidGuard } from '../_decorators/guards/uid.guard';
 import { Roles } from '../_decorators/roles-auth.decorator';
-import { JwtAuthGuard } from '../_decorators/guards/jwt-auth.guard';
 
 @ApiBearerAuth()
 @ApiTags('Пользовательские оценки фильмов')
