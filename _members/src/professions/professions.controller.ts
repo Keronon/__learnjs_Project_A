@@ -20,7 +20,6 @@ import { Roles } from '../_decorators/roles-auth.decorator';
 import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { Profession } from './professions.struct';
 import { CreateProfessionDto } from './dto/create-profession.dto';
-import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
 
 @ApiTags('Профессии работников киноиндустрии')
 @Controller('api/professions')
@@ -32,7 +31,7 @@ export class ProfessionsController {
     @ApiBody({ type: CreateProfessionDto, description: 'Объект с данными для новой профессии' })
     @ApiCreatedResponse({ type: Profession, description: 'Успех. Ответ - созданная профессия' })
     @ApiBadRequestResponse({
-        schema: { example: ['name - Must be longer then 4 and shorter then 64 symbols'] },
+        schema: { example: ['name - Must be longer then 2 and shorter then 64 symbols'] },
         description: 'Ошибки валидации. Ответ - Error: Bad Request',
     })
     @ApiConflictResponse({
@@ -63,7 +62,6 @@ export class ProfessionsController {
 
     @ApiOperation({ summary: 'Получение массива всех профессий' })
     @ApiOkResponse({ type: [Profession], description: 'Успех. Ответ - массив профессий' })
-    @UseGuards(JwtAuthGuard)
     @Get()
     getAllProfessions(): Promise<Profession[]> {
         log('getAllProfessions');

@@ -2,7 +2,17 @@
 import { colors } from '../console.colors';
 const log = ( data: any ) => console.log( colors.fg.yellow, `- - > C-Film_members :`, data, colors.reset );
 
-import { ApiResponse, ApiOperation, ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiOperation,
+         ApiTags,
+         ApiParam,
+         ApiBody,
+         ApiForbiddenResponse,
+         ApiUnauthorizedResponse,
+         ApiCreatedResponse,
+         ApiBadRequestResponse,
+         ApiOkResponse,
+         ApiBearerAuth,
+         ApiNotFoundResponse } from '@nestjs/swagger';
 import { Controller, Param, Post, Delete, UseGuards, Body, Get } from '@nestjs/common';
 import { FilmMembersService } from './film_members.service';
 import { Roles } from '../_decorators/roles-auth.decorator';
@@ -10,16 +20,34 @@ import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { CreateFilmMemberDto } from './dto/create-film-member.dto';
 import { FilmMember } from './film_members.struct';
 import { GetMembersByIdFilmDto } from './dto/get-members-by-idFilm.dto';
-import { JwtAuthGuard } from 'src/_decorators/guards/jwt-auth.guard';
 
 @ApiTags('Участники фильмов')
 @Controller('api/film-members')
 export class FilmMembersController {
     constructor(private filmMembersService: FilmMembersService) {}
 
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Добавление нового участника фильма' })
     @ApiBody({ type: CreateFilmMemberDto, description: 'Объект с данными о участнике фильма' })
-    @ApiResponse({ status: 200, type: FilmMember })
+    @ApiCreatedResponse({ type: FilmMember, description: 'Успех. Ответ - созданный участник фильма' })
+    @ApiBadRequestResponse({
+        schema: { example: ['idFilm - Must be a number', 'idMember - Must be a number'] },
+        description: 'Ошибки валидации. Ответ - Error: Bad Request',
+    })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
+    @ApiForbiddenResponse({
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
+    })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Post()
@@ -30,17 +58,35 @@ export class FilmMembersController {
 
     @ApiOperation({ summary: 'Получение всех участников конкретного фильма' })
     @ApiParam({ name: 'idFilm', description: 'id фильма', example: 1 })
-    @ApiResponse({ status: 200, type: [GetMembersByIdFilmDto] })
-    @UseGuards(JwtAuthGuard)
+    @ApiOkResponse({ type: [GetMembersByIdFilmDto], description: 'Успех. Ответ - массив участников фильма' })
     @Get(':idFilm')
     getMembersByIdFilm(@Param('idFilm') idFilm: number): Promise<GetMembersByIdFilmDto[]> {
         log('getMembersByIdFilm');
         return this.filmMembersService.getMembersByIdFilm(idFilm);
     }
 
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Удаление участника фильма' })
     @ApiParam({ name: 'id', description: 'id участника фильма', example: 1 })
-    @ApiResponse({ status: 200, type: Number, description: "количество удалённых строк" })
+    @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
+    @ApiNotFoundResponse({
+        schema: { example: { message: 'Film member not found' } },
+        description: 'Участник фильма не найден. Ответ - Error: Not Found',
+    })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
+    @ApiForbiddenResponse({
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
+    })
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Delete(':id')
