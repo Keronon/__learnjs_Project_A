@@ -151,6 +151,14 @@ export class CommentsService {
         });
     }
 
+    async deleteCommentsByProfileId(idProfile: number): Promise<number> {
+        log('deleteCommentsByProfileId');
+
+        return await this.commentsDB.destroy({
+            where: {idProfile}
+        });
+    }
+
     private async getCommentById(id: number): Promise<Comment> {
         log('getCommentById');
         return await this.commentsDB.findByPk(id);

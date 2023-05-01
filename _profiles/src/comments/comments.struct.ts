@@ -6,7 +6,7 @@ import { Profile } from '../profiles/profiles.struct';
 interface CommentCreationAttrs {
     idFilm: number;
     idUser: number;
-    idProfile: number;
+    idProfile?: number;
     title?: string;
     text: string;
     prevId?: number;
@@ -32,7 +32,7 @@ export class Comment extends Model<Comment, CommentCreationAttrs> {
     idUser: number;
 
     @ApiProperty({ example: 1, description: 'id профиля пользователя-комментатора' })
-    @Column({ type: DataType.INTEGER, allowNull: false })
+    @Column({ type: DataType.INTEGER })
     @ForeignKey(() => Profile)
     idProfile: number;
 

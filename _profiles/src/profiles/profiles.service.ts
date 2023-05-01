@@ -15,10 +15,11 @@ import { Profile } from './profiles.struct';
 import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
 import { GetProfileDto } from './dto/get-profile.dto';
+import { CommentsService } from 'src/comments/comments.service';
 
 @Injectable()
 export class ProfilesService {
-    constructor(private jwtService: JwtService,
+    constructor(private commentsService: CommentsService,
                 @InjectModel(Profile) private profilesDB: typeof Profile)
     {
         RMQ.connect();
@@ -49,14 +50,6 @@ export class ProfilesService {
         await this.profilesDB.create(createProfileData);
 
         return res;
-    }
-
-    private async getSimpleProfileById(id: number): Promise<Profile> {
-        log('getSimpleProfileById');
-
-        const profile = await this.profilesDB.findByPk(id);
-        if (!profile) throw new NotFoundException({ message: 'Profile not found' });
-        return profile;
     }
 
     async getProfileByUserId(idUser: number): Promise<GetProfileDto> {
@@ -124,7 +117,8 @@ export class ProfilesService {
         if (profile.imageName) {
             deleteFile(profile.imageName);
         }
-        return await this.profilesDB.destroy({ where: { idUser } });
+        return await this.commentsService.deleteCommentsByProfileId(profile.id) +
+               await this.profilesDB.destroy({ where: { idUser } });
     }
 
     setImageAsFile(profile: Profile): GetProfileDto {
