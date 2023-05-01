@@ -65,7 +65,6 @@ export class CommentsController {
     })
     @UseGuards(UidGuard)
     @Roles('ME')
-    @UseGuards(JwtAuthGuard)
     @Post()
     createComment(@Body() createCommentDto: CreateCommentDto): Promise<Comment> {
         log('createComment');

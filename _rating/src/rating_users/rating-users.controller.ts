@@ -50,7 +50,6 @@ export class RatingUsersController {
     })
     @UseGuards(UidGuard)
     @Roles('ME', 'ADMIN')
-    @UseGuards(JwtAuthGuard)
     @Get('/film/:idFilm/user/:idUser')
     getRatingUserByFilmIdAndUserId(@Param() param: { idFilm: number; idUser: number }): Promise<RatingUser> {
         log('getRatingUserByFilmIdAndUserId');
@@ -87,7 +86,6 @@ export class RatingUsersController {
     })
     @UseGuards(UidGuard)
     @Roles('ME')
-    @UseGuards(JwtAuthGuard)
     @Post()
     setRatingUser(@Body() setRatingUserDto: SetRatingUserDto): Promise<RatingUser> {
         log('setRatingUser');

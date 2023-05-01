@@ -115,7 +115,6 @@ export class ProfilesController {
     })
     @UseGuards(UidGuard)
     @Roles('ME', 'ADMIN')
-    @UseGuards(JwtAuthGuard)
     @Get('/user/:id')
     getProfileByUserId(@Param('id') idUser: number): Promise<GetProfileDto> {
         log('getProfileByUserId');
@@ -147,10 +146,12 @@ export class ProfilesController {
         schema: { example: { message: 'User unauthorized' } },
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
     })
+    @UseGuards(UidGuard)
+    @Roles('ME', 'ADMIN')
     @Put()
-    updateAccount(@Headers('Authorization') authHeader, @Body() accountDto: AccountDto): Promise<AccountDto> {
+    updateAccount(@Body() accountDto: AccountDto): Promise<AccountDto> {
         log('updateAccount');
-        return this.profilesService.updateAccount(authHeader, accountDto);
+        return this.profilesService.updateAccountByIdUser(accountDto);
     }
 
     @ApiBearerAuth()
@@ -167,11 +168,13 @@ export class ProfilesController {
         schema: { example: { message: 'Image is empty' } },
         description: 'Файл с фото профиля не прикреплён. Ответ - Error: Bad Request',
     })
+    @UseGuards(UidGuard)
+    @Roles('ME', 'ADMIN')
     @UseInterceptors(FileInterceptor('image'))
-    @Put(':id')
-    updateImage(@Headers('Authorization') authHeader, @Param('id') id: number, @UploadedFile() image): Promise<GetProfileDto> {
+    @Put(':idUser')
+    updateImage(@Param('idUser') idUser: number, @UploadedFile() image): Promise<GetProfileDto> {
         log('updateImage');
-        return this.profilesService.updateImage(authHeader, id, image);
+        return this.profilesService.updateImageByIdUser(idUser, image);
     }
 
     @ApiBearerAuth()

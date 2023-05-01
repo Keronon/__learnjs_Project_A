@@ -53,9 +53,12 @@ export class ProfilesService {
         return res;
     }
 
-    async getSimpleProfileByUserId(idUser: number): Promise<Profile> {
-        log('getSimpleProfileByUserId');
-        return await this.profilesDB.findOne({ where: { idUser } });
+    private async getSimpleProfileById(id: number): Promise<Profile> {
+        log('getSimpleProfileById');
+
+        const profile = await this.profilesDB.findByPk(id);
+        if (!profile) throw new NotFoundException({ message: 'Profile not found' });
+        return profile;
     }
 
     async getProfileByUserId(idUser: number): Promise<GetProfileDto> {
@@ -65,10 +68,17 @@ export class ProfilesService {
         return this.setImageAsFile(profile);
     }
 
-    async updateAccount(authHeader: string, accountDto: AccountDto): Promise<AccountDto> {
-        log('updateAccount');
+    async getSimpleProfileByUserId(idUser: number): Promise<Profile> {
+        log('getSimpleProfileByUserId');
+        const profile = await this.profilesDB.findOne({ where: { idUser } });
+        if (!profile) throw new NotFoundException({ message: 'Profile not found' });
+        return profile;
+    }
 
-        const profile = await this.selfGuard(authHeader, accountDto.idProfile);
+    async updateAccountByIdUser(accountDto: AccountDto): Promise<AccountDto> {
+        log('updateAccountByIdUser');
+
+        const profile = await this.getSimpleProfileByUserId(accountDto.idUser);
 
         // ! updateUserData -> micro User -> User
         const res = await RMQ.publishReq(QueueNames.PU_cmd, QueueNames.PU_data, {
@@ -85,10 +95,10 @@ export class ProfilesService {
         return accountDto;
     }
 
-    async updateImage(authHeader: string, id: number, image: any): Promise<GetProfileDto> {
-        log('updateImage');
+    async updateImageByIdUser(idUser: number, image: any): Promise<GetProfileDto> {
+        log('updateImageByIdUser');
 
-        let profile = await this.selfGuard(authHeader, id);
+        let profile = await this.getSimpleProfileByUserId(idUser);
 
         if (!image) throw new BadRequestException({ message: 'No image to set' });
 
@@ -104,9 +114,6 @@ export class ProfilesService {
         log('deleteAccountByProfileId');
 
         const profile = await this.getSimpleProfileById(id);
-        if (!profile) {
-            throw new NotFoundException({ message: 'Profile not found' });
-        }
 
         // ! idUser -> micro User -> rows count
         const res = await RMQ.publishReq(QueueNames.PU_cmd, QueueNames.PU_data, {
@@ -132,34 +139,5 @@ export class ProfilesService {
         delete data.imageName;
 
         return data;
-    }
-
-    private async selfGuard(authHeader: string, id: number)
-    {
-        log('selfGuard');
-
-        const user = (() => { log('jwtVerify');
-            const [ token_type, token ] = authHeader.split(' ');
-            if (token_type !== 'Bearer' || !token) {
-                throw new UnauthorizedException({message: 'User unauthorized'});
-            }
-            return this.jwtService.verify(token);
-        })();
-
-        const profile = await this.getSimpleProfileById(id);
-        if (!profile) {
-            throw new NotFoundException({ message: 'Profile not found' });
-        }
-
-        if (user.role.name !== 'ADMIN' && user.id !== profile.idUser){
-            throw new ForbiddenException({message: 'No access'});
-        }
-
-        return profile;
-    }
-
-    private async getSimpleProfileById(id: number): Promise<Profile> {
-        log('getSimpleProfileById');
-        return await this.profilesDB.findByPk(id);
     }
 }

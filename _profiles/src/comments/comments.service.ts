@@ -30,9 +30,6 @@ export class CommentsService {
         log('createComment');
 
         const profile = await this.profilesService.getSimpleProfileByUserId(createCommentDto.idUser);
-        if (!profile) {
-            throw new NotFoundException({ message: 'Profile not found' });
-        }
 
         if (createCommentDto.prevId) {
             const prevComment = await this.getCommentById(createCommentDto.prevId);

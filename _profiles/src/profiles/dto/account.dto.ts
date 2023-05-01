@@ -3,9 +3,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNumber, IsString, Length } from 'class-validator';
 
 export class AccountDto {
-    @ApiProperty({ example: 1, description: 'id профиля пользователя' })
+    @ApiProperty({ example: 1, description: 'id пользователя' })
     @IsNumber({}, { message: 'Must be a number' })
-    readonly idProfile: number;
+    readonly idUser: number;
 
     @ApiProperty({ example: 'Marina', description: 'имя пользователя', minimum: 4, maximum: 64 })
     @IsString({ message: 'Must be a string' })
