@@ -8,13 +8,16 @@ import { RatingUser } from './rating-users.struct';
 import { SetRatingUserDto } from './dto/set-rating-user.dto';
 import { RatingFilmsService } from '../rating_films/rating-films.service';
 import { Op } from 'sequelize';
+import { QueueNames, RMQ } from '../rabbit.core';
 
 @Injectable()
 export class RatingUsersService {
     constructor(
         @InjectModel(RatingUser) private ratingUsersDB: typeof RatingUser,
         private ratingFilmsService: RatingFilmsService,
-    ) {}
+    ) {
+        RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.FRU_cmd, QueueNames.FRU_data))
+    }
 
     async getRatingUserByFilmIdAndUserId(idFilm: number, idUser: number): Promise<RatingUser> {
         log('getRatingUserByFilmIdAndUserId');
@@ -48,5 +51,10 @@ export class RatingUsersService {
 
         await this.ratingFilmsService.onCreateRatingUser(idFilm, setRatingUserDto.rating);
         return await this.ratingUsersDB.create(setRatingUserDto);
+    }
+
+    async deleteRatingUsersByFilmId(idFilm: number): Promise<number> {
+        log('deleteRatingUsersByFilmId');
+        return await this.ratingUsersDB.destroy({ where: { idFilm } });
     }
 }

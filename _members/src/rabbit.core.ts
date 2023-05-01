@@ -12,8 +12,7 @@ const queueOptions  : amqp.Options.AssertQueue = { expires : 5000 };
 
 const exchangeName = 'CMDs - DATA';
 // ! different in any service
-export enum QueueNames { PA_cmd = 'PA_cmd', PA_data = 'PA_data',
-                         PU_cmd = 'PU_cmd', PU_data = 'PU_data' }; // TODO : rewrite
+export enum QueueNames { FFM_cmd = 'FFM_cmd', FFM_data = 'FFM_data' };
 
 class Rabbit
 {

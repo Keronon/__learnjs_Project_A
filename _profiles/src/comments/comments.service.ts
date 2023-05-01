@@ -10,12 +10,12 @@ import { ConflictException,
          UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
-import { QueueNames, RMQ } from '../rabbit.core';
 import { ProfilesService } from '../profiles/profiles.service';
 import { JwtService } from '@nestjs/jwt';
 import { Comment } from './comments.struct';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { GetPrimaryCommentDto } from './dto/get-primary-comment.dto';
+import { QueueNames, RMQ } from '../rabbit.core';
 
 @Injectable()
 export class CommentsService {
@@ -23,7 +23,7 @@ export class CommentsService {
                 @InjectModel(Comment) private commentsDB: typeof Comment,
                 private profilesService: ProfilesService,
     ) {
-        RMQ.connect();
+        RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.FC_cmd, QueueNames.FC_data));;
     }
 
     async createComment(createCommentDto: CreateCommentDto): Promise<Comment> {
@@ -145,8 +145,8 @@ export class CommentsService {
         return await this.commentsDB.destroy({ where: { id } });
     }
 
-    async deleteCommentsByIdFilm(idFilm: number): Promise<number> {
-        log('deleteCommentsByIdFilm');
+    async deleteCommentsByFilmId(idFilm: number): Promise<number> {
+        log('deleteCommentsByFilmId');
 
         return await this.commentsDB.destroy({
             force: true,

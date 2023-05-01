@@ -74,7 +74,7 @@ export class FilmsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Изменение информации о фильме' })
+    @ApiOperation({ summary: 'Изменение информации о фильме (ADMIN)' })
     @ApiBody({ type: UpdateFilmDto, description: 'Объект с изменёнными полями информации о фильме' })
     @ApiOkResponse({ type: Film, description: 'Успех. Ответ - изменённый фильм' })
     @ApiBadRequestResponse({
@@ -119,7 +119,7 @@ export class FilmsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Удаление фильма' })
+    @ApiOperation({ summary: 'Удаление фильма (ADMIN)' })
     @ApiParam({ required: true, name: 'id', description: 'id фильма', example: 1 })
     @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
     @ApiNotFoundResponse({

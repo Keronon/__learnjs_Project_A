@@ -10,10 +10,10 @@ import { FilmGenresService } from '../film_genres/film-genres.service';
 import { Film } from './films.struct';
 import { CreateFilmDto } from './dto/create-film.dto';
 import { UpdateFilmDto } from './dto/update-film.dto';
+import { UpdateFilmRatingDto } from './dto/update-film-rating.dto';
 import { QueueNames, RMQ } from '../rabbit.core';
 import { FilmsRMQ } from './films-rmq';
 import { addFile, deleteFile, getFile } from '../files.core';
-import { UpdateFilmRatingDto } from './dto/update-film-rating.dto';
 
 @Injectable()
 export class FilmsService {
@@ -28,11 +28,12 @@ export class FilmsService {
         RMQ.connect()
             .then(RMQ.setCmdConsumer(this, QueueNames.CF_cmd, QueueNames.CF_data))
             .then(RMQ.setCmdConsumer(this, QueueNames.RF_cmd, QueueNames.RF_data));
+
         this.filmsRMQ = new FilmsRMQ(this.filmsDB);
     }
 
-    async getFilmByIdWithoutConversion(id: number): Promise<Film> {
-        log('getFilmByIdWithoutConversion');
+    async getSimpleFilmById(id: number): Promise<Film> {
+        log('getSimpleFilmById');
         return await this.filmsDB.findByPk(id);
     }
 
@@ -59,7 +60,7 @@ export class FilmsService {
     async updateFilm(updateFilmDto: UpdateFilmDto, image: any): Promise<Film> {
         log('updateFilm');
 
-        const film = await this.getFilmByIdWithoutConversion(updateFilmDto.id);
+        let film = await this.getSimpleFilmById(updateFilmDto.id);
         if (!film) {
             throw new NotFoundException({ message: 'Film not found' });
         }
@@ -74,7 +75,7 @@ export class FilmsService {
             deleteFile(film.imageName);
             film.imageName = addFile(image);
         }
-        await film.save();
+        film = await film.save();
 
         await this.filmGenresService.deleteFilmGenres(film.id);
         await this.filmGenresService.createFilmGenres(film.id, updateFilmDto.arrIdGenres);
@@ -85,7 +86,7 @@ export class FilmsService {
     async updateFilmRating(updateFilmRatingDto: UpdateFilmRatingDto): Promise<Boolean> {
         log('updateFilmRating');
 
-        const film = await this.getFilmByIdWithoutConversion(updateFilmRatingDto.id);
+        const film = await this.getSimpleFilmById(updateFilmRatingDto.id);
         if (!film) {
             throw new NotFoundException({ message: 'Film not found' });
         }
@@ -99,15 +100,16 @@ export class FilmsService {
     async deleteFilmById(id: number): Promise<number> {
         log('deleteFilmById');
 
-        const film = await this.getFilmByIdWithoutConversion(id);
+        const film = await this.getSimpleFilmById(id);
         if (!film) {
             throw new NotFoundException({ message: 'Film not found' });
         }
 
         await this.filmsRMQ.deleteFilmInfo(id);
         await this.filmsRMQ.deleteRatingFilm(id);
-
-        // TODO : delete comments, film-members
+        await this.filmsRMQ.deleteRatingUsers(id);
+        await this.filmsRMQ.deleteFilmComments(id);
+        await this.filmsRMQ.deleteFilmMembers(id);
 
         return await this.filmsDB.destroy({ where: { id } });
     }
@@ -124,7 +126,7 @@ export class FilmsService {
         return data;
     }
 
-    async checkExistenceFilmById(id: number) {
+    async checkExistenceFilmById(id: number): Promise<Boolean> {
         log('checkExistenceFilm');
         return (await this.getFilmById(id)) ? true : false;
     }

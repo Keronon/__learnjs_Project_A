@@ -61,11 +61,53 @@ export class FilmsRMQ {
         log('deleteRatingFilm');
 
         // ! idFilm -> micro Rating -> rows count
-        const res = await RMQ.publishReq(QueueNames.FR_cmd, QueueNames.FR_cmd, {
+        const res = await RMQ.publishReq(QueueNames.FR_cmd, QueueNames.FR_data, {
             id_msg: uuid.v4(),
             cmd: 'deleteRatingFilmByFilmId',
             data: idFilm,
         });
         if (res !== 1) throw new InternalServerErrorException({ message: 'Can not delete rating film' });
+    }
+
+    async deleteRatingUsers(idFilm: number): Promise<void> {
+        log('deleteRatingFilm');
+
+        // ! idFilm -> micro Rating -> rows count
+        const res = await RMQ.publishReq(QueueNames.FRU_cmd, QueueNames.FRU_data, {
+            id_msg: uuid.v4(),
+            cmd: 'deleteRatingUsersByFilmId',
+            data: idFilm,
+        });
+        if (isNaN(res) || res < 0) {
+            throw new InternalServerErrorException({ message: 'Can not delete rating users' });
+        }
+    }
+
+    async deleteFilmComments(idFilm: number): Promise<void> {
+        log('deleteFilmComments');
+
+        // ! idFilm -> micro Profiles -> rows count
+        const res = await RMQ.publishReq(QueueNames.FC_cmd, QueueNames.FC_data, {
+            id_msg: uuid.v4(),
+            cmd: 'deleteCommentsByFilmId',
+            data: idFilm,
+        });
+        if (isNaN(res) || res < 0) {
+            throw new InternalServerErrorException({ message: 'Can not delete film comments' });
+        }
+    }
+
+    async deleteFilmMembers(idFilm: number): Promise<void> {
+        log('deleteFilmMembers');
+
+        // ! idFilm -> micro Profiles -> rows count
+        const res = await RMQ.publishReq(QueueNames.FFM_cmd, QueueNames.FFM_data, {
+            id_msg: uuid.v4(),
+            cmd: 'deleteMembersByFilmId',
+            data: idFilm,
+        });
+        if (isNaN(res) || res < 0) {
+            throw new InternalServerErrorException({ message: 'Can not delete film members' });
+        }
     }
 }

@@ -14,7 +14,8 @@ const exchangeName = 'CMDs - DATA';
 // ! different in any service
 export enum QueueNames { PA_cmd = 'PA_cmd', PA_data = 'PA_data',
                          PU_cmd = 'PU_cmd', PU_data = 'PU_data',
-                         CF_cmd = 'CF_cmd', CF_data = 'CF_data'};
+                         CF_cmd = 'CF_cmd', CF_data = 'CF_data',
+                         FC_cmd = 'FC_cmd', FC_data = 'FC_data' };
 
 class Rabbit
 {

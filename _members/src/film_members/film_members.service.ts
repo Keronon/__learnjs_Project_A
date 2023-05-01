@@ -8,12 +8,15 @@ import { InjectModel } from '@nestjs/sequelize';
 import { FilmMember } from './film_members.struct';
 import { MembersService } from 'src/members/members.service';
 import { GetMembersByIdFilmDto } from './dto/get-members-by-idFilm.dto';
+import { QueueNames, RMQ } from '../rabbit.core';
 
 @Injectable()
 export class FilmMembersService {
     constructor(@InjectModel(FilmMember) private filmMembersDB: typeof FilmMember,
                 private membersService: MembersService
-    ) {}
+    ) {
+        RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.FFM_cmd, QueueNames.FFM_data))
+    }
 
     async createFilmMember ( dto: CreateFilmMemberDto ): Promise<FilmMember> {
         log('createFilmMember');
@@ -32,5 +35,10 @@ export class FilmMembersService {
     async deleteFilmMember ( id: number ): Promise<number> {
         log('deleteFilmMember');
         return await this.filmMembersDB.destroy({ where: { id } });
+    }
+
+    async deleteMembersByFilmId(idFilm: number): Promise<number> {
+        log('deleteMembersByFilmId');
+        return await this.filmMembersDB.destroy({ where: { idFilm } });
     }
 }

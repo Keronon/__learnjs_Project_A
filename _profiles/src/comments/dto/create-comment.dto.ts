@@ -13,7 +13,7 @@ export class CreateCommentDto {
     @ApiProperty({ required: false, example: 'Комментарий о фильме', description: 'заголовок комментария' })
     @IsOptional()
     @IsString({ message: 'Must be a string' })
-    @Length(10, 128, { message: 'Must be longer then 4 and shorter then 128 symbols' })
+    @Length(4, 128, { message: 'Must be longer then 4 and shorter then 128 symbols' })
     title: string;
 
     @ApiProperty({ example: 'Этот фильм невозможно смотреть за едой!', description: 'текст комментария' })
