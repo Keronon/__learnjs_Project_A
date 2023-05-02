@@ -4,23 +4,24 @@ const log = (data: any) => console.log(colors.fg.blue, `- - > S-Profiles :`, dat
 
 import * as uuid from 'uuid';
 import { BadRequestException,
+         Inject,
          Injectable,
          InternalServerErrorException,
-         NotFoundException } from '@nestjs/common';
+         NotFoundException, 
+         forwardRef} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { JwtService } from '@nestjs/jwt';
 import { QueueNames, RMQ } from '../rabbit.core';
 import { addFile, deleteFile, getFile } from '../files.core';
 import { Profile } from './profiles.struct';
 import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
 import { GetProfileDto } from './dto/get-profile.dto';
-import { CommentsService } from 'src/comments/comments.service';
+import { CommentsService } from '../comments/comments.service';
 
 @Injectable()
 export class ProfilesService {
-    constructor(private commentsService: CommentsService,
-                @InjectModel(Profile) private profilesDB: typeof Profile)
+    constructor(@InjectModel(Profile) private profilesDB: typeof Profile,
+                private commentsService: CommentsService)
     {
         RMQ.connect();
     }
@@ -117,8 +118,9 @@ export class ProfilesService {
         if (profile.imageName) {
             deleteFile(profile.imageName);
         }
-        return await this.commentsService.deleteCommentsByProfileId(profile.id) +
-               await this.profilesDB.destroy({ where: { idUser } });
+
+        await this.commentsService.deleteCommentsByProfileId(profile.id);
+        return await this.profilesDB.destroy({ where: { idUser } });
     }
 
     setImageAsFile(profile: Profile): GetProfileDto {

@@ -7,7 +7,9 @@ import { ConflictException,
          Injectable,
          NotFoundException,
          ForbiddenException,
-         UnauthorizedException } from '@nestjs/common';
+         UnauthorizedException, 
+         Inject,
+         forwardRef} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import { ProfilesService } from '../profiles/profiles.service';
@@ -21,7 +23,7 @@ import { QueueNames, RMQ } from '../rabbit.core';
 export class CommentsService {
     constructor(private jwtService: JwtService,
                 @InjectModel(Comment) private commentsDB: typeof Comment,
-                private profilesService: ProfilesService,
+                @Inject(forwardRef(() => ProfilesService)) private profilesService: ProfilesService,
     ) {
         RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.FC_cmd, QueueNames.FC_data));;
     }
@@ -153,10 +155,7 @@ export class CommentsService {
 
     async deleteCommentsByProfileId(idProfile: number): Promise<number> {
         log('deleteCommentsByProfileId');
-
-        return await this.commentsDB.destroy({
-            where: {idProfile}
-        });
+        return await this.commentsDB.destroy({ where: {idProfile} });
     }
 
     private async getCommentById(id: number): Promise<Comment> {

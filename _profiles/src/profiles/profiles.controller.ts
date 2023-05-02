@@ -177,8 +177,8 @@ export class ProfilesController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Удаление аккаунта (ADMIN)' })
-    @ApiParam({ name: 'id', description: 'id профиля', example: 1 })
+    @ApiOperation({ summary: 'Удаление аккаунта' })
+    @ApiParam({ name: 'idUser', description: 'id пользователя', example: 1 })
     @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
     @ApiNotFoundResponse({
         schema: { example: { message: 'Profile not found' } },
