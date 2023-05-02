@@ -12,7 +12,7 @@ interface FilmCreationAttrs {
     ageRating: string;
     rating?: number;
     duration: number;
-    imageName: string;
+    imageName?: string;
     idCountry: number;
 }
 

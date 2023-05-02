@@ -2,7 +2,7 @@
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Films :`, data, colors.reset);
 
-import { ConflictException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { GenresService } from '../genres/genres.service';
 import { CountriesService } from '../countries/countries.service';
@@ -45,14 +45,12 @@ export class FilmsService {
         return this.setImageAsFile(await this.getSimpleFilmById(id));
     }
 
-    async createFilm(createFilmDto: CreateFilmDto, image: any): Promise<Film> {
+    async createFilm(createFilmDto: CreateFilmDto): Promise<Film> {
         log('createFilm');
 
         await this.validateCountryAndGenres(createFilmDto.idCountry, createFilmDto.arrIdGenres);
 
-        const imageName = image ? addFile(image) : null;
-        const film = await this.filmsDB.create({ ...createFilmDto, imageName });
-
+        const film = await this.filmsDB.create(createFilmDto);
         await this.filmsRMQ.createFilmInfo(film.id, createFilmDto);
         await this.filmsRMQ.createRatingFilm(film.id);
         await this.filmGenresService.createFilmGenres(film.id, createFilmDto.arrIdGenres);
@@ -84,6 +82,21 @@ export class FilmsService {
         await this.filmGenresService.createFilmGenres(film.id, updateFilmDto.arrIdGenres);
 
         return film;
+    }
+
+    async updateImageById(id: number, image: any): Promise<any> {
+        log('updateImageById');
+
+        let film = await this.getSimpleFilmById(id);
+
+        if (!image) throw new BadRequestException({ message: 'No image to set' });
+
+        if (film.imageName) deleteFile(film.imageName);
+
+        film.imageName = addFile(image);
+        film = await film.save();
+
+        return this.setImageAsFile(film);
     }
 
     async updateFilmRating(updateFilmRatingDto: UpdateFilmRatingDto): Promise<Boolean> {
