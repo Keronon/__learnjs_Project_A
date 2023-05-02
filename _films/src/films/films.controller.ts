@@ -14,7 +14,8 @@ import { ApiParam,
          ApiForbiddenResponse,
          ApiNotFoundResponse,
          ApiUnauthorizedResponse,
-         ApiOkResponse } from '@nestjs/swagger';
+         ApiOkResponse,
+         ApiConsumes} from '@nestjs/swagger';
 import { FilmsService } from './films.service';
 import { UpdateFilmDto } from './dto/update-film.dto';
 import { Film } from './films.struct';
@@ -22,6 +23,7 @@ import { Roles } from '../_decorators/roles-auth.decorator';
 import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { CreateFilmDto } from './dto/create-film.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { FileUploadDto } from './dto/file-upload.dto';
 
 @ApiTags('Фильмы')
 @Controller('api/films')
@@ -30,9 +32,7 @@ export class FilmsController {
 
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Создание фильма (ADMIN)' })
-    @ApiBody({ type: CreateFilmDto,
-                        schema: { example: {createFilmDto: `{"nameRU": ...}`} },
-                        description: 'Объект с JSON-строкой объекта данных нового фильма' })
+    @ApiBody({ type: CreateFilmDto, description: 'Объект с данными нового фильма' })
     @ApiCreatedResponse({ type: Film, description: 'Успех. Ответ - созданный фильм' })
     @ApiBadRequestResponse({
         schema: {
@@ -70,9 +70,9 @@ export class FilmsController {
     @Roles('ADMIN')
     @UseInterceptors(FileInterceptor( 'image' ))
     @Post()
-    createFilm(@Body() body: any, @UploadedFile() image): Promise<Film> {
+    createFilm(@Body() dto: CreateFilmDto): Promise<Film> {
         log('createFilm');
-        return this.filmsService.createFilm(JSON.parse(body.createFilmDto), image);
+        return this.filmsService.createFilm(dto);
     }
 
     @ApiBearerAuth()
@@ -118,6 +118,43 @@ export class FilmsController {
     updateFilm(@Body() updateFilmDto: UpdateFilmDto, @UploadedFile() image): Promise<Film> {
         log('updateFilm');
         return this.filmsService.updateFilm(updateFilmDto, image);
+    }
+
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Изменение изображения фильма' })
+    @ApiParam({ name: 'id', description: 'id фильма', example: 1 })
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({ type: FileUploadDto, description: 'Новое изображения фильма' })
+    @ApiOkResponse({ type: File, description: 'Успех. Ответ - изменённый фильм' })
+    @ApiNotFoundResponse({
+        schema: { example: { message: 'Film not found' } },
+        description: 'Фильм не найден. Ответ - Error: Not Found',
+    })
+    @ApiBadRequestResponse({
+        schema: { example: { message: 'Image is empty' } },
+        description: 'Файл с изображением фильма не прикреплён. Ответ - Error: Bad Request',
+    })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
+    @ApiForbiddenResponse({
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
+    })
+    @UseGuards(RolesGuard)
+    @Roles('ADMIN')
+    @UseInterceptors(FileInterceptor('image'))
+    @Put(':id')
+    updateImage(@Param('id') id: number, @UploadedFile() image): Promise<Film> {
+        log('updateImage');
+        return this.filmsService.updateImageById(id, image);
     }
 
     @ApiBearerAuth()
