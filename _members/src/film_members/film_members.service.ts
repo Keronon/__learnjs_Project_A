@@ -48,6 +48,13 @@ export class FilmMembersService {
         return await this.filmMembersDB.destroy({ where: { idFilm } });
     }
 
+    async checkExistenceFilmMemberByProfessionId(idProfession: number): Promise<Boolean> {
+        log('checkExistenceFilmMemberByProfessionId');
+
+        const count = await this.filmMembersDB.count({ where: { idProfession } });
+        return count > 0 ? true : false;
+    }
+
     private async getFilmMemberById(id: number): Promise<FilmMember> {
         log('getSimpleMemberById');
         return await this.filmMembersDB.findByPk(id);

@@ -3,18 +3,23 @@ import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Professions :`, data, colors.reset);
 
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { Profession } from './professions.struct';
 import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
+import { Profession } from './professions.struct';
 import { CreateProfessionDto } from './dto/create-profession.dto';
+import { FilmMembersService } from '../film_members/film_members.service';
 
 @Injectable()
 export class ProfessionsService {
-    constructor(@InjectModel(Profession) private professionsDB: typeof Profession) {}
+    constructor(
+        @InjectModel(Profession) private professionsDB: typeof Profession,
+        private filmMembersService: FilmMembersService,
+    ) {}
 
     async createProfession(createProfessionDto: CreateProfessionDto): Promise<Profession> {
         log('createProfession');
 
-        if (await this.checkExistenceName(createProfessionDto.name)) {
+        if (await this.checkExistenceName(createProfessionDto.nameRU, createProfessionDto.nameEN)) {
             throw new ConflictException({ message: 'This profession already exists' });
         }
 
@@ -31,7 +36,6 @@ export class ProfessionsService {
         return await this.professionsDB.findByPk(id);
     }
 
-    // TODO : контролировать каскадное удаление filmMembers по профессии
     async deleteProfession(id: number): Promise<number> {
         log('deleteProfession');
 
@@ -40,14 +44,20 @@ export class ProfessionsService {
             throw new NotFoundException({ message: 'Profession not found' });
         }
 
+        if (await this.filmMembersService.checkExistenceFilmMemberByProfessionId(id)) {
+            throw new ConflictException({ message: 'Can not delete profession (film member refer to it)' });
+        }
+
         return this.professionsDB.destroy({ where: { id } });
     }
 
-    private async checkExistenceName(name: string) {
+    private async checkExistenceName(nameRU: string, nameEN: string) {
         log('checkExistenceName');
 
         const count = await this.professionsDB.count({
-            where: { name },
+            where: {
+                [Op.or]: [{ nameRU }, { nameEN }],
+            },
         });
 
         return count > 0 ? true : false;

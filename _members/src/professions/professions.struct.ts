@@ -4,7 +4,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { FilmMember } from '../film_members/film_members.struct';
 
 interface ProfessionCreationAttrs {
-    name: string;
+    nameRU: string;
+    nameEN: string;
 }
 
 @Table({ tableName: 'professions' })
@@ -18,9 +19,13 @@ export class Profession extends Model<Profession, ProfessionCreationAttrs> {
     })
     id: number;
 
-    @ApiProperty({ example: 'Актёр', description: 'название профессии' })
+    @ApiProperty({ example: 'актёр', description: 'название профессии на русском' })
     @Column({ type: DataType.STRING, unique: true, allowNull: false })
-    name: string;
+    nameRU: string;
+
+    @ApiProperty({ example: 'actor', description: 'название профессии на английском' })
+    @Column({ type: DataType.STRING, unique: true, allowNull: false })
+    nameEN: string;
 
     @HasMany(() => FilmMember)
     filmMember: FilmMember[];

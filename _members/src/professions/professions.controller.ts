@@ -31,7 +31,7 @@ export class ProfessionsController {
     @ApiBody({ type: CreateProfessionDto, description: 'Объект с данными для новой профессии' })
     @ApiCreatedResponse({ type: Profession, description: 'Успех. Ответ - созданная профессия' })
     @ApiBadRequestResponse({
-        schema: { example: ['name - Must be longer then 2 and shorter then 64 symbols'] },
+        schema: { example: ['nameRU - Must be longer then 2 and shorter then 64 symbols'] },
         description: 'Ошибки валидации. Ответ - Error: Bad Request',
     })
     @ApiConflictResponse({
@@ -75,6 +75,10 @@ export class ProfessionsController {
     @ApiNotFoundResponse({
         schema: { example: { message: 'Profession not found' } },
         description: 'Профессия не найдена. Ответ - Error: Not Found',
+    })
+    @ApiConflictResponse({
+        schema: { example: { message: 'Can not delete profession (film member refer to it)' } },
+        description: 'Участники фильма ссылаются на профессию. Ответ - Error: Conflict',
     })
     @ApiUnauthorizedResponse({
         schema: { example: { message: 'User unauthorized' } },

@@ -63,6 +63,7 @@ export class MembersController {
         return this.membersService.createMember(createMemberDto, image);
     }
 
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Получение всех работников киноиндустрии' })
     @ApiOkResponse({ type: [GetMemberDto], description: 'Успех. Ответ - массив работников' })
     @ApiUnauthorizedResponse({
