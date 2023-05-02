@@ -184,7 +184,7 @@ export class ProfilesController {
         description: 'Профиль не найден. Ответ - Error: Not Found',
     })
     @ApiBadRequestResponse({
-        schema: { example: { message: 'Image is empty' } },
+        schema: { example: { message: 'No image to set' } },
         description: 'Файл с фото профиля не прикреплён. Ответ - Error: Bad Request',
     })
     @ApiUnauthorizedResponse({

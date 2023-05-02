@@ -4,29 +4,29 @@ import { GetProfileDto } from '../../profiles/dto/get-profile.dto';
 
 export class GetPrimaryCommentDto {
     @ApiProperty({ example: 1, description: 'id комментария' })
-    id: number;
+    readonly id: number;
 
     @ApiProperty({ example: 1, description: 'id комментируемого фильма' })
-    idFilm: number;
+    readonly idFilm: number;
 
     @ApiProperty({ example: 1, description: 'id пользователя' })
-    idUser: number;
+    readonly idUser: number;
 
     @ApiProperty({ example: 1, description: 'id профиля пользователя' })
-    idProfile: number;
+    readonly idProfile: number;
 
     @ApiProperty({ required: false, example: 'Комментарий о фильме', description: 'заголовок комментария' })
-    title: string;
+    readonly title: string;
 
     @ApiProperty({ example: 'Этот фильм невозможно смотреть за едой!', description: 'текст комментария' })
-    text: string;
+    readonly text: string;
 
     @ApiProperty({ required: false, example: null, description: 'id комментируемого комментария' })
-    prevId: number;
+    readonly prevId: number;
 
     @ApiProperty({ type: GetProfileDto, description: 'профиль пользователя' })
-    profile: GetProfileDto;
+    readonly profile: GetProfileDto;
 
     @ApiProperty({ example: 3, description: 'количество дочерних комментариев' })
-    childrenCount: number;
+    readonly childrenCount: number;
 }

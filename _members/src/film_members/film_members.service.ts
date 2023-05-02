@@ -3,19 +3,22 @@ import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Film_members :`, data, colors.reset);
 
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateFilmMemberDto } from './dto/create-film-member.dto';
+import { Sequelize } from 'sequelize';
 import { InjectModel } from '@nestjs/sequelize';
 import { FilmMember } from './film_members.struct';
-import { MembersService } from 'src/members/members.service';
-import { GetMembersByIdFilmDto } from './dto/get-members-by-idFilm.dto';
+import { MembersService } from '../members/members.service';
+import { GetFilmMembersDto } from './dto/get-film-members.dto';
+import { CreateFilmMemberDto } from './dto/create-film-member.dto';
+import { GetSimpleMemberDto } from '../members/dto/get-simple-member.dto';
 import { QueueNames, RMQ } from '../rabbit.core';
 
 @Injectable()
 export class FilmMembersService {
-    constructor(@InjectModel(FilmMember) private filmMembersDB: typeof FilmMember,
-                private membersService: MembersService
+    constructor(
+        @InjectModel(FilmMember) private filmMembersDB: typeof FilmMember,
+        private membersService: MembersService,
     ) {
-        RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.FFM_cmd, QueueNames.FFM_data))
+        RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.FFM_cmd, QueueNames.FFM_data));
     }
 
     async createFilmMember(dto: CreateFilmMemberDto): Promise<FilmMember> {
@@ -23,13 +26,34 @@ export class FilmMembersService {
         return await this.filmMembersDB.create(dto);
     }
 
-    async getMembersByIdFilm(idFilm: number): Promise<GetMembersByIdFilmDto[]> {
-        log('getMembersByidFilm');
+    async getMembersByFilmId(idFilm: number): Promise<GetFilmMembersDto[]> {
+        log('getMembersByFilmId');
 
-        let found: any[] = await this.filmMembersDB.findAll({ where: { idFilm } });
-        found = found.map((v) => v.idMember);
+        const filmMembers: any[] = await this.filmMembersDB.findAll({
+            where: { idFilm },
+            include: { all: true },
+        });
 
-        return await this.membersService.getMembersByIds(found);
+        for (let i = 0; i < filmMembers.length; i++) {
+            filmMembers[i].dataValues.member = await this.membersService.setImageAsFile(
+                filmMembers[i].dataValues.member,
+            );
+        }
+
+        return filmMembers;
+    }
+
+    async getMembersByProfession(idProfession: number): Promise<GetSimpleMemberDto[]> {
+        log('getMembersByProfession');
+
+        const found = await this.filmMembersDB.findAll({
+            attributes: [
+                [Sequelize.fn('DISTINCT', Sequelize.col('idMember')) ,'idMember'],
+            ],
+            where: { idProfession },
+        });
+
+        return await this.membersService.getSimpleMembersByIds(found.map((v) => v.idMember));
     }
 
     async deleteFilmMember(id: number): Promise<number> {
