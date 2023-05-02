@@ -117,18 +117,6 @@ export class FilmsService {
         return await this.filmsDB.destroy({ where: { id } });
     }
 
-    private setImageAsFile(film: Film) {
-        log('setImageAsFile');
-
-        const data = {
-            ...film,
-            image: getFile(film.imageName ?? '_no_image.png')
-        };
-        delete data.imageName;
-
-        return data;
-    }
-
     async checkExistenceFilmById(id: number): Promise<Boolean> {
         log('checkExistenceFilm');
         return (await this.getFilmById(id)) ? true : false;
@@ -139,6 +127,19 @@ export class FilmsService {
 
         const count = await this.filmsDB.count({ where: { idCountry } });
         return count > 0 ? true : false;
+    }
+
+    private setImageAsFile(film: Film) {
+        log('setImageAsFile');
+
+        const image = film.imageName ? getFile(film.imageName) : null;
+        const data = {
+            ...film.dataValues,
+            image,
+        };
+        delete data.imageName;
+
+        return data;
     }
 
     private async validateCountryAndGenres(idCountry: number, arrIdGenres: number[]): Promise<void> {

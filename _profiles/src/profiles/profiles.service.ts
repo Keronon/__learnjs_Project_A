@@ -126,9 +126,10 @@ export class ProfilesService {
     setImageAsFile(profile: Profile): GetProfileDto {
         log('setImageAsFile');
 
+        const image = profile.imageName ? getFile(profile.imageName) : null;
         const data = {
             ...profile.dataValues,
-            image: getFile(profile.imageName ?? '_no_avatar.png'),
+            image,
         };
         delete data.imageName;
 

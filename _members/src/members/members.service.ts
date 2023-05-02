@@ -52,9 +52,10 @@ export class MembersService {
     private setImageAsFile(member: Member): GetMemberDto {
         log('setImageAsFile');
 
+        const image = member.imageName ? getFile(member.imageName) : null;
         const data = {
             ...member.dataValues,
-            image: getFile(member.imageName ?? '_no_image.png'),
+            image,
         };
         delete data.imageName;
 

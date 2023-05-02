@@ -112,6 +112,16 @@ export class ProfilesController {
         schema: { example: { message: 'User unauthorized' } },
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
     })
+    @ApiForbiddenResponse({
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
+    })
     @UseGuards(UidGuard)
     @Roles('ME', 'ADMIN')
     @Get('/user/:id')
@@ -145,6 +155,16 @@ export class ProfilesController {
         schema: { example: { message: 'User unauthorized' } },
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
     })
+    @ApiForbiddenResponse({
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
+    })
     @UseGuards(UidGuard)
     @Roles('ME', 'ADMIN')
     @Put()
@@ -155,7 +175,7 @@ export class ProfilesController {
 
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Изменение фото профиля' })
-    @ApiParam({ name: 'id', description: 'id профиля', example: 1 })
+    @ApiParam({ name: 'idUser', description: 'id пользователя', example: 1 })
     @ApiConsumes('multipart/form-data')
     @ApiBody({ type: FileUploadDto, description: 'Новое фото профиля' })
     @ApiOkResponse({ type: GetProfileDto, description: 'Успех. Ответ - изменённый профиль' })
@@ -166,6 +186,20 @@ export class ProfilesController {
     @ApiBadRequestResponse({
         schema: { example: { message: 'Image is empty' } },
         description: 'Файл с фото профиля не прикреплён. Ответ - Error: Bad Request',
+    })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
+    @ApiForbiddenResponse({
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
     })
     @UseGuards(UidGuard)
     @Roles('ME', 'ADMIN')
