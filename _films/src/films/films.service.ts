@@ -37,7 +37,9 @@ export class FilmsService {
 
     async getSimpleFilmById(id: number): Promise<Film> {
         log('getSimpleFilmById');
-        return await this.filmsDB.findByPk(id);
+        const film = await this.filmsDB.findByPk(id);
+        if (!film) throw new NotFoundException({ message: 'Film not found' });
+        return film;
     }
 
     async getFilmById(id: number): Promise<any> {
@@ -58,7 +60,7 @@ export class FilmsService {
         return film;
     }
 
-    async updateFilm(updateFilmDto: UpdateFilmDto, image: any): Promise<Film> {
+    async updateFilm(updateFilmDto: UpdateFilmDto): Promise<Film> {
         log('updateFilm');
 
         let film = await this.getSimpleFilmById(updateFilmDto.id);
@@ -71,10 +73,6 @@ export class FilmsService {
         for (let key in updateFilmDto) {
             if (key === 'arrIdGenres') break;
             film[key] = updateFilmDto[key];
-        }
-        if (image) {
-            deleteFile(film.imageName);
-            film.imageName = addFile(image);
         }
         film = await film.save();
 

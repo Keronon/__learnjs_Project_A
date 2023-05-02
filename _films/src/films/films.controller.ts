@@ -68,7 +68,6 @@ export class FilmsController {
     })
     @UseGuards(RolesGuard)
     @Roles('ADMIN')
-    @UseInterceptors(FileInterceptor( 'image' ))
     @Post()
     createFilm(@Body() dto: CreateFilmDto): Promise<Film> {
         log('createFilm');
@@ -113,11 +112,10 @@ export class FilmsController {
     })
     @UseGuards(RolesGuard)
     @Roles('ADMIN')
-    @UseInterceptors(FileInterceptor( 'image' ))
     @Put()
-    updateFilm(@Body() updateFilmDto: UpdateFilmDto, @UploadedFile() image): Promise<Film> {
+    updateFilm(@Body() updateFilmDto: UpdateFilmDto): Promise<Film> {
         log('updateFilm');
-        return this.filmsService.updateFilm(updateFilmDto, image);
+        return this.filmsService.updateFilm(updateFilmDto);
     }
 
     @ApiBearerAuth()
@@ -125,7 +123,7 @@ export class FilmsController {
     @ApiParam({ name: 'id', description: 'id фильма', example: 1 })
     @ApiConsumes('multipart/form-data')
     @ApiBody({ type: FileUploadDto, description: 'Новое изображения фильма' })
-    @ApiOkResponse({ type: File, description: 'Успех. Ответ - изменённый фильм' })
+    @ApiOkResponse({ type: Film, description: 'Успех. Ответ - изменённый фильм' })
     @ApiNotFoundResponse({
         schema: { example: { message: 'Film not found' } },
         description: 'Фильм не найден. Ответ - Error: Not Found',
