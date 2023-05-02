@@ -48,6 +48,6 @@ export class Comment extends Model<Comment, CommentCreationAttrs> {
     @Column({ type: DataType.INTEGER })
     prevId: number;
 
-    @BelongsTo(() => Profile)
+    @BelongsTo(() => Profile, {onDelete: 'SET NULL'})
     profile: Profile;
 }
