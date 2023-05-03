@@ -1,3 +1,4 @@
+import { Get } from '@nestjs/common';
 
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.yellow, `- - > C-Films :`, data, colors.reset);
@@ -24,6 +25,8 @@ import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { CreateFilmDto } from './dto/create-film.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileUploadDto } from './dto/file-upload.dto';
+import { GetFilmDto } from './dto/get-film.dto';
+import { GetMemberFilmDto } from './dto/get-member-film.dto';
 
 @ApiTags('Фильмы')
 @Controller('api/films')
@@ -72,6 +75,23 @@ export class FilmsController {
     createFilm(@Body() dto: CreateFilmDto): Promise<Film> {
         log('createFilm');
         return this.filmsService.createFilm(dto);
+    }
+
+    @ApiOperation({ summary: 'Получение массива всех фильмов' })
+    @ApiOkResponse({ type: [GetFilmDto], description: 'Успех. Ответ - массив фильмов' })
+    @Get()
+    getAllFilms(): Promise<GetFilmDto[]> {
+        log('getAllFilms');
+        return this.filmsService.getAllFilms();
+    }
+
+    @ApiOperation({ summary: 'Получение массива всех фильмов работника киноиндустрии' })
+    @ApiParam({ name: 'idMember', description: 'id работника киноиндустрии', example: 1 })
+    @ApiOkResponse({ type: [GetMemberFilmDto], description: 'Успех. Ответ - массив фильмов' })
+    @Get(':idMember')
+    getAllGenres(@Param('idMember') idMember: number): Promise<GetMemberFilmDto[]> {
+        log('getAllGenres');
+        return this.filmsService.getMemberFilms(idMember);
     }
 
     @ApiBearerAuth()

@@ -45,6 +45,22 @@ export class FilmsRMQ {
         }
     }
 
+    async getMemberFilms(idMember: number): Promise<{ idFilm, profession }[]> {
+        log('getMemberFilms');
+
+        // ! idFilm -> micro Profiles -> { idFilm, Profession }[]
+        const res = await RMQ.publishReq(QueueNames.FFM_cmd, QueueNames.FFM_data, {
+            id_msg: uuid.v4(),
+            cmd: 'getMemberFilms',
+            data: idMember,
+        });
+        if (!Array.isArray(res)) {
+            throw new InternalServerErrorException({ message: 'Can not get member films' });
+        }
+
+        return res;
+    }
+
     async deleteFilmInfo(idFilm: number): Promise<void> {
         log('deleteFilmInfo');
 

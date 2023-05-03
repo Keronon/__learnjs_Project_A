@@ -13,6 +13,7 @@ import { GetFilmMembersDto } from './dto/get-film-members.dto';
 import { CreateFilmMemberDto } from './dto/create-film-member.dto';
 import { GetSimpleMemberDto } from '../members/dto/get-simple-member.dto';
 import { QueueNames, RMQ } from '../rabbit.core';
+import { Profession } from 'src/professions/professions.struct';
 
 @Injectable()
 export class FilmMembersService {
@@ -71,6 +72,18 @@ export class FilmMembersService {
         });
 
         return await this.membersService.getSimpleMembersByIds(found.map((v) => v.idMember));
+    }
+
+    async getMemberFilms(idMember: number): Promise<any[]> {
+        log('getMemberFilms');
+
+        const found = await this.filmMembersDB.findAll({
+            attributes: ['idFilm'],
+            where: { idMember },
+            include: Profession,
+        });
+
+        return found;
     }
 
     async deleteFilmMember(id: number): Promise<number> {

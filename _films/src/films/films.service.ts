@@ -11,6 +11,8 @@ import { Film } from './films.struct';
 import { CreateFilmDto } from './dto/create-film.dto';
 import { UpdateFilmDto } from './dto/update-film.dto';
 import { UpdateFilmRatingDto } from './dto/update-film-rating.dto';
+import { GetFilmDto } from './dto/get-film.dto';
+import { GetMemberFilmDto } from './dto/get-member-film.dto';
 import { QueueNames, RMQ } from '../rabbit.core';
 import { FilmsRMQ } from './films-rmq';
 import { addFile, deleteFile, getFile } from '../files.core';
@@ -35,14 +37,43 @@ export class FilmsService {
 
     async getSimpleFilmById(id: number): Promise<Film> {
         log('getSimpleFilmById');
-        const film = await this.filmsDB.findByPk(id);
-        if (!film) throw new NotFoundException({ message: 'Film not found' });
-        return film;
+        return await this.filmsDB.findByPk(id);
     }
 
-    async getFilmById(id: number): Promise<any> {
+    async getFilmById(id: number): Promise<GetFilmDto> {
         log('getFilmById');
-        return this.setImageAsFile(await this.getSimpleFilmById(id));
+
+        const film = await this.filmsDB.findOne({
+            where: { id },
+            include: { all: true },
+        });
+        return this.setImageAsFile(film);
+    }
+
+    async getAllFilms(): Promise<GetFilmDto[]> {
+        log('getAllFilms');
+
+        const films = await this.filmsDB.findAll({
+            include: { all: true },
+        });
+        return films.map((v) => this.setImageAsFile(v));
+    }
+
+    async getMemberFilms(idMember: number): Promise<GetMemberFilmDto[]> {
+        log('getMemberFilms');
+
+        const res: GetMemberFilmDto[] = [];
+
+        const films = await this.filmsRMQ.getMemberFilms(idMember);
+
+        for (let i = 0; i < films.length; i++) {
+            res.push({
+                film: await this.getFilmById(films[i].idFilm),
+                profession: films[i].profession,
+            });
+        }
+
+        return res;
     }
 
     async createFilm(createFilmDto: CreateFilmDto): Promise<Film> {
@@ -84,6 +115,7 @@ export class FilmsService {
         log('updateImageById');
 
         let film = await this.getSimpleFilmById(id);
+        if (!film) throw new NotFoundException({ message: 'Film not found' });
 
         if (!image) throw new BadRequestException({ message: 'No image to set' });
 
@@ -128,7 +160,7 @@ export class FilmsService {
 
     async checkExistenceFilmById(id: number): Promise<Boolean> {
         log('checkExistenceFilm');
-        return (await this.getFilmById(id)) ? true : false;
+        return (await this.getSimpleFilmById(id)) ? true : false;
     }
 
     async checkExistenceFilmByCountryId(idCountry: number): Promise<Boolean> {
@@ -138,7 +170,7 @@ export class FilmsService {
         return count > 0 ? true : false;
     }
 
-    private setImageAsFile(film: Film) {
+    private setImageAsFile(film: Film): any {
         log('setImageAsFile');
 
         const image = film.imageName ? getFile(film.imageName) : null;
