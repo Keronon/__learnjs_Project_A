@@ -2,11 +2,13 @@
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Film_members :`, data, colors.reset);
 
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Sequelize } from 'sequelize';
+import * as uuid from 'uuid';
+import { ConflictException, Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/common';
+import { Op, Sequelize } from 'sequelize';
 import { InjectModel } from '@nestjs/sequelize';
 import { FilmMember } from './film_members.struct';
 import { MembersService } from '../members/members.service';
+import { ProfessionsService } from '../professions/professions.service';
 import { GetFilmMembersDto } from './dto/get-film-members.dto';
 import { CreateFilmMemberDto } from './dto/create-film-member.dto';
 import { GetSimpleMemberDto } from '../members/dto/get-simple-member.dto';
@@ -16,14 +18,31 @@ import { QueueNames, RMQ } from '../rabbit.core';
 export class FilmMembersService {
     constructor(
         @InjectModel(FilmMember) private filmMembersDB: typeof FilmMember,
+        @Inject(forwardRef(() => ProfessionsService)) private professionsService: ProfessionsService,
         private membersService: MembersService,
     ) {
         RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.FFM_cmd, QueueNames.FFM_data));
     }
 
-    async createFilmMember(dto: CreateFilmMemberDto): Promise<FilmMember> {
+    async createFilmMember(createFilmMemberDto: CreateFilmMemberDto): Promise<FilmMember> {
         log('createFilmMember');
-        return await this.filmMembersDB.create(dto);
+
+        const filmMember = await this.filmMembersDB.findOne({
+            where: {
+                [Op.and]: [
+                    { idFilm: createFilmMemberDto.idFilm },
+                    { idMember: createFilmMemberDto.idMember },
+                    { idProfession: createFilmMemberDto.idProfession },
+                ],
+            },
+        });
+        if (filmMember) {
+            throw new ConflictException({ message: 'This film member already exists' });
+        }
+
+        await this.validateFilmMemberDto(createFilmMemberDto);
+
+        return await this.filmMembersDB.create(createFilmMemberDto);
     }
 
     async getMembersByFilmId(idFilm: number): Promise<GetFilmMembersDto[]> {
@@ -47,9 +66,7 @@ export class FilmMembersService {
         log('getMembersByProfession');
 
         const found = await this.filmMembersDB.findAll({
-            attributes: [
-                [Sequelize.fn('DISTINCT', Sequelize.col('idMember')) ,'idMember'],
-            ],
+            attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('idMember')), 'idMember']],
             where: { idProfession },
         });
 
@@ -82,5 +99,27 @@ export class FilmMembersService {
     private async getFilmMemberById(id: number): Promise<FilmMember> {
         log('getSimpleMemberById');
         return await this.filmMembersDB.findByPk(id);
+    }
+
+    private async validateFilmMemberDto(createFilmMemberDto: CreateFilmMemberDto): Promise<void> {
+        log('validateFilmMemberDto');
+
+        const member = await this.membersService.getSimpleMemberById(createFilmMemberDto.idMember);
+        if (!member) {
+            throw new NotFoundException({ message: 'Member not found' });
+        }
+
+        const profession = await this.professionsService.getProfessionById(createFilmMemberDto.idProfession);
+        if (!profession) {
+            throw new NotFoundException({ message: 'Profession not found' });
+        }
+
+        // ! idFilm -> micro Film -> true/false
+        const res = await RMQ.publishReq(QueueNames.FMF_cmd, QueueNames.FMF_data, {
+            id_msg: uuid.v4(),
+            cmd: 'checkExistenceFilmById',
+            data: createFilmMemberDto.idFilm,
+        });
+        if (!res) throw new NotFoundException({ message: 'Film not found' });
     }
 }

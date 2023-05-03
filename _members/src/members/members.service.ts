@@ -19,6 +19,11 @@ export class MembersService {
         return await this.membersDB.create(createMemberDto);
     }
 
+    async getSimpleMemberById(id: number): Promise<Member> {
+        log('getSimpleMemberById');
+        return await this.membersDB.findByPk(id);
+    }
+
     async getAllMembers(): Promise<GetMemberDto[]> {
         log('getAllMembers');
 
@@ -78,10 +83,5 @@ export class MembersService {
         delete data.imageName;
 
         return data;
-    }
-
-    private async getSimpleMemberById(id: number): Promise<Member> {
-        log('getSimpleMemberById');
-        return await this.membersDB.findByPk(id);
     }
 }

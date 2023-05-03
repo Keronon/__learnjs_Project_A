@@ -21,16 +21,14 @@ export class FilmsService {
 
     constructor(
         @InjectModel(Film) private filmsDB: typeof Film,
-
-        @Inject(forwardRef(() => CountriesService))
-        private countriesService: CountriesService,
-
+        @Inject(forwardRef(() => CountriesService)) private countriesService: CountriesService,
         private genresService: GenresService,
         private filmGenresService: FilmGenresService,
     ) {
         RMQ.connect()
             .then(RMQ.setCmdConsumer(this, QueueNames.CF_cmd, QueueNames.CF_data))
-            .then(RMQ.setCmdConsumer(this, QueueNames.RF_cmd, QueueNames.RF_data));
+            .then(RMQ.setCmdConsumer(this, QueueNames.RF_cmd, QueueNames.RF_data))
+            .then(RMQ.setCmdConsumer(this, QueueNames.FMF_cmd, QueueNames.FMF_data));
 
         this.filmsRMQ = new FilmsRMQ(this.filmsDB);
     }

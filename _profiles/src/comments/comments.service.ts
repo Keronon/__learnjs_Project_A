@@ -7,7 +7,7 @@ import { ConflictException,
          Injectable,
          NotFoundException,
          ForbiddenException,
-         UnauthorizedException, 
+         UnauthorizedException,
          Inject,
          forwardRef} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';

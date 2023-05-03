@@ -12,7 +12,8 @@ import { ApiOperation,
          ApiBadRequestResponse,
          ApiOkResponse,
          ApiBearerAuth,
-         ApiNotFoundResponse } from '@nestjs/swagger';
+         ApiNotFoundResponse,
+         ApiConflictResponse } from '@nestjs/swagger';
 import { Controller, Param, Post, Delete, UseGuards, Body, Get } from '@nestjs/common';
 import { FilmMembersService } from './film_members.service';
 import { Roles } from '../_decorators/roles-auth.decorator';
@@ -34,6 +35,14 @@ export class FilmMembersController {
     @ApiBadRequestResponse({
         schema: { example: ['idFilm - Must be a number', 'idMember - Must be a number'] },
         description: 'Ошибки валидации. Ответ - Error: Bad Request',
+    })
+    @ApiNotFoundResponse({
+        schema: { example: { message: 'Profession not found' } },
+        description: 'Фильм / работник / профессия не найден. Ответ - Error: Not Found',
+    })
+    @ApiConflictResponse({
+        schema: { example: { message: 'Film not found' } },
+        description: 'Участник фильма уже существует. Ответ - Error: Conflict',
     })
     @ApiUnauthorizedResponse({
         schema: { example: { message: 'User unauthorized' } },

@@ -42,7 +42,7 @@ export class CommentsController {
     })
     @ApiNotFoundResponse({
         schema: { example: { message: 'Previous comment not found' } },
-        description: 'Комментируемый комментарий не найден. Ответ - Error: Not Found',
+        description: 'Комментируемый комментарий / фильм не найден. Ответ - Error: Not Found',
     })
     @ApiConflictResponse({
         schema: { example: { message: 'IdFilm of the comment and the previous comment do not match' } },
