@@ -2,8 +2,14 @@
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Films :`, data, colors.reset);
 
-import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
+import { BadRequestException,
+         ConflictException,
+         Inject,
+         Injectable,
+         NotFoundException,
+         forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Op, Sequelize } from 'sequelize';
 import { GenresService } from '../genres/genres.service';
 import { CountriesService } from '../countries/countries.service';
 import { FilmGenresService } from '../film_genres/film-genres.service';
@@ -13,6 +19,7 @@ import { UpdateFilmDto } from './dto/update-film.dto';
 import { UpdateFilmRatingDto } from './dto/update-film-rating.dto';
 import { GetFilmDto } from './dto/get-film.dto';
 import { GetMemberFilmDto } from './dto/get-member-film.dto';
+import { FilmFiltersDto } from './dto/film-filters.dto';
 import { QueueNames, RMQ } from '../rabbit.core';
 import { FilmsRMQ } from './films-rmq';
 import { addFile, deleteFile, getFile } from '../files.core';
@@ -74,6 +81,39 @@ export class FilmsService {
         }
 
         return res;
+    }
+
+    async getFilteredFilms(filmFiltersDto: FilmFiltersDto): Promise<GetFilmDto[]> {
+        log('getFilteredFilms');
+
+        let arrIdFilms;
+        if (filmFiltersDto.arrMembersFilterDto) {
+            arrIdFilms = await this.filmsRMQ.getFilteredFilmsByMembers(filmFiltersDto.arrMembersFilterDto);
+            if(!arrIdFilms.length) return [];
+        }
+
+        if (filmFiltersDto.ratingStart || filmFiltersDto.countRatingStart) {
+            arrIdFilms = await this.filmsRMQ.getFilteredFilmsByRating(
+                filmFiltersDto.ratingStart,
+                filmFiltersDto.countRatingStart,
+                arrIdFilms,
+            );
+            if(!arrIdFilms.length) return [];
+        }
+
+        const condition = [];
+        if(arrIdFilms) condition.push({ id: arrIdFilms });
+        if(filmFiltersDto.arrIdCountries) condition.push({ idCountry: filmFiltersDto.arrIdCountries });
+        if(filmFiltersDto.arrIdGenres) {
+            condition.push( Sequelize.literal(`genres.id IN (${filmFiltersDto.arrIdGenres.join(',')})`));
+        }
+
+        const films = await this.filmsDB.findAll({
+            include: { all: true },
+            where: { [Op.and]: condition },
+        });
+
+        return films.map((v) => this.setImageAsFile(v));
     }
 
     async createFilm(createFilmDto: CreateFilmDto): Promise<Film> {

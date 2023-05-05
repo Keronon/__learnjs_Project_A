@@ -1,4 +1,4 @@
-import { Get } from '@nestjs/common';
+import { Get, HttpCode } from '@nestjs/common';
 
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.yellow, `- - > C-Films :`, data, colors.reset);
@@ -27,6 +27,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { FileUploadDto } from './dto/file-upload.dto';
 import { GetFilmDto } from './dto/get-film.dto';
 import { GetMemberFilmDto } from './dto/get-member-film.dto';
+import { FilmFiltersDto } from './dto/film-filters.dto';
 
 @ApiTags('Фильмы')
 @Controller('api/films')
@@ -89,9 +90,29 @@ export class FilmsController {
     @ApiParam({ name: 'idMember', description: 'id работника киноиндустрии', example: 1 })
     @ApiOkResponse({ type: [GetMemberFilmDto], description: 'Успех. Ответ - массив фильмов' })
     @Get(':idMember')
-    getAllGenres(@Param('idMember') idMember: number): Promise<GetMemberFilmDto[]> {
-        log('getAllGenres');
+    getMemberFilms(@Param('idMember') idMember: number): Promise<GetMemberFilmDto[]> {
+        log('getMemberFilms');
         return this.filmsService.getMemberFilms(idMember);
+    }
+
+    @ApiOperation({ summary: 'Получение массива отфильтрованных фильмов' })
+    @ApiBody({ type: FilmFiltersDto, description: 'Объект с данными для фильтрации' })
+    @ApiOkResponse({ type: [GetFilmDto], description: 'Успех. Ответ - массив фильмов' })
+    @ApiBadRequestResponse({
+        schema: {
+            example: [
+                'year - Must be a number',
+                'ageRating - Must be a string',
+                'arrIdGenres - Must be at least one genre',
+            ],
+        },
+        description: 'Ошибки валидации. Ответ - Error: Bad Request',
+    })
+    @Post("/filter")
+    @HttpCode(200)
+    getFilteredFilms(@Body() filmFiltersDto: FilmFiltersDto): Promise<GetFilmDto[]> {
+        log('getFilteredFilms');
+        return this.filmsService.getFilteredFilms(filmFiltersDto);
     }
 
     @ApiBearerAuth()

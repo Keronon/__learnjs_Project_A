@@ -12,8 +12,9 @@ import { ProfessionsService } from '../professions/professions.service';
 import { GetFilmMembersDto } from './dto/get-film-members.dto';
 import { CreateFilmMemberDto } from './dto/create-film-member.dto';
 import { GetSimpleMemberDto } from '../members/dto/get-simple-member.dto';
+import { Profession } from '../professions/professions.struct';
+import { MembersFilterDto } from './dto/members-filter.dto';
 import { QueueNames, RMQ } from '../rabbit.core';
-import { Profession } from 'src/professions/professions.struct';
 
 @Injectable()
 export class FilmMembersService {
@@ -84,6 +85,34 @@ export class FilmMembersService {
         });
 
         return found;
+    }
+
+    async getFilteredFilmsByMembers(arrMemberFilterDto: MembersFilterDto[]): Promise<number[]> {
+        log('getFilteredFilmsByMembers');
+
+        let condition = [];
+        arrMemberFilterDto.forEach((v) => {
+            condition.push({ idMember: v.idMember, idProfession: v.idProfession });
+        });
+
+        const found = await this.filmMembersDB.findAll({
+            attributes: ['idFilm'],
+            where: { [Op.or]: condition },
+        });
+
+        const counts = {};
+        found.forEach((v) => {
+            counts[v.idFilm] = (counts[v.idFilm] || 0) + 1;
+        });
+
+        const res: number[] = [];
+        for (let [key, value] of Object.entries(counts)) {
+            if (value === arrMemberFilterDto.length) {
+                res.push(+key);
+            }
+        }
+
+        return res;
     }
 
     async deleteFilmMember(id: number): Promise<number> {

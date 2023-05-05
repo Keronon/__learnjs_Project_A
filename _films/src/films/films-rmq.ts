@@ -1,4 +1,3 @@
-
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Films :`, data, colors.reset);
 
@@ -6,6 +5,7 @@ import * as uuid from 'uuid';
 import { InternalServerErrorException } from '@nestjs/common';
 import { Film } from './films.struct';
 import { CreateFilmDto } from './dto/create-film.dto';
+import { MembersFilterDto } from './dto/members-filter.dto';
 import { QueueNames, RMQ } from '../rabbit.core';
 
 export class FilmsRMQ {
@@ -56,6 +56,38 @@ export class FilmsRMQ {
         });
         if (!Array.isArray(res)) {
             throw new InternalServerErrorException({ message: 'Can not get member films' });
+        }
+
+        return res;
+    }
+
+    async getFilteredFilmsByMembers(arrMembersFilterDto: MembersFilterDto[]): Promise<number[]> {
+        log('getFilteredFilmsByRating');
+
+        // ! MembersFilterDto[] -> micro Profiles -> arr idsFilms
+        const res = await RMQ.publishReq(QueueNames.FFM_cmd, QueueNames.FFM_data, {
+            id_msg: uuid.v4(),
+            cmd: 'getFilteredFilmsByMembers',
+            data: arrMembersFilterDto,
+        });
+        if (!Array.isArray(res)) {
+            throw new InternalServerErrorException({ message: 'Can not get filtered films by rating' });
+        }
+
+        return res;
+    }
+
+    async getFilteredFilmsByRating(ratingStart: number, countRatingStart: number, arrIdFilms: number[]): Promise<number[]> {
+        log('getFilteredFilmsByRating');
+
+        // ! { ratingStart, countRatingStart, arrIdFilms } -> micro Rating -> arr idsFilms
+        const res = await RMQ.publishReq(QueueNames.FR_cmd, QueueNames.FR_data, {
+            id_msg: uuid.v4(),
+            cmd: 'getFilteredFilmsByRating',
+            data: { ratingStart, countRatingStart, arrIdFilms },
+        });
+        if (!Array.isArray(res)) {
+            throw new InternalServerErrorException({ message: 'Can not get filtered films by rating' });
         }
 
         return res;

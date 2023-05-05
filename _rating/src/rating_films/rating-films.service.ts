@@ -8,7 +8,9 @@ import { ConflictException,
          InternalServerErrorException,
          NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
 import { RatingFilm } from './rating-films.struct';
+import { RatingFilterDto } from './dto/rating-filter.dto';
 import { QueueNames, RMQ } from '../rabbit.core';
 
 @Injectable()
@@ -28,21 +30,24 @@ export class RatingFilmsService {
         return ratingFilm.count;
     }
 
-    async createRatingFilm(idFilm: number): Promise<RatingFilm> {
-        log('createRatingFilm');
+    async getFilteredFilmsByRating(ratingFilterDto: RatingFilterDto): Promise<number[]> {
+        log('getFilteredFilmsByRating');
 
-        if (await this.checkExistenceRating(idFilm)) {
-            throw new ConflictException({ message: 'This rating film already exists' });
+        const condition = [];
+        if (ratingFilterDto.arrIdFilms) condition.push({ idFilm: ratingFilterDto.arrIdFilms });
+        if (ratingFilterDto.ratingStart) {
+            condition.push({ ratingFilm: { [Op.gte]: ratingFilterDto.ratingStart } });
+        }
+        if (ratingFilterDto.countRatingStart) {
+            condition.push({ count: { [Op.gte]: ratingFilterDto.countRatingStart } });
         }
 
-        const ratingFilmData = {
-            count: 0,
-            ratingFilm: 0,
-            ratingCurrent: 0,
-            idFilm,
-        };
+        const found = await this.ratingFilmsDB.findAll({
+            attributes: ['idFilm'],
+            where: condition,
+        });
 
-        return await this.ratingFilmsDB.create(ratingFilmData);
+        return found.map((v) => v.idFilm);
     }
 
     async onCreateRatingUser(idFilm: number, newRatingUser: number, oldRatingUser: number = 0): Promise<RatingFilm> {
