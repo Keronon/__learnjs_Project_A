@@ -41,7 +41,7 @@ class Rabbit
         if ( !this.channel ) throw new InternalServerErrorException({ message: `No connection to rabbit channel` });
 
         // join data queue
-        const queue = await RMQ.channel.assertQueue( queueName, queueOptions );
+        const queue = await this.channel.assertQueue( queueName, queueOptions );
         await this.channel.bindQueue( queue.queue, exchangeName, queueName );
 
         return queue;
@@ -103,9 +103,9 @@ class Rabbit
 
         return () =>
         {
-            RMQ.assertQueue(reqQueueName).then
+            this.assertQueue(reqQueueName).then
             ((res) =>
-                RMQ.channel.consume( res.queue, ( msg ) =>
+                this.channel.consume( res.queue, ( msg ) =>
                 {
                     log('consume');
 
@@ -117,23 +117,23 @@ class Rabbit
 
                         const back = (res) =>
                         {
-                            RMQ.publishMessage( resQueueName, { id_msg: message.id_msg, cmd: message.cmd, data: res } );
-                            RMQ.channel.ack( msg );
+                            this.publishMessage( resQueueName, { id_msg: message.id_msg, cmd: message.cmd, data: res } );
+                            this.channel.ack( msg );
                         };
 
                         if ( deal instanceof Promise ) {
                             deal.then( back ).catch
                             ((ex) => {
-                                RMQ.publishMessage( resQueueName, { id_msg: message.id_msg, cmd: message.cmd, data: ex } );
-                                RMQ.channel.ack( msg );
+                                this.publishMessage( resQueueName, { id_msg: message.id_msg, cmd: message.cmd, data: ex } );
+                                this.channel.ack( msg );
                             });
                         }
                         else back( deal );
                     }
                     catch (ex)
                     {
-                        RMQ.publishMessage( resQueueName, { id_msg: message.id_msg, cmd: message.cmd, data: ex } );
-                        RMQ.channel.ack( msg );
+                        this.publishMessage( resQueueName, { id_msg: message.id_msg, cmd: message.cmd, data: ex } );
+                        this.channel.ack( msg );
                     }
                 } )
             );
