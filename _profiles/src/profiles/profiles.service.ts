@@ -7,7 +7,7 @@ import { BadRequestException,
          Inject,
          Injectable,
          InternalServerErrorException,
-         NotFoundException, 
+         NotFoundException,
          forwardRef} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { QueueNames, RMQ } from '../rabbit.core';
