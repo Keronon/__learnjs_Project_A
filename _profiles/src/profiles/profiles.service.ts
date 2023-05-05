@@ -4,11 +4,9 @@ const log = (data: any) => console.log(colors.fg.blue, `- - > S-Profiles :`, dat
 
 import * as uuid from 'uuid';
 import { BadRequestException,
-         Inject,
          Injectable,
          InternalServerErrorException,
-         NotFoundException,
-         forwardRef} from '@nestjs/common';
+         NotFoundException} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { QueueNames, RMQ } from '../rabbit.core';
 import { addFile, deleteFile, getFile } from '../files.core';
