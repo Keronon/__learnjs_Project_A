@@ -3,8 +3,7 @@ import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Rating_films :`, data, colors.reset);
 
 import * as uuid from 'uuid';
-import { ConflictException,
-         Injectable,
+import { Injectable,
          InternalServerErrorException,
          NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';

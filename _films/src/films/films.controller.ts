@@ -1,4 +1,3 @@
-import { Get, HttpCode } from '@nestjs/common';
 
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.yellow, `- - > C-Films :`, data, colors.reset);
@@ -17,6 +16,7 @@ import { ApiParam,
          ApiUnauthorizedResponse,
          ApiOkResponse,
          ApiConsumes} from '@nestjs/swagger';
+import { Get, HttpCode } from '@nestjs/common';
 import { FilmsService } from './films.service';
 import { UpdateFilmDto } from './dto/update-film.dto';
 import { Film } from './films.struct';
