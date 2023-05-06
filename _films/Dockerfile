@@ -14,8 +14,8 @@ RUN npm install
 # other-copied files from project to image
 COPY . .
 
-# setting inside-port for container
-EXPOSE 12123
+# setting environment variables
+ENV PG_HOST=pg AMQP_URL=amqp://rabbitmq
 
 # commands to each container run
 CMD [ "npm", "run", "start" ]

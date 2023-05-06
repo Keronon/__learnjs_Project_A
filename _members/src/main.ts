@@ -7,7 +7,7 @@ import { ValidationPipe } from './_decorators/pipes/validation.pipe';
 
 async function bootstrap ()
 {
-    const PORT = process.env.PORT || 12126;
+    const PORT = process.env.PORT;
     const app = await NestFactory.create(AppModule);
 
     // Documentation

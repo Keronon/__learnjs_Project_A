@@ -19,11 +19,11 @@ import { FilmMember } from './film_members/film_members.struct';
 
         SequelizeModule.forRoot( {
             dialect: 'postgres',
-            host: process.env.PG_HOST || 'pg',
-            port: Number( process.env.PG_PORT ) || 5432,
-            username: process.env.PG_USER || 'postgres',
-            password: process.env.PG_PASS || 'root',
-            database: process.env.PG_DB || 'DB_members',
+            host: process.env.PG_HOST || 'localhost',
+            port: +process.env.PG_PORT,
+            username: process.env.PG_USER,
+            password: process.env.PG_PASS,
+            database: process.env.PG_DB,
             models: [ Member, Profession, FilmMember ],
             autoLoadModels: true,
             logging: false

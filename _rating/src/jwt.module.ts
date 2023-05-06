@@ -8,8 +8,8 @@ import { JwtModule } from '@nestjs/jwt';
     imports:
     [
         JwtModule.register( {
-            secret: process.env.SECRET_KEY || "SECRET", // secret key
-            signOptions: { expiresIn: "24h", },         // token lifetime
+            secret: process.env.SECRET_KEY,      // secret key
+            signOptions: { expiresIn: "24h", },  // token lifetime
         } ),
     ]
 })
