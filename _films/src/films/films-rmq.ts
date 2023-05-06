@@ -41,7 +41,7 @@ export class FilmsRMQ {
             data: idFilm,
         });
         if (Object.keys(res).length === 0) {
-            // FIXME : destroy filmInfo
+            await this.deleteFilmInfo(idFilm);
             await this.filmsDB.destroy({ where: { id: idFilm } });
             throw new InternalServerErrorException({ message: 'Got empty or error response' });
         }
