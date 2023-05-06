@@ -18,6 +18,8 @@ export class RatingFilmsService {
         RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.FR_cmd, QueueNames.FR_data));
     }
 
+    // TODO : createRatingFilm
+
     async getRatingFilmCountByFilmId(idFilm: number): Promise<number> {
         log('getRatingFilmCountByFilmId');
 
