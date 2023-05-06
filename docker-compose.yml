@@ -13,6 +13,8 @@ services:
     restart: always
     ports:
       - 5430:5432
+    environment:
+      - POSTGRES_PASSWORD=root
     volumes:
       - ./postgres/data:/var/lib/postgresql/data     # saving DB-s data
       - ./postgres/init:/docker-entrypoint-initdb.d  # joining folder with initial SQL files
@@ -25,6 +27,9 @@ services:
     restart: always
     expose:
       - '80'
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=mail@mail.io
+      - PGADMIN_DEFAULT_PASSWORD=root
     depends_on:
       - pg
     networks:
