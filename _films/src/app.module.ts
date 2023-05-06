@@ -1,7 +1,6 @@
 
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { ConfigModule } from '@nestjs/config';
 import { JwtGlobalModule } from './jwt.module';
 import { FilmsModule } from './films/films.module';
 import { GenresModule } from './genres/genres.module';
@@ -16,8 +15,6 @@ import { FilmGenre } from './film_genres/film-genres.struct';
     controllers: [],
     providers: [],
     imports: [
-        ConfigModule.forRoot({ envFilePath: '.env' }),
-
         SequelizeModule.forRoot({
             dialect: 'postgres',
             host: process.env.PG_HOST || 'localhost',
