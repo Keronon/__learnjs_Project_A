@@ -3,7 +3,8 @@ import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Rating_films :`, data, colors.reset);
 
 import * as uuid from 'uuid';
-import { Injectable,
+import { ConflictException,
+         Injectable,
          InternalServerErrorException,
          NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
@@ -49,6 +50,23 @@ export class RatingFilmsService {
         });
 
         return found.map((v) => v.idFilm);
+    }
+
+    async createRatingFilm(idFilm: number): Promise<RatingFilm> {
+        log('createRatingFilm');
+
+        if (await this.checkExistenceRating(idFilm)) {
+            throw new ConflictException({ message: 'This rating film already exists' });
+        }
+
+        const ratingFilmData = {
+            count: 0,
+            ratingFilm: 0,
+            ratingCurrent: 0,
+            idFilm,
+        };
+
+        return await this.ratingFilmsDB.create(ratingFilmData);
     }
 
     async onCreateRatingUser(idFilm: number, newRatingUser: number, oldRatingUser: number = 0): Promise<RatingFilm> {
