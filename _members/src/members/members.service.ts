@@ -33,6 +33,7 @@ export class MembersService {
 
     async getSimpleMembersByIds(ids: number[]): Promise<GetSimpleMemberDto[]> {
         log('getMembersByIds');
+
         const members: any[] = await this.membersDB.findAll({
             attributes: ['id', 'nameRU', 'nameEN'],
             where: { id: ids },

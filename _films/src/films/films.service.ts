@@ -10,19 +10,19 @@ import { BadRequestException,
          forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op, Sequelize } from 'sequelize';
+import { QueueNames, RMQ } from '../rabbit.core';
+import { FilmsRMQ } from './films-rmq';
+import { addFile, deleteFile, getFile } from '../files.core';
 import { GenresService } from '../genres/genres.service';
 import { CountriesService } from '../countries/countries.service';
 import { FilmGenresService } from '../film_genres/film-genres.service';
-import { Film } from './films.struct';
 import { CreateFilmDto } from './dto/create-film.dto';
 import { UpdateFilmDto } from './dto/update-film.dto';
 import { UpdateFilmRatingDto } from './dto/update-film-rating.dto';
 import { GetFilmDto } from './dto/get-film.dto';
 import { GetMemberFilmDto } from './dto/get-member-film.dto';
 import { FilmFiltersDto } from './dto/film-filters.dto';
-import { QueueNames, RMQ } from '../rabbit.core';
-import { FilmsRMQ } from './films-rmq';
-import { addFile, deleteFile, getFile } from '../files.core';
+import { Film } from './films.struct';
 
 @Injectable()
 export class FilmsService {

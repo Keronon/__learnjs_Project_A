@@ -60,6 +60,7 @@ export class ProfilesService {
 
     async getSimpleProfileByUserId(idUser: number): Promise<Profile> {
         log('getSimpleProfileByUserId');
+
         const profile = await this.profilesDB.findOne({ where: { idUser } });
         if (!profile) throw new NotFoundException({ message: 'Profile not found' });
         return profile;

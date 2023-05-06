@@ -14,8 +14,8 @@ services:
     ports:
       - 5430:5432
     volumes:
-      - ./postgres/data:/var/lib/postgresql/data
-      - ./postgres/init:/docker-entrypoint-initdb.d
+      - ./postgres/data:/var/lib/postgresql/data     # saving DB-s data
+      - ./postgres/init:/docker-entrypoint-initdb.d  # joining folder with initial SQL files
     networks:
       - local_net
 
@@ -38,8 +38,8 @@ services:
       - 5672:5672
       - 15672:15672
     volumes:
-      - ./rabbitmq/durables/:/var/lib/rabbitmq/
-      - ./rabbitmq/logs/:/var/log/rabbitmq
+      - ./rabbitmq/durables/:/var/lib/rabbitmq/  # saving durables queues
+      - ./rabbitmq/logs/:/var/log/rabbitmq       # saving logs
     networks:
       - local_net
 
@@ -110,5 +110,19 @@ services:
       - 12125:12125
     volumes:
       - ./_rating:/root
+    networks:
+      - local_net
+
+  members:
+    build: ./_members
+    container_name: members
+    restart: on-failure
+    depends_on:
+      - pg
+      - rabbitmq
+    ports:
+      - 12126:12126
+    volumes:
+      - ./_members:/root
     networks:
       - local_net

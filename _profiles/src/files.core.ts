@@ -14,7 +14,7 @@ export function addFile(file: any)
 
     try {
         const file_name: string = file.originalname;
-        const f_path = path.resolve( __dirname, '..', '_images' );
+        const f_path = path.resolve( __dirname, '..', '_files' );
         const f_name = uuid.v4() + file_name.substring( file_name.lastIndexOf('.') );
 
         // если составленного пути нет - создать недостающие папки
@@ -33,13 +33,11 @@ export function getFile(fileName: string)
 {
     log('getFile');
 
-    const f_path = path.resolve( __dirname, '..', '_images' );
+    const f_path = path.resolve( __dirname, '..', '_files' );
     const f_name = path.join(f_path, fileName);
 
-    if (!fs.existsSync(f_name)) return '< ! файл не найден ! >';
+    if (!fs.existsSync(f_name)) return null;
 
-    //const file = fs.createReadStream(fileName);
-    //return new StreamableFile(file);
     return {
         fileName: fileName,
         base64: fs.readFileSync(f_name).toString('base64')
@@ -51,7 +49,7 @@ export function deleteFile(fileName: string)
     log('delete file');
 
     try {
-        const f_path = path.resolve( __dirname, '..', '_images' );
+        const f_path = path.resolve( __dirname, '..', '_files' );
         fs.rmSync( path.join( f_path, fileName ) );
 
         return true;
