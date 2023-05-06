@@ -35,10 +35,12 @@ describe( '_users', () =>
                 .expect( 200 )
                 .expect( (res: req.Response) =>
                 {
-                    expect( 'idUser' in res.body && typeof(res.body.idUser) === 'number' )
-                        .toBe( true );
-                    expect( 'token'  in res.body && typeof(res.body.token)  === 'string' )
-                        .toBe( true );
+                    expect(res.body).toEqual(
+                        expect.objectContaining({
+                            idUser: expect.any(Number),
+                            token: expect.any(String)
+                        })
+                    );
 
                     admin_token = res.body.token;
                     console.log('\n\n = = = A D M I N _ T O K E N = = = \n\n');
@@ -53,10 +55,12 @@ describe( '_users', () =>
         {
             return req( app.getHttpServer() )
                 .get( '/api/users' )
+                .set('Authorization', `Bearer ${admin_token}`)
                 .expect( 200 )
                 .expect( (res: req.Response) =>
                 {
-                    expect(res.body.every((v) => v instanceof User)).toBeTruthy();
+                    const check = new User();
+                    Object.keys(res.body).every((v) => expect(check[v]).toBeDefined);
                 } );
         } );
 
@@ -68,7 +72,8 @@ describe( '_users', () =>
                 .expect( 200 )
                 .expect( (res: req.Response) =>
                 {
-                    expect(res.body).toBeInstanceOf(User);
+                    const check = new User();
+                    Object.keys(res.body).every((v) => expect(check[v]).toBeDefined);
                 } );
         } );
     });

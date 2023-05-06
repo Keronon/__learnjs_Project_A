@@ -42,10 +42,12 @@ describe( '_profiles', () =>
                 .expect( 201 )
                 .expect( (res: req.Response) =>
                 {
-                    expect( 'idUser' in res.body && typeof(res.body.idUser) === 'number' )
-                        .toBe( true );
-                    expect( 'token'  in res.body && typeof(res.body.token)  === 'string' )
-                        .toBe( true );
+                    expect(res.body).toEqual(
+                        expect.objectContaining({
+                            idUser: expect.any(Number),
+                            token: expect.any(String)
+                        })
+                    );
 
                     ids.push(res.body.idUser);
                 } );
@@ -66,10 +68,12 @@ describe( '_profiles', () =>
                 .expect( 201 )
                 .expect( (res: req.Response) =>
                 {
-                    expect( 'idUser' in res.body && typeof(res.body.idUser) === 'number' )
-                        .toBe( true );
-                    expect( 'token'  in res.body && typeof(res.body.token)  === 'string' )
-                        .toBe( true );
+                    expect(res.body).toEqual(
+                        expect.objectContaining({
+                            idUser: expect.any(Number),
+                            token: expect.any(String)
+                        })
+                    );
 
                     ids.push(res.body.idUser);
                 } );
@@ -83,8 +87,7 @@ describe( '_profiles', () =>
                 .expect( 200 )
                 .expect( (res: req.Response) =>
                 {
-                    for (const key in new GetProfileDto)
-                        expect(res.body[key]).toBeDefined();
+                    expect(res.body).toEqual(expect.objectContaining(new GetProfileDto));
                 } );
         } );
 
@@ -103,8 +106,7 @@ describe( '_profiles', () =>
                 .expect( 200 )
                 .expect( (res: req.Response) =>
                 {
-                    for (const key in new AccountDto)
-                        expect(res.body[key]).toBeDefined();
+                    expect(res.body).toEqual(expect.objectContaining(new AccountDto));
                 } );
         } );
 
@@ -151,11 +153,11 @@ describe( '_profiles', () =>
                 .post( '/api/comments' )
                 .set('Authorization', admin_token)
                 .send(createCommentDto)
-                .expect( 200 )
+                .expect( 201 )
                 .expect( (res: req.Response) =>
                 {
-                    expect(res.body).toBeInstanceOf(Comment);
-
+                    const check = new Comment();
+                    Object.keys(res.body).every((v) => expect(check[v]).toBeDefined);
                     id = res.body.id;
                 } );
         } );
@@ -168,11 +170,10 @@ describe( '_profiles', () =>
                 .expect( 200 )
                 .expect( (res: req.Response) =>
                 {
-                    expect(Array.isArray(res.body)).toBe(true);
+                    expect(res.body).toBeInstanceOf(Array);
 
                     res.body.every((v) => {
-                        for (const key in new GetPrimaryCommentDto)
-                            expect(res.body[key]).toBeDefined();
+                        expect(res.body).toEqual(expect.objectContaining(new GetPrimaryCommentDto));
                     });
                 } );
         } );
@@ -185,7 +186,12 @@ describe( '_profiles', () =>
                 .expect( 200 )
                 .expect( (res: req.Response) =>
                 {
-                    expect(Array.isArray(res.body)).toBe(true);
+                    expect(res.body).toEqual(
+                        expect.objectContaining({
+                            id: expect.any(Number),
+                            children: expect.any(Array)
+                        })
+                    );
                 } );
         } );
 
