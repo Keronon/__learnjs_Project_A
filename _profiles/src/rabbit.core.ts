@@ -105,31 +105,27 @@ class Rabbit
                 {
                     log('consume');
 
-                    const message: Message = JSON.parse( msg.content.toString() ) ;
+                    const message: Message = JSON.parse( msg.content.toString() );
+
+                    const back = (res) =>
+                    {
+                        this.publishMessage( resQueueName, { id_msg: message.id_msg, cmd: message.cmd, data: res } );
+                        this.channel.ack( msg );
+                    };
 
                     try
                     {
                         const deal = _this[ message.cmd ]( message.data );
 
-                        const back = (res) =>
-                        {
-                            this.publishMessage( resQueueName, { id_msg: message.id_msg, cmd: message.cmd, data: res } );
-                            this.channel.ack( msg );
-                        };
-
                         if ( deal instanceof Promise ) {
                             deal.then( back ).catch
-                            ((ex) => {
-                                this.publishMessage( resQueueName, { id_msg: message.id_msg, cmd: message.cmd, data: ex } );
-                                this.channel.ack( msg );
-                            });
+                            ((ex) => back(ex));
                         }
                         else back( deal );
                     }
                     catch (ex)
                     {
-                        this.publishMessage( resQueueName, { id_msg: message.id_msg, cmd: message.cmd, data: ex } );
-                        this.channel.ack( msg );
+                        back(ex);
                     }
                 } )
             );
