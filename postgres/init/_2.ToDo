@@ -1,0 +1,18 @@
+
+1) pgAdmin > DB_users
+
+INSERT INTO roles( name  ,  description          , "createdAt", "updatedAt")
+	   VALUES    ('ADMIN', 'администратор'       ,  Now()     ,  Now()     ),
+	             ('USER' , 'обычный пользователь',  Now()     ,  Now()     );
+
+2) Postman > Create user
+
+{
+    "profileName": "Admin",
+    "email"      : "mail@mail.io",
+    "password"   : "password"
+}
+
+3) pgAdmin > DB_users
+
+UPDATE users SET "idRole"=1 WHERE id=1;
