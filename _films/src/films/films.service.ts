@@ -9,7 +9,7 @@ import { BadRequestException,
          NotFoundException,
          forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Op, Sequelize } from 'sequelize';
+import { Op } from 'sequelize';
 import { QueueNames, RMQ } from '../rabbit.core';
 import { FilmsRMQ } from './films-rmq';
 import { addFile, deleteFile, getFile } from '../files.core';
@@ -27,6 +27,7 @@ import { Film } from './films.struct';
 @Injectable()
 export class FilmsService {
     private filmsRMQ: FilmsRMQ;
+    private readonly countInPart: number;
 
     constructor(
         @InjectModel(Film) private filmsDB: typeof Film,
@@ -40,6 +41,7 @@ export class FilmsService {
             .then(RMQ.setCmdConsumer(this, QueueNames.FMF_cmd, QueueNames.FMF_data));
 
         this.filmsRMQ = new FilmsRMQ(this.filmsDB);
+        this.countInPart = 35;
     }
 
     async getSimpleFilmById(id: number): Promise<Film> {
@@ -57,11 +59,13 @@ export class FilmsService {
         return this.setImageAsFile(film);
     }
 
-    async getAllFilms(): Promise<GetFilmDto[]> {
+    async getAllFilms(part: number): Promise<GetFilmDto[]> {
         log('getAllFilms');
 
         const films = await this.filmsDB.findAll({
             include: { all: true },
+            offset: (part - 1) * this.countInPart,
+            limit: this.countInPart
         });
         return films.map((v) => this.setImageAsFile(v));
     }
@@ -101,16 +105,20 @@ export class FilmsService {
             if(!arrIdFilms.length) return [];
         }
 
+        if (filmFiltersDto.arrIdGenres) {
+            arrIdFilms = await this.filmGenresService.getFilteredFilmsByGenres(filmFiltersDto.arrIdGenres, arrIdFilms);
+            if(!arrIdFilms.length) return [];
+        }
+
         const condition = [];
         if(arrIdFilms) condition.push({ id: arrIdFilms });
         if(filmFiltersDto.arrIdCountries) condition.push({ idCountry: filmFiltersDto.arrIdCountries });
-        if(filmFiltersDto.arrIdGenres) {
-            condition.push( Sequelize.literal(`genres.id IN (${filmFiltersDto.arrIdGenres.join(',')})`));
-        }
 
         const films = await this.filmsDB.findAll({
             include: { all: true },
             where: { [Op.and]: condition },
+            offset: (filmFiltersDto.part - 1) * this.countInPart,
+            limit: this.countInPart
         });
 
         return films.map((v) => this.setImageAsFile(v));

@@ -45,4 +45,9 @@ export class FilmFiltersDto {
     @IsArray({ message: 'Must be an array' })
     @ArrayMinSize(1, {message: "Must be at least one member filter"})
     readonly arrMembersFilterDto: MembersFilterDto[];
+
+    @ApiProperty({ example: 1, description: 'номер партии данных (начало c 1)' })
+    @IsNumber({}, { message: 'Must be a number' })
+    @Min(1, { message: 'Must be more than 1' })
+    readonly part: number;
 }

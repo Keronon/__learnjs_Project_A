@@ -15,7 +15,7 @@ import { ApiParam,
          ApiNotFoundResponse,
          ApiUnauthorizedResponse,
          ApiOkResponse,
-         ApiConsumes} from '@nestjs/swagger';
+         ApiConsumes } from '@nestjs/swagger';
 import { Get, HttpCode } from '@nestjs/common';
 import { FilmsService } from './films.service';
 import { UpdateFilmDto } from './dto/update-film.dto';
@@ -79,17 +79,18 @@ export class FilmsController {
     }
 
     @ApiOperation({ summary: 'Получение массива всех фильмов' })
+    @ApiParam({ name: 'part', description: 'номер партии данных (начало c 1)', example: 1 })
     @ApiOkResponse({ type: [GetFilmDto], description: 'Успех. Ответ - массив фильмов' })
-    @Get()
-    getAllFilms(): Promise<GetFilmDto[]> {
+    @Get(':part')
+    getAllFilms(@Param('part') part: number): Promise<GetFilmDto[]> {
         log('getAllFilms');
-        return this.filmsService.getAllFilms();
+        return this.filmsService.getAllFilms(part);
     }
 
     @ApiOperation({ summary: 'Получение массива всех фильмов работника киноиндустрии' })
     @ApiParam({ name: 'idMember', description: 'id работника киноиндустрии', example: 1 })
     @ApiOkResponse({ type: [GetMemberFilmDto], description: 'Успех. Ответ - массив фильмов' })
-    @Get(':idMember')
+    @Get('member/:idMember')
     getMemberFilms(@Param('idMember') idMember: number): Promise<GetMemberFilmDto[]> {
         log('getMemberFilms');
         return this.filmsService.getMemberFilms(idMember);

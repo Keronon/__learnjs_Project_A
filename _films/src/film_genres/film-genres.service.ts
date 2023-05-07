@@ -20,6 +20,21 @@ export class FilmGenresService {
         return arrIdGenres.length;
     }
 
+    async getFilteredFilmsByGenres(arrIdGenres: number[], arrIdFilms: number[]): Promise<number[]> {
+        log('getFilteredFilmsByGenres');
+
+        const condition = [];
+        if (arrIdFilms) condition.push({ idFilm: arrIdFilms });
+        condition.push({ idGenre: arrIdGenres });
+
+        const found = await this.filmGenresDB.findAll({
+            attributes: ['idFilm'],
+            where: condition,
+        });
+
+        return found.map((v) => v.idFilm);
+    }
+
     async deleteFilmGenres(idFilm: number): Promise<number> {
         log('deleteFilmGenres');
         return await this.filmGenresDB.destroy({ where: { idFilm } });
