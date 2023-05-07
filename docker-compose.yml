@@ -50,6 +50,7 @@ services:
 
   users:
     build: ./_users
+    image: keronon/users:v1
     container_name: users
     restart: on-failure
     depends_on:
@@ -64,6 +65,7 @@ services:
 
   profiles:
     build: ./_profiles
+    image: keronon/profiles:v1
     container_name: profiles
     restart: on-failure
     depends_on:
@@ -78,6 +80,7 @@ services:
 
   films:
     build: ./_films
+    image: keronon/films:v1
     container_name: films
     restart: on-failure
     depends_on:
@@ -92,6 +95,7 @@ services:
 
   film_info:
     build: ./_film_info
+    image: keronon/film_info:v1
     container_name: film_info
     restart: on-failure
     depends_on:
@@ -106,6 +110,7 @@ services:
 
   rating:
     build: ./_rating
+    image: keronon/rating:v1
     container_name: rating
     restart: on-failure
     depends_on:
@@ -120,6 +125,7 @@ services:
 
   members:
     build: ./_members
+    image: keronon/members:v1
     container_name: members
     restart: on-failure
     depends_on:

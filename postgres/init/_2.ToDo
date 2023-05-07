@@ -15,4 +15,4 @@ INSERT INTO roles( name  ,  description          , "createdAt", "updatedAt")
 
 3) pgAdmin > DB_users
 
-UPDATE users SET "idRole"=1 WHERE id=1;
+UPDATE users SET "idRole"=(SELECT id FROM roles WHERE name='ADMIN') WHERE email='mail@mail.io';
