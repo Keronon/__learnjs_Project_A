@@ -8,6 +8,7 @@ import { ValidationPipe } from './_decorators/pipes/validation.pipe';
 async function bootstrap() {
     const PORT = process.env.PORT;
     const app = await NestFactory.create(AppModule);
+    app.enableCors();
 
     // Documentation
     const config = new DocumentBuilder()
