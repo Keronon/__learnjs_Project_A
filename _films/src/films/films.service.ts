@@ -23,6 +23,7 @@ import { GetFilmDto } from './dto/get-film.dto';
 import { GetMemberFilmDto } from './dto/get-member-film.dto';
 import { FilmFiltersDto } from './dto/film-filters.dto';
 import { Film } from './films.struct';
+import { TypesSorting } from './types-sorting';
 
 @Injectable()
 export class FilmsService {
@@ -93,7 +94,7 @@ export class FilmsService {
         let arrIdFilms;
         if (filmFiltersDto.arrMembersFilterDto) {
             arrIdFilms = await this.filmsRMQ.getFilteredFilmsByMembers(filmFiltersDto.arrMembersFilterDto);
-            if(!arrIdFilms.length) return [];
+            if (!arrIdFilms.length) return [];
         }
 
         if (filmFiltersDto.ratingStart || filmFiltersDto.countRatingStart) {
@@ -102,21 +103,24 @@ export class FilmsService {
                 filmFiltersDto.countRatingStart,
                 arrIdFilms,
             );
-            if(!arrIdFilms.length) return [];
+            if (!arrIdFilms.length) return [];
         }
 
         if (filmFiltersDto.arrIdGenres) {
             arrIdFilms = await this.filmGenresService.getFilteredFilmsByGenres(filmFiltersDto.arrIdGenres, arrIdFilms);
-            if(!arrIdFilms.length) return [];
+            if (!arrIdFilms.length) return [];
         }
 
         const condition = [];
-        if(arrIdFilms) condition.push({ id: arrIdFilms });
-        if(filmFiltersDto.arrIdCountries) condition.push({ idCountry: filmFiltersDto.arrIdCountries });
+        if (arrIdFilms) condition.push({ id: arrIdFilms });
+        if (filmFiltersDto.arrIdCountries) condition.push({ idCountry: filmFiltersDto.arrIdCountries });
+
+        const order = this.getValueOrder(filmFiltersDto.typeSorting);
 
         const films = await this.filmsDB.findAll({
             include: { all: true },
             where: { [Op.and]: condition },
+            order: order,
             offset: (filmFiltersDto.part - 1) * this.countInPart,
             limit: this.countInPart
         });
@@ -249,5 +253,29 @@ export class FilmsService {
                 throw new ConflictException({ message: `Genre with id = ${idGenre} is repeated several times` });
             }
         }
+    }
+
+    private getValueOrder(typeSorting: string) {
+        const order = [];
+
+        switch (typeSorting) {
+            case TypesSorting.rating:
+                order.push(['rating', 'DESC']);
+                break;
+            case TypesSorting.countRating:
+                order.push(['countRating', 'DESC']);
+                break;
+            case TypesSorting.year:
+                order.push(['year', 'DESC']);
+                break;
+            case TypesSorting.alphabetRU:
+                order.push(['nameRU', 'ASC']);
+                break;
+            case TypesSorting.alphabetEN:
+                order.push(['nameEN', 'ASC']);
+                break;
+        }
+
+        return order;
     }
 }

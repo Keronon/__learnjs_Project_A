@@ -1,19 +1,20 @@
 
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMinSize, IsArray, IsNumber, IsOptional, Max, Min } from 'class-validator';
+import { ArrayMinSize, IsArray, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 import { MembersFilterDto } from './members-filter.dto';
+import { TypesSorting } from '../types-sorting';
 
 export class FilmFiltersDto {
     @ApiProperty({ required: false, type: [Number], example: [1, 2], description: 'массив id жанров', minimum: 1 })
     @IsOptional()
     @IsArray({ message: 'Must be an array' })
-    @ArrayMinSize(1, {message: "Must be at least one id genre"})
+    @ArrayMinSize(1, { message: 'Must be at least one id genre' })
     readonly arrIdGenres: number[];
 
     @ApiProperty({ required: false, type: [Number], example: [1, 2], description: 'массив id стран', minimum: 1 })
     @IsOptional()
     @IsArray({ message: 'Must be an array' })
-    @ArrayMinSize(1, {message: "Must be at least one id country"})
+    @ArrayMinSize(1, { message: 'Must be at least one id country' })
     readonly arrIdCountries: number[];
 
     @ApiProperty({
@@ -43,11 +44,16 @@ export class FilmFiltersDto {
     })
     @IsOptional()
     @IsArray({ message: 'Must be an array' })
-    @ArrayMinSize(1, {message: "Must be at least one member filter"})
+    @ArrayMinSize(1, { message: 'Must be at least one member filter' })
     readonly arrMembersFilterDto: MembersFilterDto[];
 
     @ApiProperty({ example: 1, description: 'номер партии данных (начало c 1)' })
     @IsNumber({}, { message: 'Must be a number' })
     @Min(1, { message: 'Must be more than 1' })
     readonly part: number;
+
+    @ApiProperty({ required: false, example: TypesSorting.year, description: 'тип сортировки' })
+    @IsOptional()
+    @IsString({ message: 'Must be a string' })
+    readonly typeSorting: TypesSorting;
 }

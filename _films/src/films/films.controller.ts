@@ -78,10 +78,19 @@ export class FilmsController {
         return this.filmsService.createFilm(dto);
     }
 
+    @ApiOperation({ summary: 'Получение фильма по id' })
+    @ApiParam({ name: 'id', description: 'id фильма', example: 1 })
+    @ApiOkResponse({ type: GetFilmDto, description: 'Успех. Ответ - фильм / ничего(не найден)' })
+    @Get(':id')
+    getFilmById(@Param('id') id: number): Promise<GetFilmDto> {
+        log('getFilmById');
+        return this.filmsService.getFilmById(id);
+    }
+
     @ApiOperation({ summary: 'Получение массива всех фильмов' })
     @ApiParam({ name: 'part', description: 'номер партии данных (начало c 1)', example: 1 })
     @ApiOkResponse({ type: [GetFilmDto], description: 'Успех. Ответ - массив фильмов' })
-    @Get(':part')
+    @Get('part/:part')
     getAllFilms(@Param('part') part: number): Promise<GetFilmDto[]> {
         log('getAllFilms');
         return this.filmsService.getAllFilms(part);
@@ -109,7 +118,7 @@ export class FilmsController {
         },
         description: 'Ошибки валидации. Ответ - Error: Bad Request',
     })
-    @Post("/filter")
+    @Post('/filter')
     @HttpCode(200)
     getFilteredFilms(@Body() filmFiltersDto: FilmFiltersDto): Promise<GetFilmDto[]> {
         log('getFilteredFilms');
