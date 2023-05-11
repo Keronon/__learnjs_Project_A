@@ -8,13 +8,13 @@ export class FilmFiltersDto {
     @ApiProperty({ required: false, type: [Number], example: [1, 2], description: 'массив id жанров', minimum: 1 })
     @IsOptional()
     @IsArray({ message: 'Must be an array' })
-    @ArrayMinSize(1, { message: 'Must be at least one id genre' })
+    @ArrayMinSize(1, { message: 'Must be at least one genre' })
     readonly arrIdGenres: number[];
 
     @ApiProperty({ required: false, type: [Number], example: [1, 2], description: 'массив id стран', minimum: 1 })
     @IsOptional()
     @IsArray({ message: 'Must be an array' })
-    @ArrayMinSize(1, { message: 'Must be at least one id country' })
+    @ArrayMinSize(1, { message: 'Must be at least one country' })
     readonly arrIdCountries: number[];
 
     @ApiProperty({

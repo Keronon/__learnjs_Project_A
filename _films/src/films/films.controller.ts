@@ -111,9 +111,10 @@ export class FilmsController {
     @ApiBadRequestResponse({
         schema: {
             example: [
-                'year - Must be a number',
-                'ageRating - Must be a string',
-                'arrIdGenres - Must be at least one genre',
+                'ratingStart - Must be less than 10',
+                'countRatingStart - Must be a number',
+                'arrMembersFilterDto - Must be at least one member filter',
+                'part - Must be more than 1'
             ],
         },
         description: 'Ошибки валидации. Ответ - Error: Bad Request',
