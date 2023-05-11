@@ -24,6 +24,13 @@ export class MembersService {
         return await this.membersDB.findByPk(id);
     }
 
+    async getMemberById(id: number): Promise<GetMemberDto> {
+        log('getMemberById');
+
+        const member = await this.getSimpleMemberById(id);
+        return member ? this.setImageAsFile(member) : null;
+    }
+
     async getAllMembers(): Promise<GetMemberDto[]> {
         log('getAllMembers');
 

@@ -65,6 +65,15 @@ export class MembersController {
         return this.membersService.createMember(createMemberDto);
     }
 
+    @ApiOperation({ summary: 'Получение работника киноиндустрии по id' })
+    @ApiParam({ name: 'id', description: 'id работника киноиндустрии', example: 1 })
+    @ApiOkResponse({ type: GetMemberDto, description: 'Успех. Ответ - работник киноиндустрии / ничего(не найден)' })
+    @Get(':id')
+    getMemberById(@Param('id') id: number): Promise<GetMemberDto> {
+        log('getMemberById');
+        return this.membersService.getMemberById(id);
+    }
+
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Получение всех работников киноиндустрии (ADMIN)' })
     @ApiOkResponse({ type: [GetMemberDto], description: 'Успех. Ответ - массив работников' })
