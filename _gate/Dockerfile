@@ -15,7 +15,7 @@ RUN npm install
 COPY . .
 
 # setting environment variables
-ENV URL_USERS=http://localhost:12121 URL_PROFILES=http://localhost:12122 URL_FILMS=http://localhost:12123 URL_FILM_INFO=http://localhost:12124 URL_MEMBERS=http://localhost:12125
+ENV URL_USERS=http://users:12121 URL_PROFILES=http://profiles:12122 URL_FILMS=http://films:12123 URL_FILM_INFO=http://film_info:12124 URL_MEMBERS=http://members:12125
 
 # commands to each container run
 CMD [ "npm", "run", "start" ]

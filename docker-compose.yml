@@ -1,5 +1,5 @@
 
-version: '0.1'
+version: '0.2'
 
 networks:
   local_net:
@@ -17,7 +17,8 @@ services:
       POSTGRES_PASSWORD: "root"
     volumes:
       - ./postgres/data:/var/lib/postgresql/data     # saving DB-s data
-      - ./postgres/init:/docker-entrypoint-initdb.d  # joining folder with initial SQL files
+      - ./postgres/init:/docker-entrypoint-initdb.d  # joining folder with initial files
+      - ./postgres/init_x:/init_x                    # joining folder with support command files
     networks:
       - local_net
 
@@ -51,9 +52,21 @@ services:
     networks:
       - local_net
 
+  gate:
+    build: ./_gate
+    image: keronon/gate:v2
+    container_name: gate
+    restart: on-failure
+    ports:
+      - 12120:12120
+    volumes:
+      - ./_gate:/root
+    networks:
+      - local_net
+
   users:
     build: ./_users
-    image: keronon/users:v1
+    image: keronon/users:v2
     container_name: users
     restart: on-failure
     depends_on:
@@ -68,7 +81,7 @@ services:
 
   profiles:
     build: ./_profiles
-    image: keronon/profiles:v1
+    image: keronon/profiles:v2
     container_name: profiles
     restart: on-failure
     depends_on:
@@ -83,7 +96,7 @@ services:
 
   films:
     build: ./_films
-    image: keronon/films:v1
+    image: keronon/films:v2
     container_name: films
     restart: on-failure
     depends_on:
@@ -98,7 +111,7 @@ services:
 
   film_info:
     build: ./_film_info
-    image: keronon/film_info:v1
+    image: keronon/film_info:v2
     container_name: film_info
     restart: on-failure
     depends_on:
@@ -111,31 +124,16 @@ services:
     networks:
       - local_net
 
-  rating:
-    build: ./_rating
-    image: keronon/rating:v1
-    container_name: rating
-    restart: on-failure
-    depends_on:
-      - pg
-      - rabbitmq
-    ports:
-      - 12125:12125
-    volumes:
-      - ./_rating:/root
-    networks:
-      - local_net
-
   members:
     build: ./_members
-    image: keronon/members:v1
+    image: keronon/members:v2
     container_name: members
     restart: on-failure
     depends_on:
       - pg
       - rabbitmq
     ports:
-      - 12126:12126
+      - 12125:12125
     volumes:
       - ./_members:/root
     networks:

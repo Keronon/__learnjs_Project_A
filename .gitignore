@@ -1,5 +1,4 @@
 
-postgres/_ prepare
 postgres/data
 postgres/pgAdmin
 rabbitmq
