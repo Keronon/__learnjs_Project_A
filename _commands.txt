@@ -159,3 +159,12 @@ npm i -D
 @types/uuid           << генерация имён types
 
 # - - -
+
+
+
+# # # # #
+# SPECIAL >> packages - GATE :
+# # # # #
+
+nest.cmd new -p npm -g _gate
+npm i http-proxy-middleware @nestjs/config
