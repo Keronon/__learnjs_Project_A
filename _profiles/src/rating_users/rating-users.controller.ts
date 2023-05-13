@@ -66,8 +66,8 @@ export class RatingUsersController {
         description: 'Ошибки валидации. Ответ - Error: Bad Request',
     })
     @ApiNotFoundResponse({
-        schema: { example: { message: 'Rating film not found' } },
-        description: 'Рейтинг фильма не найден (некорректный idFilm). Ответ - Error: Not Found',
+        schema: { example: { message: 'Film not found' } },
+        description: 'Фильм не найден. Ответ - Error: Not Found',
     })
     @ApiUnauthorizedResponse({
         schema: { example: { message: 'User unauthorized' } },

@@ -1,6 +1,6 @@
 
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsNumber, IsOptional, IsString, Length } from 'class-validator';
+import { ArrayMinSize, IsArray, IsNumber, IsOptional, IsString, Length } from 'class-validator';
 
 export class CreateFilmDto {
     @ApiProperty({ example: 'Зеленая миля', description: 'название фильма на русском', minimum: 1, maximum: 128 })

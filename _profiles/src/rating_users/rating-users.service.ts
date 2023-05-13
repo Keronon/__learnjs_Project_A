@@ -2,21 +2,18 @@
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.blue, `- - > S-Rating_users :`, data, colors.reset);
 
-import { Injectable } from '@nestjs/common';
+import * as uuid from 'uuid';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { RatingUser } from './rating-users.struct';
 import { SetRatingUserDto } from './dto/set-rating-user.dto';
-import { RatingFilmsService } from '../rating_films/rating-films.service';
 import { Op } from 'sequelize';
 import { QueueNames, RMQ } from '../rabbit.core';
 
 @Injectable()
 export class RatingUsersService {
-    constructor(
-        @InjectModel(RatingUser) private ratingUsersDB: typeof RatingUser,
-        private ratingFilmsService: RatingFilmsService,
-    ) {
-        RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.FRU_cmd, QueueNames.FRU_data))
+    constructor(@InjectModel(RatingUser) private ratingUsersDB: typeof RatingUser) {
+        RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.FR_cmd, QueueNames.FR_data));
     }
 
     async getRatingUserByFilmIdAndUserId(idFilm: number, idUser: number): Promise<RatingUser> {
@@ -37,11 +34,7 @@ export class RatingUsersService {
 
         let ratingUser = await this.getRatingUserByFilmIdAndUserId(idFilm, idUser);
         if (ratingUser) {
-            await this.ratingFilmsService.onCreateRatingUser(
-                idFilm,
-                setRatingUserDto.rating,
-                ratingUser.rating,
-            );
+            await this.updateRatingFilm(idFilm, setRatingUserDto.rating, ratingUser.rating);
 
             ratingUser.rating = setRatingUserDto.rating;
             ratingUser = await ratingUser.save();
@@ -49,12 +42,26 @@ export class RatingUsersService {
             return ratingUser;
         }
 
-        await this.ratingFilmsService.onCreateRatingUser(idFilm, setRatingUserDto.rating);
+        await this.updateRatingFilm(idFilm, setRatingUserDto.rating);
         return await this.ratingUsersDB.create(setRatingUserDto);
     }
 
     async deleteRatingUsersByFilmId(idFilm: number): Promise<number> {
         log('deleteRatingUsersByFilmId');
         return await this.ratingUsersDB.destroy({ where: { idFilm } });
+    }
+
+    private async updateRatingFilm(idFilm: number, newRatingUser: number, oldRatingUser: number = null): Promise<boolean> {
+        log('updateRatingFilm');
+
+        // ! { id, newRatingUser, oldRatingUser } -> micro Film -> true
+        const res = await RMQ.publishReq(QueueNames.RF_cmd, QueueNames.RF_data, {
+            id_msg: uuid.v4(),
+            cmd: 'updateFilmRating',
+            data: { id: idFilm, newRatingUser, oldRatingUser },
+        });
+        if (res !== true) throw new InternalServerErrorException({ message: 'Can not update film rating' });
+
+        return res;
     }
 }

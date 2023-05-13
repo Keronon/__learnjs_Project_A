@@ -10,9 +10,10 @@ interface FilmCreationAttrs {
     nameEN?: string;
     year: number;
     ageRating: string;
-    rating?: number;
     duration: number;
     imageName?: string;
+    rating: number;
+    countRating: number;
     idCountry: number;
 }
 
@@ -43,10 +44,6 @@ export class Film extends Model<Film, FilmCreationAttrs> {
     @Column({ type: DataType.STRING, allowNull: false })
     ageRating: string;
 
-    @ApiProperty({ required: false, example: 9.1, description: 'рейтинг фильма' })
-    @Column({ type: DataType.DOUBLE })
-    rating: number;
-
     @ApiProperty({ example: 189, description: 'длительность фильма (в минутах)' })
     @Column({ type: DataType.INTEGER, allowNull: false })
     duration: number;
@@ -54,6 +51,14 @@ export class Film extends Model<Film, FilmCreationAttrs> {
     @ApiProperty({ required: false, example: './u12dflf.png', description: 'путь к изображению фильма' })
     @Column({ type: DataType.STRING, unique: true })
     imageName: string;
+
+    @ApiProperty({ example: 9.1, description: 'рейтинг фильма' })
+    @Column({ type: DataType.DOUBLE })
+    rating: number;
+
+    @ApiProperty({ example: 40000, description: 'количество пользовательских оценок фильма' })
+    @Column({ type: DataType.INTEGER })
+    countRating: number;
 
     @ApiProperty({ example: 1, description: 'id страны' })
     @Column({ type: DataType.INTEGER, allowNull: false })

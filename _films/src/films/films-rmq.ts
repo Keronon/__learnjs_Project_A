@@ -31,22 +31,6 @@ export class FilmsRMQ {
         }
     }
 
-    async createRatingFilm(idFilm: number): Promise<void> {
-        log('createRatingFilm');
-
-        // ! idFilm -> micro Rating -> RatingFilm
-        const res = await RMQ.publishReq(QueueNames.FR_cmd, QueueNames.FR_data, {
-            id_msg: uuid.v4(),
-            cmd: 'createRatingFilm',
-            data: idFilm,
-        });
-        if (Object.keys(res).length === 0) {
-            await this.deleteFilmInfo(idFilm);
-            await this.filmsDB.destroy({ where: { id: idFilm } });
-            throw new InternalServerErrorException({ message: 'Got empty or error response' });
-        }
-    }
-
     async getMemberFilms(idMember: number): Promise<{ idFilm, profession }[]> {
         log('getMemberFilms');
 
@@ -79,22 +63,6 @@ export class FilmsRMQ {
         return res;
     }
 
-    async getFilteredFilmsByRating(ratingStart: number, countRatingStart: number, arrIdFilms: number[]): Promise<number[]> {
-        log('getFilteredFilmsByRating');
-
-        // ! { ratingStart, countRatingStart, arrIdFilms } -> micro Rating -> arr idsFilms
-        const res = await RMQ.publishReq(QueueNames.FR_cmd, QueueNames.FR_data, {
-            id_msg: uuid.v4(),
-            cmd: 'getFilteredFilmsByRating',
-            data: { ratingStart, countRatingStart, arrIdFilms },
-        });
-        if (!Array.isArray(res)) {
-            throw new InternalServerErrorException({ message: 'Can not get filtered films by rating' });
-        }
-
-        return res;
-    }
-
     async deleteFilmInfo(idFilm: number): Promise<void> {
         log('deleteFilmInfo');
 
@@ -107,23 +75,11 @@ export class FilmsRMQ {
         if (res !== 1) throw new InternalServerErrorException({ message: 'Can not delete film info' });
     }
 
-    async deleteRatingFilm(idFilm: number): Promise<void> {
-        log('deleteRatingFilm');
-
-        // ! idFilm -> micro Rating -> rows count
-        const res = await RMQ.publishReq(QueueNames.FR_cmd, QueueNames.FR_data, {
-            id_msg: uuid.v4(),
-            cmd: 'deleteRatingFilmByFilmId',
-            data: idFilm,
-        });
-        if (res !== 1) throw new InternalServerErrorException({ message: 'Can not delete rating film' });
-    }
-
     async deleteRatingUsers(idFilm: number): Promise<void> {
         log('deleteRatingFilm');
 
         // ! idFilm -> micro Rating -> rows count
-        const res = await RMQ.publishReq(QueueNames.FRU_cmd, QueueNames.FRU_data, {
+        const res = await RMQ.publishReq(QueueNames.FR_cmd, QueueNames.FR_data, {
             id_msg: uuid.v4(),
             cmd: 'deleteRatingUsersByFilmId',
             data: idFilm,

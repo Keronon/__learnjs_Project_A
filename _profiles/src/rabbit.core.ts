@@ -15,7 +15,9 @@ const exchangeName = 'CMDs - DATA';
 export enum QueueNames { PA_cmd = 'PA_cmd', PA_data = 'PA_data',
                          PU_cmd = 'PU_cmd', PU_data = 'PU_data',
                          CF_cmd = 'CF_cmd', CF_data = 'CF_data',
-                         FC_cmd = 'FC_cmd', FC_data = 'FC_data' };
+                         FC_cmd = 'FC_cmd', FC_data = 'FC_data',
+                         FR_cmd = 'FR_cmd', FR_data = 'FR_data',
+                         RF_cmd = 'RF_cmd', RF_data = 'RF_data' };
 
 class Rabbit
 {

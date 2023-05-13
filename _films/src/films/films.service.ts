@@ -97,15 +97,6 @@ export class FilmsService {
             if (!arrIdFilms.length) return [];
         }
 
-        if (filmFiltersDto.ratingStart || filmFiltersDto.countRatingStart) {
-            arrIdFilms = await this.filmsRMQ.getFilteredFilmsByRating(
-                filmFiltersDto.ratingStart,
-                filmFiltersDto.countRatingStart,
-                arrIdFilms,
-            );
-            if (!arrIdFilms.length) return [];
-        }
-
         if (filmFiltersDto.arrIdGenres) {
             arrIdFilms = await this.filmGenresService.getFilteredFilmsByGenres(filmFiltersDto.arrIdGenres, arrIdFilms);
             if (!arrIdFilms.length) return [];
@@ -113,6 +104,12 @@ export class FilmsService {
 
         const condition = [];
         if (arrIdFilms) condition.push({ id: arrIdFilms });
+        if (filmFiltersDto.ratingStart) {
+            condition.push({ rating: { [Op.gte]: filmFiltersDto.ratingStart } });
+        }
+        if (filmFiltersDto.countRatingStart) {
+            condition.push({ countRating: { [Op.gte]: filmFiltersDto.countRatingStart } });
+        }
         if (filmFiltersDto.arrIdCountries) condition.push({ idCountry: filmFiltersDto.arrIdCountries });
 
         const order = this.getValueOrder(filmFiltersDto.typeSorting);
@@ -133,9 +130,9 @@ export class FilmsService {
 
         await this.validateCountryAndGenres(createFilmDto.idCountry, createFilmDto.arrIdGenres);
 
-        const film = await this.filmsDB.create(createFilmDto);
+        const film = await this.filmsDB.create({...createFilmDto, rating: 0, countRating: 0});
+
         await this.filmsRMQ.createFilmInfo(film.id, createFilmDto);
-        await this.filmsRMQ.createRatingFilm(film.id);
         await this.filmGenresService.createFilmGenres(film.id, createFilmDto.arrIdGenres);
 
         return film;
@@ -187,7 +184,17 @@ export class FilmsService {
             throw new NotFoundException({ message: 'Film not found' });
         }
 
-        film.rating = updateFilmRatingDto.newRating;
+        let sumRatings: number;
+        if (!updateFilmRatingDto.oldRatingUser) {
+            sumRatings = film.rating * film.countRating + updateFilmRatingDto.newRatingUser;
+            film.countRating++;
+        } else {
+            sumRatings = film.rating * film.countRating -
+                         updateFilmRatingDto.oldRatingUser +
+                         updateFilmRatingDto.newRatingUser;
+        }
+
+        film.rating = sumRatings / film.countRating;
         await film.save();
 
         return true;
@@ -202,7 +209,6 @@ export class FilmsService {
         }
 
         await this.filmsRMQ.deleteFilmInfo(id);
-        await this.filmsRMQ.deleteRatingFilm(id);
         await this.filmsRMQ.deleteRatingUsers(id);
         await this.filmsRMQ.deleteFilmComments(id);
         await this.filmsRMQ.deleteFilmMembers(id);
@@ -228,6 +234,7 @@ export class FilmsService {
         const image = film.imageName ? getFile(film.imageName) : null;
         const data = {
             ...film.dataValues,
+            rating: Math.round(film.rating * 10) / 10,
             image,
         };
         delete data.imageName;

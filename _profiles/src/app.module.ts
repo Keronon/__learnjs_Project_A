@@ -4,8 +4,10 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { JwtGlobalModule } from './jwt.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { CommentsModule } from './comments/comments.module';
+import { RatingUsersModule } from './rating_users/rating-users.module';
 import { Profile } from './profiles/profiles.struct';
 import { Comment } from './comments/comments.struct';
+import { RatingUser } from './rating_users/rating-users.struct';
 
 @Module({
     controllers: [],
@@ -19,7 +21,7 @@ import { Comment } from './comments/comments.struct';
             username: process.env.PG_USER,
             password: process.env.PG_PASS,
             database: process.env.PG_DB,
-            models: [Profile, Comment],
+            models: [Profile, Comment, RatingUser],
             autoLoadModels: true,
             logging: false
         }),
@@ -27,6 +29,7 @@ import { Comment } from './comments/comments.struct';
         JwtGlobalModule,
         ProfilesModule,
         CommentsModule,
+        RatingUsersModule
     ],
 })
 export class AppModule {}

@@ -17,7 +17,6 @@ export enum QueueNames { FFI_cmd = 'FFI_cmd', FFI_data = 'FFI_data',
                          FC_cmd = 'FC_cmd', FC_data = 'FC_data',
                          FR_cmd = 'FR_cmd', FR_data = 'FR_data',
                          RF_cmd = 'RF_cmd', RF_data = 'RF_data',
-                         FRU_cmd = 'FRU_cmd', FRU_data = 'FRU_data',
                          FFM_cmd = 'FFM_cmd', FFM_data = 'FFM_data',
                          FMF_cmd = 'FMF_cmd', FMF_data = 'FMF_data' };
 
