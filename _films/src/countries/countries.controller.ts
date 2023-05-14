@@ -27,7 +27,7 @@ export class CountriesController {
     constructor(private countriesService: CountriesService) {}
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Создание страны (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Создание страны' })
     @ApiBody({ type: CreateCountryDto, description: 'Объект с данными для новой страны' })
     @ApiCreatedResponse({ type: Country, description: 'Успех. Ответ - созданная страна' })
     @ApiBadRequestResponse({
@@ -69,7 +69,7 @@ export class CountriesController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Удаление страны (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Удаление страны' })
     @ApiParam({ name: 'id', description: 'id страны', example: 1 })
     @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
     @ApiNotFoundResponse({

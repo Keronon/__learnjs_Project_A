@@ -29,7 +29,7 @@ export class FilmMembersController {
     constructor(private filmMembersService: FilmMembersService) {}
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Добавление нового участника фильма' })
+    @ApiOperation({ summary: '(ADMIN) Добавление нового участника фильма' })
     @ApiBody({ type: CreateFilmMemberDto, description: 'Объект с данными о участнике фильма' })
     @ApiCreatedResponse({ type: FilmMember, description: 'Успех. Ответ - созданный участник фильма' })
     @ApiBadRequestResponse({
@@ -85,7 +85,7 @@ export class FilmMembersController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Удаление участника фильма' })
+    @ApiOperation({ summary: '(ADMIN) Удаление участника фильма' })
     @ApiParam({ name: 'id', description: 'id участника фильма', example: 1 })
     @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
     @ApiNotFoundResponse({

@@ -60,7 +60,7 @@ export class ProfilesController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Регистрация нового аккаунта администратора (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Регистрация нового аккаунта администратора' })
     @ApiBody({ type: RegistrationDto, description: 'Объект с данными для регистрации аккаунта' })
     @ApiCreatedResponse({
         schema: { example: { idUser: 1, token: 'h123fgh213fh12j31jh23.h12g3h1' } },
@@ -102,7 +102,7 @@ export class ProfilesController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Получение профиля по id пользователя, связанного с ним' })
+    @ApiOperation({ summary: '(ADMIN | SELF) Получение профиля по id пользователя, связанного с ним' })
     @ApiParam({ name: 'id', description: 'id пользователя', example: 1 })
     @ApiOkResponse({
         type: GetProfileDto,
@@ -131,7 +131,7 @@ export class ProfilesController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Изменение данных аккаунта' })
+    @ApiOperation({ summary: '(ADMIN | SELF) Изменение данных аккаунта' })
     @ApiBody({ type: AccountDto, description: 'Объект с изменёнными полями аккаунта' })
     @ApiOkResponse({ type: AccountDto, description: 'Успех. Ответ - изменённый аккаунт' })
     @ApiNotFoundResponse({
@@ -174,7 +174,7 @@ export class ProfilesController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Изменение фото профиля' })
+    @ApiOperation({ summary: '(ADMIN | SELF) Изменение фото профиля' })
     @ApiParam({ name: 'idUser', description: 'id пользователя', example: 1 })
     @ApiConsumes('multipart/form-data')
     @ApiBody({ type: FileUploadDto, description: 'Новое фото профиля' })
@@ -211,7 +211,7 @@ export class ProfilesController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Удаление аккаунта' })
+    @ApiOperation({ summary: '(ADMIN | SELF) Удаление аккаунта' })
     @ApiParam({ name: 'idUser', description: 'id пользователя', example: 1 })
     @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
     @ApiNotFoundResponse({

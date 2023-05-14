@@ -34,7 +34,7 @@ export class FilmInfoController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Изменение доп. информации о фильме (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Изменение доп. информации о фильме' })
     @ApiBody({ type: UpdateFilmInfoDto, description: 'Объект с изменёнными полями доп. информации о фильме' })
     @ApiOkResponse({ type: FilmInfo, description: 'Успех. Ответ - изменённая доп. информация о фильме' })
     @ApiNotFoundResponse({

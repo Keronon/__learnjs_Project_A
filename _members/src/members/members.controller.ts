@@ -31,7 +31,7 @@ export class MembersController {
     constructor(private membersService: MembersService) {}
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Добавление нового работника (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Добавление нового работника' })
     @ApiBody({ type: CreateMemberDto, description: 'Объект с данными о работнике киноиндустрии' })
     @ApiCreatedResponse({ type: Member, description: 'Успех. Ответ - созданный работнике' })
     @ApiBadRequestResponse({
@@ -65,7 +65,7 @@ export class MembersController {
         return this.membersService.createMember(createMemberDto);
     }
 
-    @ApiOperation({ summary: 'Получение работника киноиндустрии по id' })
+    @ApiOperation({ summary: '(ADMIN) Получение работника киноиндустрии по id' })
     @ApiParam({ name: 'id', description: 'id работника киноиндустрии', example: 1 })
     @ApiOkResponse({ type: GetMemberDto, description: 'Успех. Ответ - работник киноиндустрии / ничего(не найден)' })
     @Get(':id')
@@ -75,7 +75,7 @@ export class MembersController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Получение всех работников киноиндустрии (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Получение всех работников киноиндустрии' })
     @ApiOkResponse({ type: [GetMemberDto], description: 'Успех. Ответ - массив работников' })
     @ApiUnauthorizedResponse({
         schema: { example: { message: 'User unauthorized' } },
@@ -100,7 +100,7 @@ export class MembersController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Изменение фото работника киноиндустрии (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Изменение фото работника киноиндустрии' })
     @ApiParam({ name: 'id', description: 'id работника', example: 1 })
     @ApiConsumes('multipart/form-data')
     @ApiBody({ type: FileUploadDto, description: 'Новое фото работника' })
@@ -137,7 +137,7 @@ export class MembersController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Удаление работника киноиндустрии (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Удаление работника киноиндустрии' })
     @ApiParam({ name: 'id', description: 'id работника', example: 1 })
     @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
     @ApiNotFoundResponse({

@@ -27,7 +27,7 @@ export class ProfessionsController {
     constructor(private professionsService: ProfessionsService) {}
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Создание профессии (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Создание профессии' })
     @ApiBody({ type: CreateProfessionDto, description: 'Объект с данными для новой профессии' })
     @ApiCreatedResponse({ type: Profession, description: 'Успех. Ответ - созданная профессия' })
     @ApiBadRequestResponse({
@@ -69,7 +69,7 @@ export class ProfessionsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Удаление профессии (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Удаление профессии' })
     @ApiParam({ name: 'id', description: 'id профессии', example: 1 })
     @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
     @ApiNotFoundResponse({

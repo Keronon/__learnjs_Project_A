@@ -26,7 +26,7 @@ import { Roles } from '../_decorators/roles-auth.decorator';
 export class RatingUsersController {
     constructor(private ratingUsersService: RatingUsersService) {}
 
-    @ApiOperation({ summary: 'Получение оценки по id фильма и пользователя' })
+    @ApiOperation({ summary: '(ADMIN | SELF) Получение оценки по id фильма и пользователя' })
     @ApiParam({ name: 'idFilm', description: 'id фильма', example: 1 })
     @ApiParam({ name: 'idUser', description: 'id пользователя', example: 1 })
     @ApiOkResponse({
@@ -55,7 +55,7 @@ export class RatingUsersController {
         return this.ratingUsersService.getRatingUserByFilmIdAndUserId(param.idFilm, param.idUser);
     }
 
-    @ApiOperation({ summary: 'Создание/обновление пользовательской оценки фильма' })
+    @ApiOperation({ summary: '(SELF) Создание/обновление пользовательской оценки фильма' })
     @ApiBody({
         type: SetRatingUserDto,
         description: 'Объект с данными для создания/обновления пользовательской оценки фильма',

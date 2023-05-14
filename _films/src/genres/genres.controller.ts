@@ -29,7 +29,7 @@ export class GenresController {
     constructor(private genresService: GenresService) {}
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Создание жанра фильма (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Создание жанра фильма' })
     @ApiBody({ type: CreateGenreDto, description: 'Объект с данными для нового жанра фильма' })
     @ApiCreatedResponse({ type: Genre, description: 'Успех. Ответ - созданный жанр фильма' })
     @ApiBadRequestResponse({
@@ -71,7 +71,7 @@ export class GenresController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Удаление жанра фильма (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Удаление жанра фильма' })
     @ApiParam({ name: 'id', description: 'id жанра фильма', example: 1 })
     @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
     @ApiNotFoundResponse({

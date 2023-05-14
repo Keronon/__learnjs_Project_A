@@ -28,7 +28,7 @@ export class CommentsController {
     constructor(private commentsService: CommentsService) {}
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Создание нового комментария' })
+    @ApiOperation({ summary: '(SELF) Создание нового комментария' })
     @ApiBody({ type: CreateCommentDto, description: 'Объект с данными для нового комментария' })
     @ApiCreatedResponse({ type: Comment, description: 'Успех. Ответ - созданный комментарий' })
     @ApiBadRequestResponse({
@@ -92,7 +92,7 @@ export class CommentsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Удаление комментария по id' })
+    @ApiOperation({ summary: '(ADMIN | SELF) Удаление комментария по id' })
     @ApiParam({ name: 'id', description: 'id комментария', example: 1 })
     @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
     @ApiNotFoundResponse({

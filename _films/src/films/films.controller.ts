@@ -35,7 +35,7 @@ export class FilmsController {
     constructor(private filmsService: FilmsService) {}
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Создание фильма (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Создание фильма' })
     @ApiBody({ type: CreateFilmDto, description: 'Объект с данными нового фильма' })
     @ApiCreatedResponse({ type: Film, description: 'Успех. Ответ - созданный фильм' })
     @ApiBadRequestResponse({
@@ -127,7 +127,7 @@ export class FilmsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Изменение информации о фильме (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Изменение информации о фильме' })
     @ApiBody({ type: UpdateFilmDto, description: 'Объект с изменёнными полями информации о фильме' })
     @ApiOkResponse({ type: Film, description: 'Успех. Ответ - изменённый фильм' })
     @ApiBadRequestResponse({
@@ -171,7 +171,7 @@ export class FilmsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Изменение изображения фильма' })
+    @ApiOperation({ summary: '(ADMIN) Изменение изображения фильма' })
     @ApiParam({ name: 'id', description: 'id фильма', example: 1 })
     @ApiConsumes('multipart/form-data')
     @ApiBody({ type: FileUploadDto, description: 'Новое изображения фильма' })
@@ -208,7 +208,7 @@ export class FilmsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Удаление фильма (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Удаление фильма' })
     @ApiParam({ required: true, name: 'id', description: 'id фильма', example: 1 })
     @ApiOkResponse({ type: Number, description: 'Успех. Ответ - количество удалённых строк' })
     @ApiNotFoundResponse({

@@ -22,7 +22,7 @@ import { Roles } from '../_decorators/roles-auth.decorator';
 export class UsersController {
     constructor(private usersService: UsersService) {}
 
-    @ApiOperation({ summary: 'Получение массива всех пользователей (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Получение массива всех пользователей' })
     @ApiOkResponse({ type: [User], description: 'Успех. Ответ - массив пользователей' })
     @ApiUnauthorizedResponse({
         schema: { example: { message: 'User unauthorized' } },
@@ -45,7 +45,7 @@ export class UsersController {
         return this.usersService.getAllUsers();
     }
 
-    @ApiOperation({ summary: 'Получение пользователя по его id (ADMIN)' })
+    @ApiOperation({ summary: '(ADMIN) Получение пользователя по его id' })
     @ApiParam({ name: 'id', description: 'id пользователя', example: 1 })
     @ApiOkResponse({ type: User, description: 'Успех. Ответ - пользователь / ничего(не найден)' })
     @ApiUnauthorizedResponse({
