@@ -1,6 +1,5 @@
 @startuml
 
-
 title  База данных
 header Носаченко А.
 footer Схема таблиц
@@ -30,20 +29,22 @@ class Members
 {
   + <font color="gold"      >serial_   id;
 
-  - text___   nameRU;
+  + text___   nameRU;
 
   - text___   nameEN;
 
   + text___   text;
 
-  + text___   imagePath;
+  - text___   imageName;
 }
 
 class Professions
 {
   + <font color="gold"      >serial_   id;
 
-  + text___   name;
+  + text___   nameRU;
+
+  + text___   nameEN;
 }
 
 }
@@ -64,17 +65,19 @@ class Films
 
   - text___   nameEN;
 
-  + <font color="lightgreen">integer   idCountry;
-
   + integer   year;
 
   + text___   ageRating;
 
-  - integer   rating;
-
   + integer   duration;
 
-  + text___   imagePath;
+  - text___   imageName;
+
+  - integer   rating;
+
+  - integer   countRating;
+
+  + <font color="lightgreen">integer   idCountry;
 }
 
 class Countries
@@ -118,45 +121,11 @@ class Film_info
 {
   + <font color="gold"      >serial_   id;
 
-  + <font color="lightblue" >integer   idFilm;
-
   + text___   text;
 
-  + text___   trailerLink;
-}
-
-}
-
-
-' = = = = = = = =
-' = = = MiS = = =
-' = = = = = = = =
-
-
-namespace MS_Rating {
-
-class Rating_films
-{
-  + <font color="gold"      >serial_   id;
+  - text___   trailerLink;
 
   + <font color="lightblue" >integer   idFilm;
-
-  + integer   count;
-
-  + integer   ratingFilm;
-
-  + integer   ratingCurrent;
-}
-
-class Rating_users
-{
-  + <font color="gold"      >serial_   id;
-
-  + <font color="lightblue" >integer   idFilm;
-
-  + <font color="lightblue" >integer   idUser;
-
-  + integer   rating;
 }
 
 }
@@ -173,11 +142,11 @@ class Profiles
 {
   + <font color="gold"      >serial_   id;
 
-  + <font color="lightblue" >integer   idUser;
-
   + text___   profileName;
 
-  - text___   imagePath;
+  - text___   imageName;
+
+  + <font color="lightblue" >integer   idUser;
 }
 
 class Comments
@@ -186,13 +155,26 @@ class Comments
 
   + <font color="lightblue" >integer   idFilm;
 
-  + <font color="lightgreen">integer   idProfile;
+  + <font color="lightblue" >integer   idUser;
+
+  - <font color="lightgreen">integer   idProfile;
 
   - text___   title;
 
   + text___   text;
 
   - integer   prevId;
+}
+
+class Rating_users
+{
+  + <font color="gold"      >serial_   id;
+
+  - integer   rating;
+
+  - <font color="lightblue" >integer   idFilm;
+
+  - <font color="lightblue" >integer   idUser;
 }
 
 }
@@ -213,7 +195,7 @@ class Users
 
   + text___   password;
 
-  + <font color="lightgreen">integer   idRole;
+  - <font color="lightgreen">integer   idRole;
 }
 
 class Roles
@@ -254,13 +236,12 @@ Film_members <--o Films
 
 Film_info    <--o Films
 
-Rating_films <--o Films
 Rating_users <--o Films
 Rating_users <--o Users
 
+Comments     <--o Users
 Comments     <--o Films
 
 Profiles     <--o Users
-
 
 @enduml
