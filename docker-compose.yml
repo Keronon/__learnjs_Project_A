@@ -19,6 +19,7 @@ services:
       - ./postgres/data:/var/lib/postgresql/data     # saving DB-s data
       - ./postgres/init:/docker-entrypoint-initdb.d  # joining folder with initial files
       - ./postgres/init_x:/init_x                    # joining folder with support command files
+      - ./postgres/log:/log
     networks:
       - local_net
 
@@ -91,6 +92,7 @@ services:
       - 12122:12122
     volumes:
       - ./_profiles:/root
+      - ./images/profiles:/root/_files
     networks:
       - local_net
 
@@ -106,6 +108,7 @@ services:
       - 12123:12123
     volumes:
       - ./_films:/root
+      - ./images/films:/root/_files
     networks:
       - local_net
 
@@ -136,5 +139,6 @@ services:
       - 12125:12125
     volumes:
       - ./_members:/root
+      - ./images/members:/root/_files
     networks:
       - local_net

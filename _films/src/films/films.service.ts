@@ -42,7 +42,7 @@ export class FilmsService {
             .then(RMQ.setCmdConsumer(this, QueueNames.FMF_cmd, QueueNames.FMF_data));
 
         this.filmsRMQ = new FilmsRMQ(this.filmsDB);
-        this.countInPart = 35;
+        this.countInPart = 20;
     }
 
     async getSimpleFilmById(id: number): Promise<Film> {
