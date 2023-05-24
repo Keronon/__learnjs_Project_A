@@ -37,6 +37,16 @@ export class FilmFiltersDto {
     @IsNumber({}, { message: 'Must be a number' })
     readonly countRatingStart: number;
 
+    @ApiProperty({ required: false, example: 2000, description: 'стартовое значение года' })
+    @IsOptional()
+    @IsNumber({}, { message: 'Must be a number' })
+    readonly yearStart: number;
+
+    @ApiProperty({ required: false, example: 2010, description: 'конечное значение года' })
+    @IsOptional()
+    @IsNumber({}, { message: 'Must be a number' })
+    readonly yearEnd: number;
+
     @ApiProperty({
         required: false, type: [MembersFilterDto],
         description: 'массив работников с профессией',

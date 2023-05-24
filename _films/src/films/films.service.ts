@@ -104,12 +104,10 @@ export class FilmsService {
 
         const condition = [];
         if (arrIdFilms) condition.push({ id: arrIdFilms });
-        if (filmFiltersDto.ratingStart) {
-            condition.push({ rating: { [Op.gte]: filmFiltersDto.ratingStart } });
-        }
-        if (filmFiltersDto.countRatingStart) {
-            condition.push({ countRating: { [Op.gte]: filmFiltersDto.countRatingStart } });
-        }
+        if (filmFiltersDto.ratingStart) condition.push({ rating: { [Op.gte]: filmFiltersDto.ratingStart } });
+        if (filmFiltersDto.countRatingStart) condition.push({ countRating: { [Op.gte]: filmFiltersDto.countRatingStart } });
+        if (filmFiltersDto.yearStart) condition.push({ year: { [Op.gte]: filmFiltersDto.yearStart } });
+        if (filmFiltersDto.yearEnd) condition.push({ year: { [Op.lte]: filmFiltersDto.yearEnd } });
         if (filmFiltersDto.arrIdCountries) condition.push({ idCountry: filmFiltersDto.arrIdCountries });
 
         const order = this.getValueOrder(filmFiltersDto.typeSorting);
