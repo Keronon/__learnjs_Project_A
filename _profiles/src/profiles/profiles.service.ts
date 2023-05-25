@@ -9,11 +9,10 @@ import { BadRequestException,
          NotFoundException} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { QueueNames, RMQ } from '../rabbit.core';
-import { addFile, deleteFile, getFile } from '../files.core';
+import { addFile, deleteFile } from '../files.core';
 import { Profile } from './profiles.struct';
 import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
-import { GetProfileDto } from './dto/get-profile.dto';
 import { CommentsService } from '../comments/comments.service';
 
 @Injectable()
@@ -51,11 +50,11 @@ export class ProfilesService {
         return res;
     }
 
-    async getProfileByUserId(idUser: number): Promise<GetProfileDto> {
+    async getProfileByUserId(idUser: number): Promise<Profile> {
         log('getProfileByUserId');
 
         const profile = await this.profilesDB.findOne({ where: { idUser } });
-        return profile ? this.setImageAsFile(profile) : null;
+        return profile;
     }
 
     async getSimpleProfileByUserId(idUser: number): Promise<Profile> {
@@ -86,7 +85,7 @@ export class ProfilesService {
         return accountDto;
     }
 
-    async updateImageByIdUser(idUser: number, image: any): Promise<GetProfileDto> {
+    async updateImageByIdUser(idUser: number, image: any): Promise<Profile> {
         log('updateImageByIdUser');
 
         let profile = await this.getSimpleProfileByUserId(idUser);
@@ -96,9 +95,7 @@ export class ProfilesService {
         if (profile.imageName) deleteFile(profile.imageName);
 
         profile.imageName = addFile(image);
-        profile = await profile.save();
-
-        return this.setImageAsFile(profile);
+        return profile = await profile.save();
     }
 
     async deleteAccountByUserId(idUser: number): Promise<number> {
@@ -120,18 +117,5 @@ export class ProfilesService {
 
         await this.commentsService.deleteCommentsByProfileId(profile.id);
         return await this.profilesDB.destroy({ where: { idUser } });
-    }
-
-    setImageAsFile(profile: Profile): GetProfileDto {
-        log('setImageAsFile');
-
-        const image = profile.imageName ? getFile(profile.imageName) : null;
-        const data = {
-            ...profile.dataValues,
-            image,
-        };
-        delete data.imageName;
-
-        return data;
     }
 }

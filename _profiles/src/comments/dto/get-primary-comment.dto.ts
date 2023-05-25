@@ -1,6 +1,6 @@
 
 import { ApiProperty } from '@nestjs/swagger';
-import { GetProfileDto } from '../../profiles/dto/get-profile.dto';
+import { Profile } from 'src/profiles/profiles.struct';
 
 export class GetPrimaryCommentDto {
     @ApiProperty({ example: 1, description: 'id комментария' })
@@ -24,8 +24,8 @@ export class GetPrimaryCommentDto {
     @ApiProperty({ required: false, example: null, description: 'id комментируемого комментария' })
     readonly prevId: number;
 
-    @ApiProperty({ type: GetProfileDto, description: 'профиль пользователя' })
-    readonly profile: GetProfileDto;
+    @ApiProperty({ type: Profile, description: 'профиль пользователя' })
+    readonly profile: Profile;
 
     @ApiProperty({ example: 3, description: 'количество дочерних комментариев' })
     readonly childrenCount: number;

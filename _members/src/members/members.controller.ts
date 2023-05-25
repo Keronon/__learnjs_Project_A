@@ -21,7 +21,6 @@ import { Roles } from '../_decorators/roles-auth.decorator';
 import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { MembersService } from './members.service';
 import { CreateMemberDto } from './dto/create-member.dto';
-import { GetMemberDto } from './dto/get-member.dto';
 import { FileUploadDto } from './dto/file-upload.dto';
 import { Member } from './members.struct';
 
@@ -67,16 +66,16 @@ export class MembersController {
 
     @ApiOperation({ summary: '(ADMIN) Получение работника киноиндустрии по id' })
     @ApiParam({ name: 'id', description: 'id работника киноиндустрии', example: 1 })
-    @ApiOkResponse({ type: GetMemberDto, description: 'Успех. Ответ - работник киноиндустрии / ничего(не найден)' })
+    @ApiOkResponse({ type: Member, description: 'Успех. Ответ - работник киноиндустрии / ничего(не найден)' })
     @Get(':id')
-    getMemberById(@Param('id') id: number): Promise<GetMemberDto> {
+    getMemberById(@Param('id') id: number): Promise<Member> {
         log('getMemberById');
         return this.membersService.getMemberById(id);
     }
 
     @ApiBearerAuth()
     @ApiOperation({ summary: '(ADMIN) Получение всех работников киноиндустрии' })
-    @ApiOkResponse({ type: [GetMemberDto], description: 'Успех. Ответ - массив работников' })
+    @ApiOkResponse({ type: [Member], description: 'Успех. Ответ - массив работников' })
     @ApiUnauthorizedResponse({
         schema: { example: { message: 'User unauthorized' } },
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
@@ -94,7 +93,7 @@ export class MembersController {
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Get()
-    getAllMembers(): Promise<GetMemberDto[]> {
+    getAllMembers(): Promise<Member[]> {
         log('getAllMembers');
         return this.membersService.getAllMembers();
     }
@@ -104,7 +103,7 @@ export class MembersController {
     @ApiParam({ name: 'id', description: 'id работника', example: 1 })
     @ApiConsumes('multipart/form-data')
     @ApiBody({ type: FileUploadDto, description: 'Новое фото работника' })
-    @ApiOkResponse({ type: GetMemberDto, description: 'Успех. Ответ - изменённый работник' })
+    @ApiOkResponse({ type: Member, description: 'Успех. Ответ - изменённый работник' })
     @ApiNotFoundResponse({
         schema: { example: { message: 'Member not found' } },
         description: 'Работник не найден. Ответ - Error: Not Found',
@@ -131,7 +130,7 @@ export class MembersController {
     @UseGuards(RolesGuard)
     @UseInterceptors(FileInterceptor('image'))
     @Put(':id')
-    updateImage(@Param('id') id: number, @UploadedFile() image): Promise<GetMemberDto> {
+    updateImage(@Param('id') id: number, @UploadedFile() image): Promise<Member> {
         log('updateImage');
         return this.membersService.updateImageById(id, image);
     }

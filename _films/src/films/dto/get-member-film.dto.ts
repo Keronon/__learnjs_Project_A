@@ -1,6 +1,6 @@
 
 import { ApiProperty } from '@nestjs/swagger';
-import { GetFilmDto } from './get-film.dto';
+import { Film } from '../films.struct';
 
 class Profession {
     @ApiProperty({ example: 1, description: 'id профессии' })
@@ -14,8 +14,8 @@ class Profession {
 }
 
 export class GetMemberFilmDto {
-    @ApiProperty({ type: GetFilmDto, description: 'фильм' })
-    readonly film: GetFilmDto;
+    @ApiProperty({ type: Film, description: 'фильм' })
+    readonly film: Film;
 
     @ApiProperty({ type: Profession, description: 'профессия' })
     readonly profession: Profession;

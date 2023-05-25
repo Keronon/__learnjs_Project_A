@@ -6,8 +6,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { Member } from './members.struct';
-import { addFile, getFile, deleteFile } from '../files.core';
-import { GetMemberDto } from './dto/get-member.dto';
+import { addFile, deleteFile } from '../files.core';
 import { GetSimpleMemberDto } from './dto/get-simple-member.dto';
 
 @Injectable()
@@ -24,18 +23,17 @@ export class MembersService {
         return await this.membersDB.findByPk(id);
     }
 
-    async getMemberById(id: number): Promise<GetMemberDto> {
+    async getMemberById(id: number): Promise<Member> {
         log('getMemberById');
 
         const member = await this.getSimpleMemberById(id);
-        return member ? this.setImageAsFile(member) : null;
+        return member;
     }
 
-    async getAllMembers(): Promise<GetMemberDto[]> {
+    async getAllMembers(): Promise<Member[]> {
         log('getAllMembers');
 
-        const res = await this.membersDB.findAll();
-        return res.map((v) => this.setImageAsFile(v));
+        return await this.membersDB.findAll();
     }
 
     async getSimpleMembersByIds(ids: number[]): Promise<GetSimpleMemberDto[]> {
@@ -48,7 +46,7 @@ export class MembersService {
         return members;
     }
 
-    async updateImageById(id: number, image: any): Promise<GetMemberDto> {
+    async updateImageById(id: number, image: any): Promise<Member> {
         log('updateImageByIdUser');
 
         let member = await this.getSimpleMemberById(id);
@@ -61,9 +59,7 @@ export class MembersService {
         if (member.imageName) deleteFile(member.imageName);
 
         member.imageName = addFile(image);
-        member = await member.save();
-
-        return this.setImageAsFile(member);
+        return await member.save();
     }
 
     async deleteMember(id: number): Promise<number> {
@@ -78,18 +74,5 @@ export class MembersService {
             deleteFile(member.imageName);
         }
         return await this.membersDB.destroy({ where: { id } });
-    }
-
-    setImageAsFile(member: Member): GetMemberDto {
-        log('setImageAsFile');
-
-        const image = member.imageName ? getFile(member.imageName) : null;
-        const data = {
-            ...member.dataValues,
-            image,
-        };
-        delete data.imageName;
-
-        return data;
     }
 }

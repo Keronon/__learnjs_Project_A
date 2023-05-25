@@ -12,14 +12,13 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import { QueueNames, RMQ } from '../rabbit.core';
 import { FilmsRMQ } from './films-rmq';
-import { addFile, deleteFile, getFile } from '../files.core';
+import { addFile, deleteFile } from '../files.core';
 import { GenresService } from '../genres/genres.service';
 import { CountriesService } from '../countries/countries.service';
 import { FilmGenresService } from '../film_genres/film-genres.service';
 import { CreateFilmDto } from './dto/create-film.dto';
 import { UpdateFilmDto } from './dto/update-film.dto';
 import { UpdateFilmRatingDto } from './dto/update-film-rating.dto';
-import { GetFilmDto } from './dto/get-film.dto';
 import { GetMemberFilmDto } from './dto/get-member-film.dto';
 import { FilmFiltersDto } from './dto/film-filters.dto';
 import { Film } from './films.struct';
@@ -50,25 +49,23 @@ export class FilmsService {
         return await this.filmsDB.findByPk(id);
     }
 
-    async getFilmById(id: number): Promise<GetFilmDto> {
+    async getFilmById(id: number): Promise<Film> {
         log('getFilmById');
 
-        const film = await this.filmsDB.findOne({
+        return await this.filmsDB.findOne({
             where: { id },
             include: { all: true },
         });
-        return this.setImageAsFile(film);
     }
 
-    async getAllFilms(part: number): Promise<GetFilmDto[]> {
+    async getAllFilms(part: number): Promise<Film[]> {
         log('getAllFilms');
 
-        const films = await this.filmsDB.findAll({
+        return await this.filmsDB.findAll({
             include: { all: true },
             offset: (part - 1) * this.countInPart,
             limit: this.countInPart
         });
-        return films.map((v) => this.setImageAsFile(v));
     }
 
     async getMemberFilms(idMember: number): Promise<GetMemberFilmDto[]> {
@@ -88,7 +85,7 @@ export class FilmsService {
         return res;
     }
 
-    async getFilteredFilms(filmFiltersDto: FilmFiltersDto): Promise<GetFilmDto[]> {
+    async getFilteredFilms(filmFiltersDto: FilmFiltersDto): Promise<Film[]> {
         log('getFilteredFilms');
 
         let arrIdFilms;
@@ -112,15 +109,13 @@ export class FilmsService {
 
         const order = this.getValueOrder(filmFiltersDto.typeSorting);
 
-        const films = await this.filmsDB.findAll({
+        return await this.filmsDB.findAll({
             include: { all: true },
             where: { [Op.and]: condition },
             order: order,
             offset: (filmFiltersDto.part - 1) * this.countInPart,
             limit: this.countInPart
         });
-
-        return films.map((v) => this.setImageAsFile(v));
     }
 
     async createFilm(createFilmDto: CreateFilmDto): Promise<Film> {
@@ -158,7 +153,7 @@ export class FilmsService {
         return film;
     }
 
-    async updateImageById(id: number, image: any): Promise<any> {
+    async updateImageById(id: number, image: any): Promise<Film> {
         log('updateImageById');
 
         let film = await this.getSimpleFilmById(id);
@@ -169,9 +164,7 @@ export class FilmsService {
         if (film.imageName) deleteFile(film.imageName);
 
         film.imageName = addFile(image);
-        film = await film.save();
-
-        return this.setImageAsFile(film);
+        return await film.save();
     }
 
     async updateFilmRating(updateFilmRatingDto: UpdateFilmRatingDto): Promise<Boolean> {
@@ -224,20 +217,6 @@ export class FilmsService {
 
         const count = await this.filmsDB.count({ where: { idCountry } });
         return count > 0 ? true : false;
-    }
-
-    private setImageAsFile(film: Film): any {
-        log('setImageAsFile');
-
-        const image = film.imageName ? getFile(film.imageName) : null;
-        const data = {
-            ...film.dataValues,
-            rating: Math.round(film.rating * 10) / 10,
-            image,
-        };
-        delete data.imageName;
-
-        return data;
     }
 
     private async validateCountryAndGenres(idCountry: number, arrIdGenres: number[]): Promise<void> {

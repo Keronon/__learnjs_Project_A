@@ -25,7 +25,6 @@ import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { CreateFilmDto } from './dto/create-film.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileUploadDto } from './dto/file-upload.dto';
-import { GetFilmDto } from './dto/get-film.dto';
 import { GetMemberFilmDto } from './dto/get-member-film.dto';
 import { FilmFiltersDto } from './dto/film-filters.dto';
 
@@ -80,18 +79,18 @@ export class FilmsController {
 
     @ApiOperation({ summary: 'Получение фильма по id' })
     @ApiParam({ name: 'id', description: 'id фильма', example: 1 })
-    @ApiOkResponse({ type: GetFilmDto, description: 'Успех. Ответ - фильм / ничего(не найден)' })
+    @ApiOkResponse({ type: Film, description: 'Успех. Ответ - фильм / ничего(не найден)' })
     @Get(':id')
-    getFilmById(@Param('id') id: number): Promise<GetFilmDto> {
+    getFilmById(@Param('id') id: number): Promise<Film> {
         log('getFilmById');
         return this.filmsService.getFilmById(id);
     }
 
     @ApiOperation({ summary: 'Получение массива всех фильмов' })
     @ApiParam({ name: 'part', description: 'номер партии данных (начало c 1)', example: 1 })
-    @ApiOkResponse({ type: [GetFilmDto], description: 'Успех. Ответ - массив фильмов' })
+    @ApiOkResponse({ type: [Film], description: 'Успех. Ответ - массив фильмов' })
     @Get('part/:part')
-    getAllFilms(@Param('part') part: number): Promise<GetFilmDto[]> {
+    getAllFilms(@Param('part') part: number): Promise<Film[]> {
         log('getAllFilms');
         return this.filmsService.getAllFilms(part);
     }
@@ -107,7 +106,7 @@ export class FilmsController {
 
     @ApiOperation({ summary: 'Получение массива отфильтрованных фильмов' })
     @ApiBody({ type: FilmFiltersDto, description: 'Объект с данными для фильтрации' })
-    @ApiOkResponse({ type: [GetFilmDto], description: 'Успех. Ответ - массив фильмов' })
+    @ApiOkResponse({ type: [Film], description: 'Успех. Ответ - массив фильмов' })
     @ApiBadRequestResponse({
         schema: {
             example: [
@@ -121,7 +120,7 @@ export class FilmsController {
     })
     @Post('/filter')
     @HttpCode(200)
-    getFilteredFilms(@Body() filmFiltersDto: FilmFiltersDto): Promise<GetFilmDto[]> {
+    getFilteredFilms(@Body() filmFiltersDto: FilmFiltersDto): Promise<Film[]> {
         log('getFilteredFilms');
         return this.filmsService.getFilteredFilms(filmFiltersDto);
     }

@@ -8,6 +8,7 @@ import { RatingUsersModule } from './rating_users/rating-users.module';
 import { Profile } from './profiles/profiles.struct';
 import { Comment } from './comments/comments.struct';
 import { RatingUser } from './rating_users/rating-users.struct';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
     controllers: [],
@@ -25,6 +26,8 @@ import { RatingUser } from './rating_users/rating-users.struct';
             autoLoadModels: true,
             logging: false
         }),
+
+        ServeStaticModule.forRoot( { rootPath: '/root/_files', serveRoot: '/api/profiles/images'} ),
 
         JwtGlobalModule,
         ProfilesModule,

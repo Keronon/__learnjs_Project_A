@@ -10,6 +10,7 @@ import { Film } from './films/films.struct';
 import { Genre } from './genres/genres.struct';
 import { Country } from './countries/countries.struct';
 import { FilmGenre } from './film_genres/film-genres.struct';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
     controllers: [],
@@ -26,6 +27,8 @@ import { FilmGenre } from './film_genres/film-genres.struct';
             autoLoadModels: true,
             logging: false,
         }),
+
+        ServeStaticModule.forRoot( { rootPath: '/root/_files', serveRoot: '/api/films/images'} ),
 
         JwtGlobalModule,
         FilmsModule,

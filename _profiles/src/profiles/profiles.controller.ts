@@ -24,8 +24,8 @@ import { UidGuard } from '../_decorators/guards/uid.guard';
 import { Roles } from '../_decorators/roles-auth.decorator';
 import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
-import { GetProfileDto } from './dto/get-profile.dto';
 import { FileUploadDto } from './dto/file-upload.dto';
+import { Profile } from './profiles.struct';
 
 enum RoleNames { Admin = 'ADMIN', User = 'USER' }
 
@@ -105,7 +105,7 @@ export class ProfilesController {
     @ApiOperation({ summary: '(ADMIN | SELF) Получение профиля по id пользователя, связанного с ним' })
     @ApiParam({ name: 'id', description: 'id пользователя', example: 1 })
     @ApiOkResponse({
-        type: GetProfileDto,
+        type: Profile,
         description: 'Успех. Ответ - профиль пользователя / ничего(не найден)',
     })
     @ApiUnauthorizedResponse({
@@ -125,7 +125,7 @@ export class ProfilesController {
     @UseGuards(UidGuard)
     @Roles('ME', 'ADMIN')
     @Get('/user/:id')
-    getProfileByUserId(@Param('id') idUser: number): Promise<GetProfileDto> {
+    getProfileByUserId(@Param('id') idUser: number): Promise<Profile> {
         log('getProfileByUserId');
         return this.profilesService.getProfileByUserId(idUser);
     }
@@ -178,7 +178,7 @@ export class ProfilesController {
     @ApiParam({ name: 'idUser', description: 'id пользователя', example: 1 })
     @ApiConsumes('multipart/form-data')
     @ApiBody({ type: FileUploadDto, description: 'Новое фото профиля' })
-    @ApiOkResponse({ type: GetProfileDto, description: 'Успех. Ответ - изменённый профиль' })
+    @ApiOkResponse({ type: Profile, description: 'Успех. Ответ - изменённый профиль' })
     @ApiNotFoundResponse({
         schema: { example: { message: 'Profile not found' } },
         description: 'Профиль не найден. Ответ - Error: Not Found',
@@ -205,7 +205,7 @@ export class ProfilesController {
     @Roles('ME', 'ADMIN')
     @UseInterceptors(FileInterceptor('image'))
     @Put(':idUser')
-    updateImage(@Param('idUser') idUser: number, @UploadedFile() image): Promise<GetProfileDto> {
+    updateImage(@Param('idUser') idUser: number, @UploadedFile() image): Promise<Profile> {
         log('updateImage');
         return this.profilesService.updateImageByIdUser(idUser, image);
     }

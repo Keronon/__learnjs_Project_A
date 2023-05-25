@@ -55,12 +55,6 @@ export class FilmMembersService {
             include: { all: true },
         });
 
-        for (let i = 0; i < filmMembers.length; i++) {
-            filmMembers[i].dataValues.member = await this.membersService.setImageAsFile(
-                filmMembers[i].dataValues.member,
-            );
-        }
-
         return filmMembers;
     }
 

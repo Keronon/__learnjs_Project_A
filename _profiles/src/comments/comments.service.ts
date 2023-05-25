@@ -79,8 +79,6 @@ export class CommentsService {
                     id: found[i].dataValues.id,
                     deletedAt: found[i].dataValues.deletedAt,
                 };
-            } else {
-                found[i].dataValues.profile = this.profilesService.setImageAsFile(found[i].dataValues.profile);
             }
 
             found[i].dataValues.childrenCount = childrenCount;
@@ -112,8 +110,6 @@ export class CommentsService {
                     id: comment.dataValues.id,
                     deletedAt: comment.dataValues.deletedAt,
                 };
-            } else {
-                comment.dataValues.profile = this.profilesService.setImageAsFile(comment.dataValues.profile);
             }
             return { ...comment.dataValues, children: found };
         }

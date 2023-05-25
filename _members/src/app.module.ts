@@ -8,6 +8,7 @@ import { Member } from './members/members.struct';
 import { Profession } from './professions/professions.struct';
 import { FilmMembersModule } from './film_members/film_members.module';
 import { FilmMember } from './film_members/film_members.struct';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module( {
     controllers: [],
@@ -25,6 +26,8 @@ import { FilmMember } from './film_members/film_members.struct';
             autoLoadModels: true,
             logging: false
         } ),
+
+        ServeStaticModule.forRoot( { rootPath: '/root/_files', serveRoot: '/api/members/images'} ),
 
         JwtGlobalModule,
         MembersModule,
