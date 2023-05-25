@@ -267,23 +267,37 @@ export class FilmsService {
             case TypesSorting.rating:
                 order.push(['rating', 'DESC']);
                 order.push(['countRating', 'DESC']);
+                order.push(['year', 'DESC']);
+                order.push(['nameRU', 'ASC']);
+                order.push(['nameEN', 'ASC']);
                 break;
             case TypesSorting.countRating:
                 order.push(['countRating', 'DESC']);
                 order.push(['rating', 'DESC']);
+                order.push(['year', 'DESC']);
+                order.push(['nameRU', 'ASC']);
+                order.push(['nameEN', 'ASC']);
                 break;
             case TypesSorting.year:
                 order.push(['year', 'DESC']);
                 order.push(['rating', 'DESC']);
                 order.push(['countRating', 'DESC']);
+                order.push(['nameRU', 'ASC']);
+                order.push(['nameEN', 'ASC']);
                 break;
             case TypesSorting.alphabetRU:
                 order.push(['nameRU', 'ASC']);
                 order.push(['rating', 'DESC']);
+                order.push(['countRating', 'DESC']);
+                order.push(['year', 'DESC']);
+                order.push(['nameEN', 'ASC']);
                 break;
             case TypesSorting.alphabetEN:
                 order.push(['nameEN', 'ASC']);
                 order.push(['rating', 'DESC']);
+                order.push(['countRating', 'DESC']);
+                order.push(['year', 'DESC']);
+                order.push(['nameRU', 'ASC']);
                 break;
         }
 
