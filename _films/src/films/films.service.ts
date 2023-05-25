@@ -42,7 +42,7 @@ export class FilmsService {
             .then(RMQ.setCmdConsumer(this, QueueNames.FMF_cmd, QueueNames.FMF_data));
 
         this.filmsRMQ = new FilmsRMQ(this.filmsDB);
-        this.countInPart = 20;
+        this.countInPart = 28;
     }
 
     async getSimpleFilmById(id: number): Promise<Film> {
@@ -266,18 +266,24 @@ export class FilmsService {
         switch (typeSorting) {
             case TypesSorting.rating:
                 order.push(['rating', 'DESC']);
+                order.push(['countRating', 'DESC']);
                 break;
             case TypesSorting.countRating:
                 order.push(['countRating', 'DESC']);
+                order.push(['rating', 'DESC']);
                 break;
             case TypesSorting.year:
                 order.push(['year', 'DESC']);
+                order.push(['rating', 'DESC']);
+                order.push(['countRating', 'DESC']);
                 break;
             case TypesSorting.alphabetRU:
                 order.push(['nameRU', 'ASC']);
+                order.push(['rating', 'DESC']);
                 break;
             case TypesSorting.alphabetEN:
                 order.push(['nameEN', 'ASC']);
+                order.push(['rating', 'DESC']);
                 break;
         }
 
