@@ -2,7 +2,6 @@
 
 INSERT INTO professions ("nameRU", "nameEN", "createdAt", "updatedAt") VALUES
 ( 'Актер', 'Actor', Now(), Now() ),
-( 'Актриса', 'Actress', Now(), Now() ),
 ( 'Композитор', 'Composer', Now(), Now() ),
 ( 'Монтажер', 'Editor', Now(), Now() ),
 ( 'Озвучка', 'Voice', Now(), Now() ),

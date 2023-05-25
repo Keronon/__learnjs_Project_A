@@ -3,8 +3,8 @@
 CREATE TABLE roles
 (
     id serial NOT NULL,
-    name character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    description character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    name text NOT NULL,
+    description text NOT NULL,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT roles_pkey PRIMARY KEY (id),
@@ -14,8 +14,8 @@ CREATE TABLE roles
 CREATE TABLE users
 (
     id serial NOT NULL,
-    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    password character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    email text NOT NULL,
+    password text NOT NULL,
     "idRole" integer,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
@@ -34,8 +34,8 @@ CREATE TABLE users
 CREATE TABLE profiles
 (
     id serial NOT NULL,
-    "profileName" character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    "imageName" character varying(255) COLLATE pg_catalog."default",
+    "profileName" text NOT NULL,
+    "imageName" text,
     "idUser" integer NOT NULL,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
@@ -50,8 +50,8 @@ CREATE TABLE IF NOT EXISTS public.comments
     "idFilm" integer NOT NULL,
     "idUser" integer NOT NULL,
     "idProfile" integer,
-    title character varying(255) COLLATE pg_catalog."default",
-    text character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    title text,
+    text text NOT NULL,
     "prevId" integer,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
@@ -81,8 +81,8 @@ CREATE TABLE "ratingUsers"
 CREATE TABLE countries
 (
     id serial NOT NULL,
-    "nameRU" character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    "nameEN" character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    "nameRU" text NOT NULL,
+    "nameEN" text NOT NULL,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT countries_pkey PRIMARY KEY (id),
@@ -93,8 +93,8 @@ CREATE TABLE countries
 CREATE TABLE genres
 (
     id serial NOT NULL,
-    "nameRU" character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    "nameEN" character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    "nameRU" text NOT NULL,
+    "nameEN" text NOT NULL,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT genres_pkey PRIMARY KEY (id)
@@ -103,12 +103,12 @@ CREATE TABLE genres
 CREATE TABLE films
 (
     id serial NOT NULL,
-    "nameRU" character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    "nameEN" character varying(255) COLLATE pg_catalog."default",
+    "nameRU" text NOT NULL,
+    "nameEN" text,
     year integer NOT NULL,
-    "ageRating" character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    "ageRating" text NOT NULL,
     duration integer NOT NULL,
-    "imageName" character varying(255) COLLATE pg_catalog."default",
+    "imageName" text,
     rating double precision,
     "countRating" integer,
     "idCountry" integer NOT NULL,
@@ -146,8 +146,8 @@ CREATE TABLE "filmGenres"
 CREATE TABLE "filmInfo"
 (
     id serial NOT NULL,
-    text character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    "trailerLink" character varying(255) COLLATE pg_catalog."default",
+    text text NOT NULL,
+    "trailerLink" text,
     "idFilm" integer NOT NULL,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
@@ -162,8 +162,8 @@ CREATE TABLE "filmInfo"
 CREATE TABLE professions
 (
     id serial NOT NULL,
-    "nameRU" character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    "nameEN" character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    "nameRU" text NOT NULL,
+    "nameEN" text NOT NULL,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT professions_pkey PRIMARY KEY (id),
@@ -174,10 +174,10 @@ CREATE TABLE professions
 CREATE TABLE members
 (
     id serial NOT NULL,
-    "nameRU" character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    "nameEN" character varying(255) COLLATE pg_catalog."default",
-    text character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    "imageName" character varying(255) COLLATE pg_catalog."default",
+    "nameRU" text NOT NULL,
+    "nameEN" text,
+    text text NOT NULL,
+    "imageName" text,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT members_pkey PRIMARY KEY (id),
