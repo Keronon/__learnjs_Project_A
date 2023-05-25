@@ -21,11 +21,11 @@ export class User extends Model<User, UserCreationAttrs> {
     id: number;
 
     @ApiProperty({ example: 'user@mail.ru', description: 'электронная почта' })
-    @Column({ type: DataType.STRING, unique: true, allowNull: false })
+    @Column({ type: DataType.TEXT, unique: true, allowNull: false })
     email: string;
 
     @ApiProperty({ example: '12cdEF_*', description: 'пароль' })
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.TEXT, allowNull: false })
     password: string;
 
     @ApiProperty({ example: 1, description: 'id роли' })

@@ -20,11 +20,11 @@ export class Profession extends Model<Profession, ProfessionCreationAttrs> {
     id: number;
 
     @ApiProperty({ example: 'актёр', description: 'название профессии на русском' })
-    @Column({ type: DataType.STRING, unique: true, allowNull: false })
+    @Column({ type: DataType.TEXT, unique: true, allowNull: false })
     nameRU: string;
 
     @ApiProperty({ example: 'actor', description: 'название профессии на английском' })
-    @Column({ type: DataType.STRING, unique: true, allowNull: false })
+    @Column({ type: DataType.TEXT, unique: true, allowNull: false })
     nameEN: string;
 
     @HasMany(() => FilmMember)

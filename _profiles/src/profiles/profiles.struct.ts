@@ -20,11 +20,11 @@ export class Profile extends Model<Profile, ProfileCreationAttrs> {
     id: number;
 
     @ApiProperty({ example: 'Marina', description: 'имя пользователя' })
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.TEXT, allowNull: false })
     profileName: string;
 
     @ApiProperty({ example: 'u12dflf.png', description: 'путь к аватару пользователя' })
-    @Column({ type: DataType.STRING, unique: true })
+    @Column({ type: DataType.TEXT, unique: true })
     imageName: string;
 
     @ApiProperty({ example: 1, description: 'id пользователя' })

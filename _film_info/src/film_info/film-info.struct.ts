@@ -20,7 +20,7 @@ export class FilmInfo extends Model<FilmInfo, FilmInfoCreationAttrs> {
     id: number;
 
     @ApiProperty({ example: 'Этот фильм о...', description: 'опиcание фильма' })
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.TEXT, allowNull: false })
     text: string;
 
     @ApiProperty({
@@ -28,7 +28,7 @@ export class FilmInfo extends Model<FilmInfo, FilmInfoCreationAttrs> {
         example: 'https://widgets.kinopoisk.ru/discovery/film/81338/trailer/47737?noAd=0&embedId=&hidden=&muted=&loop=0&autoplay=1&from=&extraTrailers=&onlyPlayer=1',
         description: 'ссылка на трейлер фильма',
     })
-    @Column({ type: DataType.STRING })
+    @Column({ type: DataType.TEXT })
     trailerLink: string;
 
     @ApiProperty({ example: 1, description: 'id фильма' })

@@ -1,5 +1,5 @@
 
-version: '0.2'
+version: '3'
 
 networks:
   local_net:
@@ -55,7 +55,7 @@ services:
 
   gate:
     build: ./_gate
-    image: keronon/gate:v2
+    image: keronon/gate:v3
     container_name: gate
     restart: on-failure
     ports:
@@ -67,7 +67,7 @@ services:
 
   users:
     build: ./_users
-    image: keronon/users:v2
+    image: keronon/users:v3
     container_name: users
     restart: on-failure
     depends_on:
@@ -82,7 +82,7 @@ services:
 
   profiles:
     build: ./_profiles
-    image: keronon/profiles:v2
+    image: keronon/profiles:v3
     container_name: profiles
     restart: on-failure
     depends_on:
@@ -98,7 +98,7 @@ services:
 
   films:
     build: ./_films
-    image: keronon/films:v2
+    image: keronon/films:v3
     container_name: films
     restart: on-failure
     depends_on:
@@ -114,7 +114,7 @@ services:
 
   film_info:
     build: ./_film_info
-    image: keronon/film_info:v2
+    image: keronon/film_info:v3
     container_name: film_info
     restart: on-failure
     depends_on:
@@ -129,7 +129,7 @@ services:
 
   members:
     build: ./_members
-    image: keronon/members:v2
+    image: keronon/members:v3
     container_name: members
     restart: on-failure
     depends_on:

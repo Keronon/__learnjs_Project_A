@@ -37,11 +37,11 @@ export class Comment extends Model<Comment, CommentCreationAttrs> {
     idProfile: number;
 
     @ApiProperty({ required: false, example: 'Комментарий о фильме', description: 'заголовок комментария' })
-    @Column({ type: DataType.STRING })
+    @Column({ type: DataType.TEXT })
     title: string;
 
     @ApiProperty({ example: 'Некоторый комментарий', description: 'комментарий фильма' })
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.TEXT, allowNull: false })
     text: string;
 
     @ApiProperty({ required: false, example: 1, description: 'id комментируемого комментария' })

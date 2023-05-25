@@ -29,11 +29,11 @@ export class Film extends Model<Film, FilmCreationAttrs> {
     id: number;
 
     @ApiProperty({ example: 'Зеленая миля', description: 'название фильма на русском' })
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.TEXT, allowNull: false })
     nameRU: string;
 
     @ApiProperty({ required: false, example: 'The Green Mile', description: 'название фильма на английском' })
-    @Column({ type: DataType.STRING })
+    @Column({ type: DataType.TEXT })
     nameEN: string;
 
     @ApiProperty({ example: 1999, description: 'год выпуска фильма' })
@@ -41,7 +41,7 @@ export class Film extends Model<Film, FilmCreationAttrs> {
     year: number;
 
     @ApiProperty({ example: '16+', description: 'возрастное ограничение фильма' })
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.TEXT, allowNull: false })
     ageRating: string;
 
     @ApiProperty({ example: 189, description: 'длительность фильма (в минутах)' })
@@ -49,7 +49,7 @@ export class Film extends Model<Film, FilmCreationAttrs> {
     duration: number;
 
     @ApiProperty({ required: false, example: './u12dflf.png', description: 'путь к изображению фильма' })
-    @Column({ type: DataType.STRING, unique: true })
+    @Column({ type: DataType.TEXT, unique: true })
     imageName: string;
 
     @ApiProperty({ example: 9.1, description: 'рейтинг фильма' })
