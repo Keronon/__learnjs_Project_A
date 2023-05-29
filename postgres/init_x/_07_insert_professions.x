@@ -1,13 +1,14 @@
 \connect DB_members
 
 INSERT INTO professions ("nameRU", "nameEN", "createdAt", "updatedAt") VALUES
-( 'Актер', 'Actor', Now(), Now() ),
-( 'Композитор', 'Composer', Now(), Now() ),
-( 'Монтажер', 'Editor', Now(), Now() ),
-( 'Озвучка', 'Voice', Now(), Now() ),
-( 'Оператор', 'Operator', Now(), Now() ),
-( 'Переводчик', 'Translator', Now(), Now() ),
-( 'Продюсер', 'Producer', Now(), Now() ),
 ( 'Режиссер', 'Director', Now(), Now() ),
-( 'Сценарист', 'Screenwriter', Now(), Now() ),
-( 'Художник-постановщик', 'Artist', Now(), Now() );
+( 'Актер', 'Actor', Now(), Now() ),
+( 'Продюсер', 'Producer', Now(), Now() ),
+( 'Режиссер дубляжа', 'Voice_director', Now(), Now() ),
+( 'Переводчик', 'Translator', Now(), Now() ),
+( 'Сценарист', 'Writer', Now(), Now() ),
+( 'Оператор', 'Operator', Now(), Now() ),
+( 'Композитор', 'Composer', Now(), Now() ),
+( 'Художник', 'Design', Now(), Now() ),
+( 'Монтажер', 'Editor', Now(), Now() ),
+( 'Директор фильма', 'Producer_USSR', Now(), Now() );
