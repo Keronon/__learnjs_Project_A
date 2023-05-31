@@ -62,7 +62,7 @@ export class FilmFiltersDto {
     @Min(1, { message: 'Must be more than 1' })
     readonly part: number;
 
-    @ApiProperty({ required: false, example: TypesSorting.year, description: 'тип сортировки' })
+    @ApiProperty({ required: false, enum: TypesSorting, enumName: 'Тип сортировки' })
     @IsOptional()
     @IsString({ message: 'Must be a string' })
     readonly typeSorting: TypesSorting;

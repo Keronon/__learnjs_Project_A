@@ -12,6 +12,7 @@ import { ApiBody,
 import { Body, Controller, Post, HttpCode } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
+import { GetAuthDto } from './dto/get-auth.dto';
 
 @ApiTags('Авторизационный пользовательский функционал')
 @Controller('api/users')
@@ -20,10 +21,7 @@ export class AuthController {
 
     @ApiOperation({ summary: 'Авторизация' })
     @ApiBody({ type: AuthDto, description: 'Объект с данными для авторизации' })
-    @ApiOkResponse({
-        schema: { example: {  idUser: 1, token: 'h123fgh213fh12j31jh23.h12g3h1' } },
-        description: 'Успех. Ответ - id пользователя и токен',
-    })
+    @ApiOkResponse({ type: GetAuthDto, description: 'Успех. Ответ - id пользователя, роль и токен'})
     @ApiNotFoundResponse({
         schema: { example: { message: 'Incorrect email' } },
         description: 'Пользователь с данным email не найден. Ответ - Error: Not Found',
@@ -43,7 +41,7 @@ export class AuthController {
     })
     @Post('/login')
     @HttpCode(200)
-    login(@Body() authDto: AuthDto): Promise<{ idUser: number, token: string }> {
+    login(@Body() authDto: AuthDto): Promise<GetAuthDto> {
         log('login');
         return this.authService.login(authDto);
     }

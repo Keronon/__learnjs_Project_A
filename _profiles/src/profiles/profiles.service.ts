@@ -13,6 +13,7 @@ import { addFile, deleteFile } from '../files.core';
 import { Profile } from './profiles.struct';
 import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
+import { GetAuthDto } from './dto/get-auth.dto';
 import { CommentsService } from '../comments/comments.service';
 
 @Injectable()
@@ -23,7 +24,7 @@ export class ProfilesService {
         RMQ.connect();
     }
 
-    async registration(registrationDto: RegistrationDto, roleName: string): Promise<{ idUser: number; token: string }> {
+    async registration(registrationDto: RegistrationDto, roleName: string): Promise<GetAuthDto> {
         log('registration');
 
         const regData = {
@@ -32,7 +33,7 @@ export class ProfilesService {
             role: roleName,
         };
 
-        // ! regData -> micro Auth -> { idUser: number, token: string }
+        // ! regData -> micro Auth -> GetAuthDto
         const res = await RMQ.publishReq(QueueNames.PA_cmd, QueueNames.PA_data, {
             id_msg: uuid.v4(),
             cmd: 'registration',

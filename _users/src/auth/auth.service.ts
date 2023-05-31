@@ -11,6 +11,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/auth.dto';
 import { User } from '../users/users.struct';
+import { GetAuthDto } from './dto/get-auth.dto';
 import { QueueNames, RMQ } from '../rabbit.core';
 import { RegistrationUserDto } from './dto/registration-user.dto';
 
@@ -22,7 +23,7 @@ export class AuthService {
         RMQ.connect().then(RMQ.setCmdConsumer(this, QueueNames.PA_cmd, QueueNames.PA_data));
     }
 
-    async login(authDto: AuthDto): Promise<{ idUser: number, token: string }> {
+    async login(authDto: AuthDto): Promise<GetAuthDto> {
         log('login');
 
         const user = await this.usersService.getUserByEmail(authDto.email);
@@ -39,10 +40,10 @@ export class AuthService {
             });
         }
 
-        return { idUser: user.id, token: this.generateToken(user) };
+        return { idUser: user.id, role: user.role, token: this.generateToken(user) };
     }
 
-    async registration(regDto: RegistrationUserDto) {
+    async registration(regDto: RegistrationUserDto): Promise<GetAuthDto> {
         log('registration');
 
         const userWithSameEmail = await this.usersService.getUserByEmail(regDto.email);
@@ -57,7 +58,7 @@ export class AuthService {
             password: hashPassword,
         });
 
-        return { idUser: user.id, token: this.generateToken(user) };
+        return { idUser: user.id, role: user.role, token: this.generateToken(user) };
     }
 
     private generateToken(user: User) {

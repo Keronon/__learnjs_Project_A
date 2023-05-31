@@ -26,6 +26,7 @@ import { RegistrationDto } from './dto/registration.dto';
 import { AccountDto } from './dto/account.dto';
 import { FileUploadDto } from './dto/file-upload.dto';
 import { Profile } from './profiles.struct';
+import { GetAuthDto } from './dto/get-auth.dto';
 
 enum RoleNames { Admin = 'ADMIN', User = 'USER' }
 
@@ -36,10 +37,7 @@ export class ProfilesController {
 
     @ApiOperation({ summary: 'Регистрация нового аккаунта пользователя' })
     @ApiBody({ type: RegistrationDto, description: 'Объект с данными для регистрации аккаунта' })
-    @ApiCreatedResponse({
-        schema: { example: { idUser: 1, token: 'h123fgh213fh12j31jh23.h12g3h1' } },
-        description: 'Успех. Ответ - id пользователя и токен',
-    })
+    @ApiCreatedResponse({ type: GetAuthDto, description: 'Успех. Ответ - id пользователя, роль и токен' })
     @ApiConflictResponse({
         schema: { example: { message: 'User with this email already exists' } },
         description: 'Пользователь с данным email уже существует. Ответ - Error: Conflict',
@@ -54,7 +52,7 @@ export class ProfilesController {
         description: 'Ошибки валидации. Ответ - Error: Bad Request',
     })
     @Post('/reg/user')
-    regUser(@Body() registrationDto: RegistrationDto): Promise<{ idUser: number; token: string }> {
+    regUser(@Body() registrationDto: RegistrationDto): Promise<GetAuthDto> {
         log('regUser');
         return this.profilesService.registration(registrationDto, RoleNames.User);
     }
@@ -62,10 +60,7 @@ export class ProfilesController {
     @ApiBearerAuth()
     @ApiOperation({ summary: '(ADMIN) Регистрация нового аккаунта администратора' })
     @ApiBody({ type: RegistrationDto, description: 'Объект с данными для регистрации аккаунта' })
-    @ApiCreatedResponse({
-        schema: { example: { idUser: 1, token: 'h123fgh213fh12j31jh23.h12g3h1' } },
-        description: 'Успех. Ответ - id пользователя и токен',
-    })
+    @ApiCreatedResponse({ type: GetAuthDto, description: 'Успех. Ответ - id пользователя, роль и токен' })
     @ApiConflictResponse({
         schema: { example: { message: 'User with this email already exists' } },
         description: 'Пользователь с данным email уже существует. Ответ - Error: Conflict',
@@ -96,7 +91,7 @@ export class ProfilesController {
     @Roles('ADMIN')
     @UseGuards(RolesGuard)
     @Post('/reg/admin')
-    regAdmin(@Body() registrationDto: RegistrationDto): Promise<{ idUser: number; token: string }> {
+    regAdmin(@Body() registrationDto: RegistrationDto): Promise<GetAuthDto> {
         log('regAdmin');
         return this.profilesService.registration(registrationDto, RoleNames.Admin);
     }

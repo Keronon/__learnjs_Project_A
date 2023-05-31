@@ -14,6 +14,7 @@ import { UsersService } from './users.service';
 import { User } from './users.struct';
 import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { Roles } from '../_decorators/roles-auth.decorator';
+import { GetUserDto } from './dto/get-user.dto';
 
 @ApiBearerAuth()
 @ApiTags('Пользователи')
@@ -23,7 +24,7 @@ export class UsersController {
     constructor(private usersService: UsersService) {}
 
     @ApiOperation({ summary: '(ADMIN) Получение массива всех пользователей' })
-    @ApiOkResponse({ type: [User], description: 'Успех. Ответ - массив пользователей' })
+    @ApiOkResponse({ type: [GetUserDto], description: 'Успех. Ответ - массив пользователей' })
     @ApiUnauthorizedResponse({
         schema: { example: { message: 'User unauthorized' } },
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
@@ -47,7 +48,7 @@ export class UsersController {
 
     @ApiOperation({ summary: '(ADMIN) Получение пользователя по его id' })
     @ApiParam({ name: 'id', description: 'id пользователя', example: 1 })
-    @ApiOkResponse({ type: User, description: 'Успех. Ответ - пользователь / ничего(не найден)' })
+    @ApiOkResponse({ type: GetUserDto, description: 'Успех. Ответ - пользователь / ничего(не найден)' })
     @ApiUnauthorizedResponse({
         schema: { example: { message: 'User unauthorized' } },
         description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
