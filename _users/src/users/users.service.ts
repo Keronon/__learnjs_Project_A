@@ -63,7 +63,7 @@ export class UsersService {
     async updateUser(updateUserDto: UpdateUserDto): Promise<User> {
         log('updateUser');
 
-        let user = await this.getUserById(updateUserDto.id);
+        const user = await this.getUserById(updateUserDto.id);
         if (!user) {
             throw new NotFoundException({ message: 'User not found' });
         }
@@ -74,7 +74,7 @@ export class UsersService {
         }
 
         user.email = updateUserDto.email;
-        user = await user.save();
+        await user.save();
 
         return user;
     }

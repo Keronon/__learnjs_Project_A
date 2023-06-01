@@ -89,14 +89,16 @@ export class ProfilesService {
     async updateImageByIdUser(idUser: number, image: any): Promise<Profile> {
         log('updateImageByIdUser');
 
-        let profile = await this.getSimpleProfileByUserId(idUser);
+        const profile = await this.getSimpleProfileByUserId(idUser);
 
         if (!image) throw new BadRequestException({ message: 'No image to set' });
 
         if (profile.imageName) deleteFile(profile.imageName);
 
         profile.imageName = addFile(image);
-        return profile = await profile.save();
+        await profile.save()
+
+        return profile;
     }
 
     async deleteAccountByUserId(idUser: number): Promise<number> {

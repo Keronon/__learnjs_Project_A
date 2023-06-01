@@ -49,7 +49,7 @@ export class MembersService {
     async updateImageById(id: number, image: any): Promise<Member> {
         log('updateImageByIdUser');
 
-        let member = await this.getSimpleMemberById(id);
+        const member = await this.getSimpleMemberById(id);
         if (!member) {
             throw new NotFoundException({ message: 'Member not found' });
         }
@@ -59,7 +59,9 @@ export class MembersService {
         if (member.imageName) deleteFile(member.imageName);
 
         member.imageName = addFile(image);
-        return await member.save();
+        await member.save()
+
+        return member;
     }
 
     async deleteMember(id: number): Promise<number> {

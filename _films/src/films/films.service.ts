@@ -134,7 +134,7 @@ export class FilmsService {
     async updateFilm(updateFilmDto: UpdateFilmDto): Promise<Film> {
         log('updateFilm');
 
-        let film = await this.getSimpleFilmById(updateFilmDto.id);
+        const film = await this.getSimpleFilmById(updateFilmDto.id);
         if (!film) {
             throw new NotFoundException({ message: 'Film not found' });
         }
@@ -145,7 +145,7 @@ export class FilmsService {
             if (key === 'arrIdGenres') break;
             film[key] = updateFilmDto[key];
         }
-        film = await film.save();
+        await film.save();
 
         await this.filmGenresService.deleteFilmGenres(film.id);
         await this.filmGenresService.createFilmGenres(film.id, updateFilmDto.arrIdGenres);
@@ -156,7 +156,7 @@ export class FilmsService {
     async updateImageById(id: number, image: any): Promise<Film> {
         log('updateImageById');
 
-        let film = await this.getSimpleFilmById(id);
+        const film = await this.getSimpleFilmById(id);
         if (!film) throw new NotFoundException({ message: 'Film not found' });
 
         if (!image) throw new BadRequestException({ message: 'No image to set' });
@@ -164,7 +164,9 @@ export class FilmsService {
         if (film.imageName) deleteFile(film.imageName);
 
         film.imageName = addFile(image);
-        return await film.save();
+        await film.save()
+
+        return film;
     }
 
     async updateFilmRating(updateFilmRatingDto: UpdateFilmRatingDto): Promise<Boolean> {
