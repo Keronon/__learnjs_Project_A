@@ -1,0 +1,5 @@
+CREATE DATABASE "DB_users";
+CREATE DATABASE "DB_profiles";
+CREATE DATABASE "DB_films";
+CREATE DATABASE "DB_film_info";
+CREATE DATABASE "DB_members";

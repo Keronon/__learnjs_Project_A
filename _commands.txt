@@ -7,7 +7,36 @@ nest.cmd new -p npm -g _users
 nest.cmd new -p npm -g _profiles
 nest.cmd new -p npm -g _films
 nest.cmd new -p npm -g _film_info
+nest.cmd new -p npm -g _members
 nest.cmd new -p npm -g _rating
+
+nest.cmd generate module     users
+nest.cmd generate controller users
+nest.cmd generate service    users
+...
+
+# - - -
+
+
+
+# # # # #
+# controle :
+# # # # #
+
+
+npm run start
+npm run start:dev
+
+# - - -
+
+
+
+# # # # #
+# docker :
+# # # # #
+
+docker-compose up -d --build
+docker-compose down -v
 
 # - - -
 
@@ -43,8 +72,8 @@ sequelize             << ↑
 sequelize-typescript  << ↑
 amqplib               << RabbitMQ
 
-! @nestjs/swagger     << создание сайта-документации
-! swagger-ui-express  << ↑ дополнение для графики
+@nestjs/swagger       << создание сайта-документации
+swagger-ui-express    << ↑ дополнение для графики
 
 # - - -
 
@@ -109,3 +138,33 @@ uuid                  << генерация имён
 npm i -D
 
 @types/uuid           << генерация имён types
+
+# - - -
+
+
+
+# # # # #
+# packages - members :
+# # # # #
+
+npm i
+
+@nestjs/serve-static  << static images
+uuid                  << генерация имён
+
+# - - -
+
+npm i -D
+
+@types/uuid           << генерация имён types
+
+# - - -
+
+
+
+# # # # #
+# SPECIAL >> packages - GATE :
+# # # # #
+
+nest.cmd new -p npm -g _gate
+npm i http-proxy-middleware @nestjs/config

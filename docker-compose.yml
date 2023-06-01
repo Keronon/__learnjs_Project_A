@@ -1,5 +1,5 @@
 
-version: '0.1'
+version: '3'
 
 networks:
   local_net:
@@ -13,8 +13,13 @@ services:
     restart: always
     ports:
       - 5430:5432
-#    volumes:
-#      - ./postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: "root"
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data     # saving DB-s data
+      - ./postgres/init:/docker-entrypoint-initdb.d  # joining folder with initial files
+      - ./postgres/init_x:/init_x                    # joining folder with support command files
+      - ./postgres/log:/log
     networks:
       - local_net
 
@@ -22,8 +27,14 @@ services:
     image: dpage/pgadmin4
     container_name: pgadmin
     restart: always
-    expose:
-      - '80'
+    ports:
+      - 5431:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "mail@mail.io"
+      PGADMIN_DEFAULT_PASSWORD: "root"
+      PGADMIN_CONFIG_SERVER_MODE: "False" # only for dev
+    volumes:
+      - ./postgres/pgadmin:/var/lib/pgadmin
     depends_on:
       - pg
     networks:
@@ -37,13 +48,26 @@ services:
       - 5672:5672
       - 15672:15672
     volumes:
-      - ./rabbitmq/durables/:/var/lib/rabbitmq/
-      - ./rabbitmq/logs/:/var/log/rabbitmq
+      - ./rabbitmq/durables/:/var/lib/rabbitmq/  # saving durables queues
+      - ./rabbitmq/logs/:/var/log/rabbitmq       # saving logs
+    networks:
+      - local_net
+
+  gate:
+    build: ./_gate
+    image: keronon/gate:v3
+    container_name: gate
+    restart: on-failure
+    ports:
+      - 12120:12120
+    volumes:
+      - ./_gate:/root
     networks:
       - local_net
 
   users:
     build: ./_users
+    image: keronon/users:v3
     container_name: users
     restart: on-failure
     depends_on:
@@ -58,6 +82,7 @@ services:
 
   profiles:
     build: ./_profiles
+    image: keronon/profiles:v3
     container_name: profiles
     restart: on-failure
     depends_on:
@@ -67,11 +92,13 @@ services:
       - 12122:12122
     volumes:
       - ./_profiles:/root
+      - ./images/profiles:/root/_files
     networks:
       - local_net
 
   films:
     build: ./_films
+    image: keronon/films:v3
     container_name: films
     restart: on-failure
     depends_on:
@@ -81,11 +108,13 @@ services:
       - 12123:12123
     volumes:
       - ./_films:/root
+      - ./images/films:/root/_files
     networks:
       - local_net
 
   film_info:
     build: ./_film_info
+    image: keronon/film_info:v3
     container_name: film_info
     restart: on-failure
     depends_on:
@@ -98,9 +127,10 @@ services:
     networks:
       - local_net
 
-  rating:
-    build: ./_rating
-    container_name: rating
+  members:
+    build: ./_members
+    image: keronon/members:v3
+    container_name: members
     restart: on-failure
     depends_on:
       - pg
@@ -108,6 +138,7 @@ services:
     ports:
       - 12125:12125
     volumes:
-      - ./_rating:/root
+      - ./_members:/root
+      - ./images/members:/root/_files
     networks:
       - local_net

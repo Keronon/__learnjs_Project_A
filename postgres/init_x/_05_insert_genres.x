@@ -1,0 +1,25 @@
+\connect DB_films
+
+INSERT INTO genres ("nameRU", "nameEN", "createdAt", "updatedAt") VALUES
+( 'биография', 'biography', Now(), Now() ),
+( 'боевик', 'fighter', Now(), Now() ),
+( 'вестерн', 'Western film', Now(), Now() ),
+( 'военный', 'military', Now(), Now() ),
+( 'детектив', 'detective', Now(), Now() ),
+( 'документальный', 'documentary', Now(), Now() ),
+( 'драма', 'drama', Now(), Now() ),
+( 'история', 'story', Now(), Now() ),
+( 'комедия', 'comedy', Now(), Now() ),
+( 'короткометражка', 'short film', Now(), Now() ),
+( 'криминал', 'crime', Now(), Now() ),
+( 'мелодрама', 'melodrama', Now(), Now() ),
+( 'музыка', 'music', Now(), Now() ),
+( 'мюзикл', 'musical', Now(), Now() ),
+( 'приключения', 'adventures', Now(), Now() ),
+( 'семейный', 'family', Now(), Now() ),
+( 'спорт', 'sport', Now(), Now() ),
+( 'триллер', 'thriller', Now(), Now() ),
+( 'ужасы', 'horror', Now(), Now() ),
+( 'фантастика', 'fantastic', Now(), Now() ),
+( 'фильм-нуар', 'film-noir', Now(), Now() ),
+( 'фэнтези', 'fantasy', Now(), Now() );
