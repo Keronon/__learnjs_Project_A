@@ -29,11 +29,11 @@
 <b> Microservices included in the project:
 -----
 
+- ### <i> Gate
 - ### <i> Users
 - ### <i> Profiles
 - ### <i> Films
 - ### <i> Film_info
-- ### <i> Rating
 - ### <i> Members
 
 -----
