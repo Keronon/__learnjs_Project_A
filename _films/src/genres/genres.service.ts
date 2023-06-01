@@ -8,6 +8,7 @@ import { Op } from 'sequelize';
 import { Genre } from './genres.struct';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { FilmGenresService } from '../film_genres/film-genres.service';
+import { UpdateGenreDto } from './dto/update-genre.dto';
 
 @Injectable()
 export class GenresService {
@@ -36,6 +37,26 @@ export class GenresService {
         return await this.genresDB.create(createGenreDto);
     }
 
+    async updateGenre(updateGenreDto: UpdateGenreDto): Promise<Genre> {
+        log('updateGenre');
+
+        const genre = await this.getGenreById(updateGenreDto.id);
+        if (!genre) {
+            throw new NotFoundException({ message: 'Genre not found' });
+        }
+
+        if (await this.checkExistenceNameForUpdate(updateGenreDto.nameRU, updateGenreDto.nameEN, updateGenreDto.id)) {
+            throw new ConflictException({ message: 'This genre name already exists' });
+        }
+
+        for (let key in updateGenreDto) {
+            genre[key] = updateGenreDto[key];
+        }
+        await genre.save();
+
+        return genre;
+    }
+
     async deleteGenreById(id: number): Promise<number> {
         log('deleteGenreById');
 
@@ -57,6 +78,18 @@ export class GenresService {
         const count = await this.genresDB.count({
             where: {
                 [Op.or]: [{ nameRU }, { nameEN }],
+            },
+        });
+
+        return count > 0 ? true : false;
+    }
+
+    private async checkExistenceNameForUpdate(nameRU: string, nameEN: string, id: number) {
+        log('checkExistenceNameForUpdate');
+
+        const count = await this.genresDB.count({
+            where: {
+                [Op.and]: [{ [Op.or]: [{ nameRU }, { nameEN }] }, { id: { [Op.ne]: id } }],
             },
         });
 

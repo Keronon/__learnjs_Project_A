@@ -2,7 +2,7 @@
 import { colors } from '../console.colors';
 const log = (data: any) => console.log(colors.fg.yellow, `- - > C-Genres :`, data, colors.reset);
 
-import { Delete, Param } from '@nestjs/common';
+import { Delete, Param, Put } from '@nestjs/common';
 import { Body, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiBadRequestResponse,
          ApiBearerAuth,
@@ -22,6 +22,7 @@ import { RolesGuard } from '../_decorators/guards/roles.guard';
 import { GenresService } from './genres.service';
 import { Genre } from './genres.struct';
 import { CreateGenreDto } from './dto/create-genre.dto';
+import { UpdateGenreDto } from './dto/update-genre.dto';
 
 @ApiTags('Жанры фильмов')
 @Controller('api/genres')
@@ -60,6 +61,44 @@ export class GenresController {
     createGenre(@Body() createGenreDto: CreateGenreDto): Promise<Genre> {
         log('createGenre');
         return this.genresService.createGenre(createGenreDto);
+    }
+
+    @ApiBearerAuth()
+    @ApiOperation({ summary: '(ADMIN) Изменение информации о жанре' })
+    @ApiBody({ type: UpdateGenreDto, description: 'Объект с изменёнными полями информации о жанре' })
+    @ApiOkResponse({ type: Genre, description: 'Успех. Ответ - изменённый жанр' })
+    @ApiBadRequestResponse({
+        schema: { example: ['nameRU - Must be a string', 'nameEN - Must be a string'] },
+        description: 'Ошибки валидации. Ответ - Error: Bad Request',
+    })
+    @ApiNotFoundResponse({
+        schema: { example: { message: 'Genre not found' } },
+        description: 'Жанр не найден. Ответ - Error: Not Found',
+    })
+    @ApiConflictResponse({
+        schema: { example: { message: 'This genre name already exists' } },
+        description: 'Жанр с данным названием уже существует. Ответ - Error: Conflict',
+    })
+    @ApiUnauthorizedResponse({
+        schema: { example: { message: 'User unauthorized' } },
+        description: 'Неавторизованный пользователь. Ответ - Error: Unauthorized',
+    })
+    @ApiForbiddenResponse({
+        schema: {
+            example: {
+                statusCode: 403,
+                message: 'Forbidden resource',
+                error: 'Forbidden',
+            },
+        },
+        description: 'Доступ запрещён. Ответ - Error: Forbidden',
+    })
+    @UseGuards(RolesGuard)
+    @Roles('ADMIN')
+    @Put()
+    updateGenre(@Body() updateGenreDto: UpdateGenreDto): Promise<Genre> {
+        log('updateGenre');
+        return this.genresService.updateGenre(updateGenreDto);
     }
 
     @ApiOperation({ summary: 'Получение массива всех жанров фильмов' })
