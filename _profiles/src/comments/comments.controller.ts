@@ -84,9 +84,9 @@ export class CommentsController {
 
     @ApiOperation({ summary: 'Получение дерева комментариев к комментарию' })
     @ApiParam({ name: 'id', description: 'id первичного комментария', example: 1 })
-    @ApiOkResponse({ type: [Comment], description: 'Успех. Ответ - объект комментария с древовидно вложенными дочерними комментариями' })
+    @ApiOkResponse({ type: Comment, description: 'Успех. Ответ - объект комментария с древовидно вложенными дочерними комментариями' })
     @Get('/comment/:id')
-    getCommentsByComment(@Param('id') idComment: number): Promise<any[]> {
+    getCommentsByComment(@Param('id') idComment: number): Promise<any> {
         log('getCommentsByComment');
         return this.commentsService.getCommentsByComment(idComment);
     }
