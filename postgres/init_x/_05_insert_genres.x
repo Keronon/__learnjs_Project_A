@@ -3,7 +3,7 @@
 INSERT INTO genres ("nameRU", "nameEN", "createdAt", "updatedAt") VALUES
 ( 'биография', 'biography', Now(), Now() ),
 ( 'боевик', 'fighter', Now(), Now() ),
-( 'вестерн', 'Western film', Now(), Now() ),
+( 'вестерн', 'western film', Now(), Now() ),
 ( 'военный', 'military', Now(), Now() ),
 ( 'детектив', 'detective', Now(), Now() ),
 ( 'документальный', 'documentary', Now(), Now() ),
